@@ -1,49 +1,55 @@
-# glyfun
+# glyfun [![](reference/figures/logo.png)](https://glycoverse.github.io/glyfun/)
 
-The goal of glyfun is to …
+`glyfun` provides glycan-centric functional enrichment for
+glycoproteomics, moving beyond general protein-level descriptions.
+
+- Traditional: “Which functions are enriched in dysregulated
+  glycoproteins?”
+- `glyfun`: “Which functions are enriched in proteins with dysregulated
+  core-fucosylation?”
+
+Higher specificity, deeper insights. By focusing on distinct glycan
+motifs, glyfun helps you pinpoint the functional relevance of specific
+glycosylation changes.
 
 ## Installation
 
-You can install the development version of glyfun from
-[GitHub](https://github.com/) with:
+The glyfun package is not a core glycoverse package. You need to install
+it individually even if you have installed the meta-package
+[glycoverse](https://github.com/glycoverse/glycoverse).
+
+**Note:** This package is still in development and not for productive
+use.
+
+Install the development version (NOT recommended):
 
 ``` r
-# install.packages("pak")
-pak::pak("glycoverse/glyfun")
+pak::pkg_install("glycoverse/glyfun")
 ```
+
+## Documentation
+
+- 🚀 Get started:
+  [Here](https://glycoverse.github.io/glyfun/articles/glyfun.html)
+- 📚 Reference:
+  [Here](https://glycoverse.github.io/glyfun/reference/index.html)
+
+## Role in `glycoverse`
+
+`glyfun` integrates seamlessly with `glydet` (for calculating
+site-specific derived traits and motif quantification) and `glystats`
+(for differential expression analysis). As the final piece of the
+glycoproteomics analytical puzzle, `glyfun` bridges the gap between raw
+glycan quantification and biological insight, enabling researchers to
+move beyond data processing to functional glycomining.
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
-
 ``` r
 library(glyfun)
-## basic example code
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
-
-``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
-```
-
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this.
-
-You can also embed plots, for example:
-
-![](reference/figures/README-pressure-1.png)
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
+Comming soon.
 
 # 
 
