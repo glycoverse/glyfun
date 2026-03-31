@@ -17,7 +17,9 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![CRAN status](https://www.r-pkg.org/badges/version/glyfun)](https://CRAN.R-project.org/package=glyfun)
+[![R-universe version](https://glycoverse.r-universe.dev/glyfun/badges/version)](https://glycoverse.r-universe.dev/glyfun)
+[![R-CMD-check](https://github.com/glycoverse/glyfun/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/glycoverse/glyfun/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/glycoverse/glyfun/graph/badge.svg)](https://app.codecov.io/gh/glycoverse/glyfun)
 <!-- badges: end -->
 
 The goal of glyfun is to ...
