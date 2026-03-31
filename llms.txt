@@ -1,4 +1,4 @@
-# glyfun [![](reference/figures/logo.png)](https://glycoverse.github.io/glyfun/)
+# glyfun
 
 `glyfun` provides glycan-centric functional enrichment for
 glycoproteomics, moving beyond general protein-level descriptions.
