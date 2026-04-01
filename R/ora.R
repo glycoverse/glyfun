@@ -129,6 +129,64 @@ gc_ora_go.glystats_limma_res <- function(
   )
 }
 
+#' @export
+gc_ora_go.glystats_ttest_res <- function(
+  dea_res,
+  by = NULL,
+  dea_p_cutoff = 0.05,
+  dea_log2fc_cutoff = c(-1, 1),
+  orgdb = "org.Hs.eg.db",
+  ont = "MF",
+  universe = NULL,
+  p_adj_method = "BH",
+  p_cutoff = 0.05,
+  q_cutoff = 0.2
+) {
+  .gc_ora(
+    dea_res,
+    enrich_fun = "enrichGO",
+    result_class = "glyfun_ora_go_res",
+    by = by,
+    dea_p_cutoff = dea_p_cutoff,
+    dea_log2fc_cutoff = dea_log2fc_cutoff,
+    orgdb = orgdb,
+    ont = ont,
+    universe = universe,
+    p_adj_method = p_adj_method,
+    p_cutoff = p_cutoff,
+    q_cutoff = q_cutoff
+  )
+}
+
+#' @export
+gc_ora_go.glystats_wilcox_res <- function(
+  dea_res,
+  by = NULL,
+  dea_p_cutoff = 0.05,
+  dea_log2fc_cutoff = c(-1, 1),
+  orgdb = "org.Hs.eg.db",
+  ont = "MF",
+  universe = NULL,
+  p_adj_method = "BH",
+  p_cutoff = 0.05,
+  q_cutoff = 0.2
+) {
+  .gc_ora(
+    dea_res,
+    enrich_fun = "enrichGO",
+    result_class = "glyfun_ora_go_res",
+    by = by,
+    dea_p_cutoff = dea_p_cutoff,
+    dea_log2fc_cutoff = dea_log2fc_cutoff,
+    orgdb = orgdb,
+    ont = ont,
+    universe = universe,
+    p_adj_method = p_adj_method,
+    p_cutoff = p_cutoff,
+    q_cutoff = q_cutoff
+  )
+}
+
 .gc_ora <- function(
   dea_res,
   enrich_fun,
@@ -162,7 +220,7 @@ gc_ora_go.glystats_limma_res <- function(
 
   ck <- clusterProfiler::compareCluster(
     protein_list,
-    fun = "enrichGO",
+    fun = enrich_fun,
     keyType = "UNIPROT",
     OrgDb = orgdb,
     ont = ont,
@@ -182,5 +240,5 @@ gc_ora_go.glystats_limma_res <- function(
     )))
 
   res <- list(tidy_result = tidy_res, raw_result = ck)
-  structure(res, class = c("glyfun_ora_go_res", "glyfun_ora_res", "glyfun_res"))
+  structure(res, class = c(result_class, "glyfun_ora_res", "glyfun_res"))
 }
