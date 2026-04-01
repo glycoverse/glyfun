@@ -145,8 +145,7 @@ gc_ora_go <- function(
     tibble::deframe()
 
   n_traits <- length(names(protein_list))
-  cli::cli_alert_info("Enriching for {.val {n_traits}} glycan traits.")
-  cli::cli_alert_info("This process can take long to run.")
+  cli::cli_alert_info("Enriching for {.val {n_traits}} glycan traits... (This can take long)")
 
   suppressWarnings(
     ck <- .call_compare_cluster(
