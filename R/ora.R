@@ -194,12 +194,7 @@ gc_ora_go.glystats_wilcox_res <- function(
   by = NULL,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
-  orgdb = "org.Hs.eg.db",
-  ont = "MF",
-  universe = NULL,
-  p_adj_method = "BH",
-  p_cutoff = 0.05,
-  q_cutoff = 0.2
+  ...
 ) {
   by <- .process_by_arg_glystats(dea_res, by)
   .check_p_cutoff_arg(dea_p_cutoff)
@@ -219,16 +214,11 @@ gc_ora_go.glystats_wilcox_res <- function(
   cli::cli_alert_info("This process can take long to run.")
 
   suppressWarnings(
-    ck <- clusterProfiler::compareCluster(
+    ck <- .call_compare_cluster(
       protein_list,
       fun = enrich_fun,
-      keyType = "UNIPROT",
-      OrgDb = orgdb,
-      ont = ont,
-      universe = universe,
-      pAdjustMethod = p_adj_method,
-      pvalueCutoff = p_cutoff,
-      qvalueCutoff = q_cutoff
+      keytype = "UNIPROT",
+      ...
     )
   )
 
