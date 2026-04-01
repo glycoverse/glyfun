@@ -96,19 +96,7 @@ gc_ora_go <- function(
   p_cutoff = 0.05,
   q_cutoff = 0.2
 ) {
-  basic_class <- class(dea_res)[[1]]
-  supported_classes <- c(
-    "glystats_limma_res",
-    "glystats_ttest_res",
-    "glystats_wilcox_res"
-  )
-  if (!basic_class %in% supported_classes) {
-    cli::cli_abort(c(
-      "Unsupported input class for {.arg dea_res}.",
-      "i" = "Expected: {.cls {supported_classes}}",
-      "x" = "Got: {.cls {basic_class}}"
-    ))
-  }
+  .check_dea_res_type(dea_res)
   .gc_ora(
     dea_res,
     enrich_fun = "enrichGO",
@@ -200,19 +188,7 @@ gc_ora_kegg <- function(
   p_cutoff = 0.05,
   q_cutoff = 0.2
 ) {
-  basic_class <- class(dea_res)[[1]]
-  supported_classes <- c(
-    "glystats_limma_res",
-    "glystats_ttest_res",
-    "glystats_wilcox_res"
-  )
-  if (!basic_class %in% supported_classes) {
-    cli::cli_abort(c(
-      "Unsupported input class for {.arg dea_res}.",
-      "i" = "Expected: {.cls {supported_classes}}",
-      "x" = "Got: {.cls {basic_class}}"
-    ))
-  }
+  .check_dea_res_type(dea_res)
   .gc_ora(
     dea_res,
     enrich_fun = "enrichKEGG",

@@ -1,3 +1,21 @@
+#' Check class of `dea_res`
+#' @noRd
+.check_dea_res_type <- function(dea_res) {
+  basic_class <- class(dea_res)[[1]]
+  supported_classes <- c(
+    "glystats_limma_res",
+    "glystats_ttest_res",
+    "glystats_wilcox_res"
+  )
+  if (!basic_class %in% supported_classes) {
+    cli::cli_abort(c(
+      "Unsupported input class for {.arg dea_res}.",
+      "i" = "Expected: {.cls {supported_classes}}",
+      "x" = "Got: {.cls {basic_class}}"
+    ))
+  }
+}
+
 #' Process `by` argument for glystats input
 #'
 #' If `by` is NULL, return a valid value.
