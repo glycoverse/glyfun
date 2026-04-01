@@ -59,8 +59,6 @@ the \code{clusterProfiler} function.}
 \item{p_cutoff}{Passed to \code{pvalueCutoff} of the downstream \code{clusterProfiler} function.}
 
 \item{q_cutoff}{Passed to \code{qvalueCutoff} of the downstream \code{clusterProfiler} function.}
-
-\item{keytype}{Passed to \code{keyType} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
 }
 \value{
 A list with two elements:

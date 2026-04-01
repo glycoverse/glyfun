@@ -55,7 +55,6 @@
 #'   For example, `c(-1, 1)` means "log2FC < -1 or log2FC > 1", and `c(-Inf, 1)` means "log2FC > 1".
 #'   Defaults to `c(-1, 1)`.
 #' @param orgdb Passed to `OrgDb` of [clusterProfiler::enrichGO()].
-#' @param keytype Passed to `keyType` of [clusterProfiler::enrichGO()].
 #' @param ont Passed to `ont` of [clusterProfiler::enrichGO()]. "BP", "MF", "CC", or "ALL". Defaults to "MF".
 #' @param universe Background genes. If a character vector, directly passed to `universe` of the downstream `clusterProfiler` function.
 #'   You can also provide a [glyexp::experiment()] object with "glycoproteomics" type.
