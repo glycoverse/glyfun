@@ -37,9 +37,17 @@
     msg1 <- "{.arg by} must be a column in the {.field var_info} of the {.fn experiment} before calling the {.pkg glystats} function."
     msg2 <- "{.val {by}} is not in {.var dea_res}"
     if (length(available_cols) == 0) {
-      cli::cli_abort(c(msg1, "x" = msg2, "i" = "Did you mistakenly set {.arg add_info} to `FALSE` when calling the {.pkg glystats} function?"))
+      cli::cli_abort(c(
+        msg1,
+        "x" = msg2,
+        "i" = "Did you mistakenly set {.arg add_info} to `FALSE` when calling the {.pkg glystats} function?"
+      ))
     } else {
-      cli::cli_abort(c(msg1, "x" = msg2, "i" = "Available columns: {.val {available_cols}}"))
+      cli::cli_abort(c(
+        msg1,
+        "x" = msg2,
+        "i" = "Available columns: {.val {available_cols}}"
+      ))
     }
   }
   by
@@ -60,7 +68,9 @@
     return("trait")
   } else {
     if (by != "trait") {
-      cli::cli_abort("{.arg by} must be {.val trait} when {.arg dea_res} is a data.frame.")
+      cli::cli_abort(
+        "{.arg by} must be {.val trait} when {.arg dea_res} is a data.frame."
+      )
     }
     return("trait")
   }
@@ -106,10 +116,14 @@
     )
   }
   if (log2fc_cutoff[[1]] > 0) {
-    cli::cli_abort("The first element of {.arg log2fc_cutoff} must be 0 or negative.")
+    cli::cli_abort(
+      "The first element of {.arg log2fc_cutoff} must be 0 or negative."
+    )
   }
   if (log2fc_cutoff[[2]] < 0) {
-    cli::cli_abort("The second element of {.arg log2fc_cutoff} must be 0 or positive.")
+    cli::cli_abort(
+      "The second element of {.arg log2fc_cutoff} must be 0 or positive."
+    )
   }
 }
 

@@ -57,13 +57,13 @@
 #' @param orgdb Passed to `OrgDb` of [clusterProfiler::enrichGO()].
 #' @param keytype Passed to `keyType` of [clusterProfiler::enrichGO()].
 #' @param ont Passed to `ont` of [clusterProfiler::enrichGO()]. "BP", "MF", "CC", or "ALL". Defaults to "MF".
-#' @param universe Background genes. If a character vector, directly passed to `universe` of [clusterProfiler::enrichGO()].
+#' @param universe Background genes. If a character vector, directly passed to `universe` of the downstream `clusterProfiler` function.
 #'   You can also provide a [glyexp::experiment()] object with "glycoproteomics" type.
 #'   In this case all detected proteins in this experiment will be extracted and passed to
-#'   `universe` of [clusterProfiler::enrichGO()].
-#' @param p_adj_method Passed to `pAdjustMethod` of [clusterProfiler::enrichGO()].
-#' @param p_cutoff Passed to `pvalueCutoff` of [clusterProfiler::enrichGO()].
-#' @param q_cutoff Passed to `qvalueCutoff` of [clusterProfiler::enrichGO()].
+#'   the `clusterProfiler` function.
+#' @param p_adj_method Passed to `pAdjustMethod` of the downstream `clusterProfiler` function.
+#' @param p_cutoff Passed to `pvalueCutoff` of the downstream `clusterProfiler` function.
+#' @param q_cutoff Passed to `qvalueCutoff` of the downstream `clusterProfiler` function.
 #'
 #' @return A list with two elements:
 #'  - `tidy_result`: A tibble with enrichment results containing the following columns:
@@ -98,7 +98,11 @@ gc_ora_go <- function(
   q_cutoff = 0.2
 ) {
   basic_class <- class(dea_res)[[1]]
-  supported_classes <- c("glystats_limma_res", "glystats_ttest_res", "glystats_wilcox_res")
+  supported_classes <- c(
+    "glystats_limma_res",
+    "glystats_ttest_res",
+    "glystats_wilcox_res"
+  )
   if (!basic_class %in% supported_classes) {
     cli::cli_abort(c(
       "Unsupported input class for {.arg dea_res}.",
@@ -125,6 +129,66 @@ gc_ora_go <- function(
 
 #' Glycan-Centric KEGG Over Representation Analysis
 #'
+#' @description
+#' This function first groups the proteins in `dea_res` according to `by`,
+#' then performs KEGG ORA analysis with `clusterProfiler::compareCluster()` and
+#' `clusterProfiler::enrichKEGG()`
+#'
+#' @details
+#' # What is glycan-centric enrichment?
+#'
+#' In traditional glycoproteomics data analysis,
+#' we usually perform differential expression analysis (DEA) on glycoforms,
+#' extract proteins that have dysregulated glycosylation,
+#' then perform functional enrichment (e.g. KEGG) on these proteins.
+#' This is what all the enrichment functions in glystats do (e.g. `glystats::gly_enrich_kegg()`).
+#'
+#' `glyfun` functions differ in that they link specific glycan traits with functional annotations.
+#' Instead of answering the question
+#' "Which functions are enriched in dysregulated glycoproteins?",
+#' `glyfun` answers questions like
+#' "Which pathways are enriched in proteins with dysregulated core-fucosylation?"
+#' Higher specificity, deeper insights. By focusing on distinct glycan motifs,
+#' glyfun helps you pinpoint the functional relevance of specific glycosylation changes.
+#'
+#' # Common usage pattern
+#'
+#' A common pattern of using this function is:
+#'
+#' ```r
+#' # 1. Use `glydet` to calculate derived traits or motif quantification.
+#' trait_exp <- derive_traits(exp)  # or `quantify_motifs()`
+#'
+#' # 2. Perform differential analysis with `glystats`.
+#' dea_res <- gly_ttest(trait_exp)
+#'
+#' # 3. Use this function.
+#' kegg_res <- gc_ora_kegg(dea_res)
+#' ```
+#'
+#' @inheritParams gc_ora_go
+#' @param organism KEGG organism code. Passed to `organism` of [clusterProfiler::enrichKEGG()].
+#'   Defaults to "hsa" (Homo sapiens). Common codes: "hsa" (human), "mmu" (mouse), "rno" (rat).
+#'
+#' @return A list with two elements:
+#'  - `tidy_result`: A tibble with enrichment results containing the following columns:
+#'    - `trait`: Glycan trait
+#'    - `id`: KEGG pathway ID
+#'    - `description`: Pathway description
+#'    - `gene_ratio`: Ratio of genes in the pathway to total genes in the input
+#'    - `bg_ratio`: Ratio of genes in the pathway to total genes in the background
+#'    - `rich_factor`: Proportion of the pathway's total background genes found in the input
+#'    - `fold_enrichment`: Ratio of `gene_ratio` to `bg_ratio` (magnitude of enrichment)
+#'    - `z_score`: Directional trend of regulation (positive for up, negative for down)
+#'    - `p_val`: Raw p-value from hypergeometric test
+#'    - `p_adj`: Adjusted p-value
+#'    - `q_val`: Q-value (FDR)
+#'    - `gene_id`: Gene IDs in the pathway (separated by "/")
+#'    - `count`: Number of genes in the pathway
+#'  - `raw_result`: The raw clusterProfiler clusterProfResult object
+#' The list has classes `glyfun_ora_kegg_res` and `glyfun_ora_res`.
+#'
+#' @seealso [clusterProfiler::compareCluster()], [clusterProfiler::enrichKEGG()]
 #' @export
 gc_ora_kegg <- function(
   dea_res,
@@ -138,7 +202,11 @@ gc_ora_kegg <- function(
   q_cutoff = 0.2
 ) {
   basic_class <- class(dea_res)[[1]]
-  supported_classes <- c("glystats_limma_res", "glystats_ttest_res", "glystats_wilcox_res")
+  supported_classes <- c(
+    "glystats_limma_res",
+    "glystats_ttest_res",
+    "glystats_wilcox_res"
+  )
   if (!basic_class %in% supported_classes) {
     cli::cli_abort(c(
       "Unsupported input class for {.arg dea_res}.",
@@ -179,13 +247,19 @@ gc_ora_kegg <- function(
     glystats::get_tidy_result() |>
     dplyr::filter(
       .data$p_adj < dea_p_cutoff,
-      .data$log2fc < dea_log2fc_cutoff[[1]] | .data$log2fc > dea_log2fc_cutoff[[2]]
+      .data$log2fc < dea_log2fc_cutoff[[1]] |
+        .data$log2fc > dea_log2fc_cutoff[[2]]
     ) |>
-    dplyr::summarise(proteins = list(unique(.data$protein)), .by = tidyselect::all_of(by)) |>
+    dplyr::summarise(
+      proteins = list(unique(.data$protein)),
+      .by = tidyselect::all_of(by)
+    ) |>
     tibble::deframe()
 
   n_traits <- length(names(protein_list))
-  cli::cli_alert_info("Enriching for {.val {n_traits}} glycan traits... (This can take long)")
+  cli::cli_alert_info(
+    "Enriching for {.val {n_traits}} glycan traits... (This can take long)"
+  )
 
   suppressWarnings(
     ck <- .call_compare_cluster(
