@@ -113,8 +113,48 @@ gc_ora_go <- function(
     by = by,
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
+    keytype = "UNIPROT",
     orgdb = orgdb,
     ont = ont,
+    universe = universe,
+    p_adj_method = p_adj_method,
+    p_cutoff = p_cutoff,
+    q_cutoff = q_cutoff
+  )
+}
+
+#' Glycan-Centric KEGG Over Representation Analysis
+#'
+#' @export
+gc_ora_kegg <- function(
+  dea_res,
+  by = NULL,
+  dea_p_cutoff = 0.05,
+  dea_log2fc_cutoff = c(-1, 1),
+  organism = "hsa",
+  universe = NULL,
+  p_adj_method = "BH",
+  p_cutoff = 0.05,
+  q_cutoff = 0.2
+) {
+  basic_class <- class(dea_res)[[1]]
+  supported_classes <- c("glystats_limma_res", "glystats_ttest_res", "glystats_wilcox_res")
+  if (!basic_class %in% supported_classes) {
+    cli::cli_abort(c(
+      "Unsupported input class for {.arg dea_res}.",
+      "i" = "Expected: {.cls {supported_classes}}",
+      "x" = "Got: {.cls {basic_class}}"
+    ))
+  }
+  .gc_ora(
+    dea_res,
+    enrich_fun = "enrichKEGG",
+    result_class = "glyfun_ora_kegg_res",
+    by = by,
+    dea_p_cutoff = dea_p_cutoff,
+    dea_log2fc_cutoff = dea_log2fc_cutoff,
+    keytype = "uniprot",
+    organism = organism,
     universe = universe,
     p_adj_method = p_adj_method,
     p_cutoff = p_cutoff,
@@ -151,7 +191,6 @@ gc_ora_go <- function(
     ck <- .call_compare_cluster(
       protein_list,
       fun = enrich_fun,
-      keytype = "UNIPROT",
       ...
     )
   )
