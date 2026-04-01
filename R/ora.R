@@ -48,12 +48,22 @@
 #' @param by A column to group the proteins by.
 #'   - If `dea_res` is a [glyexp::experiment()]: the column name in `var_info` of the experiment.
 #'   - If `dea_res` is a tibble: the column name in the tibble (defaults to "trait").
-#' @param p_cutoff P-value cutoff for statistical significance. Defaults to 0.05.
+#' @param dea_p_cutoff P-value cutoff for statistical significance. Defaults to 0.05.
 #'   For `glystats` result input, adjusted p-values are used.
-#' @param log2fc_cutoff Log2 fold change cutoff statistical significance.
+#' @param dea_log2fc_cutoff Log2 fold change cutoff statistical significance.
 #'   A length-2 numeric vector, being negative and positive boundaries, respectively.
 #'   For example, `c(-1, 1)` means "log2FC < -1 or log2FC > 1", and `c(-Inf, 1)` means "log2FC > 1".
 #'   Defaults to `c(-1, 1)`.
+#' @param orgdb Passed to `OrgDb` of [clusterProfiler::enrichGO()].
+#' @param keytype Passed to `keyType` of [clusterProfiler::enrichGO()].
+#' @param ont Passed to `ont` of [clusterProfiler::enrichGO()]. "BP", "MF", "CC", or "ALL". Defaults to "MF".
+#' @param universe Background genes. If a character vector, directly passed to `universe` of [clusterProfiler::enrichGO()].
+#'   You can also provide a [glyexp::experiment()] object with "glycoproteomics" type.
+#'   In this case all detected proteins in this experiment will be extracted and passed to
+#'   `universe` of [clusterProfiler::enrichGO()].
+#' @param p_adj_method Passed to `pAdjustMethod` of [clusterProfiler::enrichGO()].
+#' @param p_cutoff Passed to `pvalueCutoff` of [clusterProfiler::enrichGO()].
+#' @param q_cutoff Passed to `qvalueCutoff` of [clusterProfiler::enrichGO()].
 #'
 #' @return A list with two elements:
 #'  - `tidy_result`: A tibble with enrichment results containing the following columns:
@@ -62,9 +72,12 @@
 #'    - `description`: Term description
 #'    - `gene_ratio`: Ratio of genes in the term to total genes in the input
 #'    - `bg_ratio`: Ratio of genes in the term to total genes in the background
+#'    - `rich_factor`: Proportion of the term's total background genes found in the input
+#'    - `fold_enrichment`: Ratio of `gene_ratio` to `bg_ratio` (magnitude of enrichment)
+#'    - `z_score`: Directional trend of regulation (positive for up, negative for down)
 #'    - `p_val`: Raw p-value from hypergeometric test
 #'    - `p_adj`: Adjusted p-value
-#'    - `q_value`: Q-value (FDR)
+#'    - `q_val`: Q-value (FDR)
 #'    - `gene_id`: Gene IDs in the term (separated by "/")
 #'    - `count`: Number of genes in the term
 #'  - `raw_result`: The raw clusterProfiler clusterProfResult object
@@ -72,6 +85,72 @@
 #'
 #' @seealso [clusterProfiler::compareCluster()], [clusterProfiler::enrichGO()]
 #' @export
-gc_ora_go <- function(dea_res, by = NULL, p_cutoff = 0.05, log2fc_cutoff = c(-1, 1)) {
+gc_ora_go <- function(
+  dea_res,
+  by = NULL,
+  dea_p_cutoff = 0.05,
+  dea_log2fc_cutoff = c(-1, 1),
+  orgdb = "org.Hs.eg.db",
+  ont = "MF",
+  universe = NULL,
+  p_adj_method = "BH",
+  p_cutoff = 0.05,
+  q_cutoff = 0.2
+) {
   UseMethod("gc_ora_go")
+}
+
+#' @export
+gc_ora_go.glystats_limma_res <- function(
+  dea_res,
+  by = NULL,
+  dea_p_cutoff = 0.05,
+  dea_log2fc_cutoff = c(-1, 1),
+  orgdb = "org.Hs.eg.db",
+  ont = "MF",
+  universe = NULL,
+  p_adj_method = "BH",
+  p_cutoff = 0.05,
+  q_cutoff = 0.2
+) {
+  by <- .process_by_arg_glystats(dea_res, by)
+  .check_p_cutoff_arg(dea_p_cutoff)
+  .check_log2fc_cutoff_arg(dea_log2fc_cutoff)
+
+  protein_list <- dea_res |>
+    glystats::get_tidy_result() |>
+    dplyr::filter(
+      .data$p_adj < dea_p_cutoff,
+      .data$log2fc < dea_log2fc_cutoff[[1]] | .data$log2fc > dea_log2fc_cutoff[[2]]
+    ) |>
+    dplyr::summarise(proteins = list(unique(.data$protein)), .by = tidyselect::all_of(by)) |>
+    tibble::deframe()
+
+  n_traits <- length(names(protein_list))
+  cli::cli_alert_info("Enriching for {.val {n_traits}} glycan traits.")
+  cli::cli_alert_info("This process can take long to run.")
+
+  ck <- clusterProfiler::compareCluster(
+    protein_list,
+    fun = "enrichGO",
+    keyType = "UNIPROT",
+    OrgDb = orgdb,
+    ont = ont,
+    universe = universe,
+    pAdjustMethod = p_adj_method,
+    pvalueCutoff = p_cutoff,
+    qvalueCutoff = q_cutoff
+  )
+
+  tidy_res <- tibble::as_tibble(ck) |>
+    janitor::clean_names() |>
+    dplyr::rename(tidyselect::all_of(c(
+      "trait" = "cluster",
+      "p_val" = "pvalue",
+      "p_adj" = "p_adjust",
+      "q_val" = "qvalue"
+    )))
+
+  res <- list(tidy_result = tidy_res, raw_result = ck)
+  structure(res, class = c("glyfun_ora_go_res", "glyfun_ora_res", "glyfun_res"))
 }

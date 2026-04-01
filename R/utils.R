@@ -7,7 +7,7 @@
 #' @param by `by` paramerter.
 #'
 #' @returns A valid `by` value.
-#' @no Rd
+#' @noRd
 .process_by_arg_glystats <- function(dea_res, by) {
   checkmate::assert_string(by, null.ok = TRUE)
 

@@ -4,7 +4,18 @@
 \alias{gc_ora_go}
 \title{Glycan-Centric GO Over Representation Analysis}
 \usage{
-gc_ora_go(dea_res, by = NULL, p_cutoff = 0.05, log2fc_cutoff = c(-1, 1))
+gc_ora_go(
+  dea_res,
+  by = NULL,
+  dea_p_cutoff = 0.05,
+  dea_log2fc_cutoff = c(-1, 1),
+  orgdb = "org.Hs.eg.db",
+  ont = "MF",
+  universe = NULL,
+  p_adj_method = "BH",
+  p_cutoff = 0.05,
+  q_cutoff = 0.2
+)
 }
 \arguments{
 \item{dea_res}{Differential analysis result. Can be one of:
@@ -26,13 +37,30 @@ called on an \code{\link[glyexp:experiment]{glyexp::experiment()}} of "traitprot
 \item If \code{dea_res} is a tibble: the column name in the tibble (defaults to "trait").
 }}
 
-\item{p_cutoff}{P-value cutoff for statistical significance. Defaults to 0.05.
+\item{dea_p_cutoff}{P-value cutoff for statistical significance. Defaults to 0.05.
 For \code{glystats} result input, adjusted p-values are used.}
 
-\item{log2fc_cutoff}{Log2 fold change cutoff statistical significance.
+\item{dea_log2fc_cutoff}{Log2 fold change cutoff statistical significance.
 A length-2 numeric vector, being negative and positive boundaries, respectively.
 For example, \code{c(-1, 1)} means "log2FC < -1 or log2FC > 1", and \code{c(-Inf, 1)} means "log2FC > 1".
 Defaults to \code{c(-1, 1)}.}
+
+\item{orgdb}{Passed to \code{OrgDb} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
+
+\item{ont}{Passed to \code{ont} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}. "BP", "MF", "CC", or "ALL". Defaults to "MF".}
+
+\item{universe}{Background genes. If a character vector, directly passed to \code{universe} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.
+You can also provide a \code{\link[glyexp:experiment]{glyexp::experiment()}} object with "glycoproteomics" type.
+In this case all detected proteins in this experiment will be extracted and passed to
+\code{universe} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
+
+\item{p_adj_method}{Passed to \code{pAdjustMethod} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
+
+\item{p_cutoff}{Passed to \code{pvalueCutoff} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
+
+\item{q_cutoff}{Passed to \code{qvalueCutoff} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
+
+\item{keytype}{Passed to \code{keyType} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
 }
 \value{
 A list with two elements:
@@ -44,9 +72,12 @@ A list with two elements:
 \item \code{description}: Term description
 \item \code{gene_ratio}: Ratio of genes in the term to total genes in the input
 \item \code{bg_ratio}: Ratio of genes in the term to total genes in the background
+\item \code{rich_factor}: Proportion of the term's total background genes found in the input
+\item \code{fold_enrichment}: Ratio of \code{gene_ratio} to \code{bg_ratio} (magnitude of enrichment)
+\item \code{z_score}: Directional trend of regulation (positive for up, negative for down)
 \item \code{p_val}: Raw p-value from hypergeometric test
 \item \code{p_adj}: Adjusted p-value
-\item \code{q_value}: Q-value (FDR)
+\item \code{q_val}: Q-value (FDR)
 \item \code{gene_id}: Gene IDs in the term (separated by "/")
 \item \code{count}: Number of genes in the term
 }
