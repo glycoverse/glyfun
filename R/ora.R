@@ -113,6 +113,36 @@ gc_ora_go.glystats_limma_res <- function(
   p_cutoff = 0.05,
   q_cutoff = 0.2
 ) {
+  .gc_ora(
+    dea_res,
+    enrich_fun = "enrichGO",
+    result_class = "glyfun_ora_go_res",
+    by = by,
+    dea_p_cutoff = dea_p_cutoff,
+    dea_log2fc_cutoff = dea_log2fc_cutoff,
+    orgdb = orgdb,
+    ont = ont,
+    universe = universe,
+    p_adj_method = p_adj_method,
+    p_cutoff = p_cutoff,
+    q_cutoff = q_cutoff
+  )
+}
+
+.gc_ora <- function(
+  dea_res,
+  enrich_fun,
+  result_class,
+  by = NULL,
+  dea_p_cutoff = 0.05,
+  dea_log2fc_cutoff = c(-1, 1),
+  orgdb = "org.Hs.eg.db",
+  ont = "MF",
+  universe = NULL,
+  p_adj_method = "BH",
+  p_cutoff = 0.05,
+  q_cutoff = 0.2
+) {
   by <- .process_by_arg_glystats(dea_res, by)
   .check_p_cutoff_arg(dea_p_cutoff)
   .check_log2fc_cutoff_arg(dea_log2fc_cutoff)
