@@ -2,3 +2,4 @@
 
 export(gc_ora_go)
 export(gc_ora_kegg)
+importFrom(rlang,.data)
