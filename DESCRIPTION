@@ -12,3 +12,13 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 URL: https://glycoverse.github.io/glyfun/
+Imports: 
+    checkmate,
+    cli,
+    clusterProfiler,
+    dplyr,
+    glystats,
+    janitor,
+    rlang,
+    tibble,
+    tidyselect
