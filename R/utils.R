@@ -88,7 +88,7 @@
 
 .available_by_columns_impl <- function(res, col_before) {
   all_cols <- colnames(res)
-  idx <- which(all_cols == "log2fc")
+  idx <- which(all_cols == col_before)
   cols <- all_cols[1:(idx - 1)]
   setdiff(cols, c("variable", "protein"))
 }
