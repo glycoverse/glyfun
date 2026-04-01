@@ -218,26 +218,46 @@ gc_ora_go.glystats_wilcox_res <- function(
   cli::cli_alert_info("Enriching for {.val {n_traits}} glycan traits.")
   cli::cli_alert_info("This process can take long to run.")
 
-  ck <- clusterProfiler::compareCluster(
-    protein_list,
-    fun = enrich_fun,
-    keyType = "UNIPROT",
-    OrgDb = orgdb,
-    ont = ont,
-    universe = universe,
-    pAdjustMethod = p_adj_method,
-    pvalueCutoff = p_cutoff,
-    qvalueCutoff = q_cutoff
+  suppressWarnings(
+    ck <- clusterProfiler::compareCluster(
+      protein_list,
+      fun = enrich_fun,
+      keyType = "UNIPROT",
+      OrgDb = orgdb,
+      ont = ont,
+      universe = universe,
+      pAdjustMethod = p_adj_method,
+      pvalueCutoff = p_cutoff,
+      qvalueCutoff = q_cutoff
+    )
   )
 
-  tidy_res <- tibble::as_tibble(ck) |>
-    janitor::clean_names() |>
-    dplyr::rename(tidyselect::all_of(c(
-      "trait" = "cluster",
-      "p_val" = "pvalue",
-      "p_adj" = "p_adjust",
-      "q_val" = "qvalue"
-    )))
+  if (is.null(ck)) {
+    tidy_res <- tibble::tibble(
+      trait = character(),
+      id = character(),
+      description = character(),
+      gene_ratio = character(),
+      bg_ratio = character(),
+      rich_factor = numeric(),
+      fold_enrichment = numeric(),
+      z_score = numeric(),
+      p_val = numeric(),
+      p_adj = numeric(),
+      q_val = numeric(),
+      gene_id = character(),
+      count = integer()
+    )
+  } else {
+    tidy_res <- tibble::as_tibble(ck) |>
+      janitor::clean_names() |>
+      dplyr::rename(tidyselect::all_of(c(
+        "trait" = "cluster",
+        "p_val" = "pvalue",
+        "p_adj" = "p_adjust",
+        "q_val" = "qvalue"
+      )))
+  }
 
   res <- list(tidy_result = tidy_res, raw_result = ck)
   structure(res, class = c(result_class, "glyfun_ora_res", "glyfun_res"))
