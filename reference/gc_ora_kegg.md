@@ -1,0 +1,178 @@
+# Glycan-Centric KEGG Over Representation Analysis
+
+This function first groups the proteins in `dea_res` according to `by`,
+then performs KEGG ORA analysis with
+[`clusterProfiler::compareCluster()`](https://rdrr.io/pkg/clusterProfiler/man/compareCluster.html)
+and
+[`clusterProfiler::enrichKEGG()`](https://rdrr.io/pkg/clusterProfiler/man/enrichKEGG.html)
+
+## Usage
+
+``` r
+gc_ora_kegg(
+  dea_res,
+  by = NULL,
+  dea_p_cutoff = 0.05,
+  dea_log2fc_cutoff = c(-1, 1),
+  organism = "hsa",
+  universe = NULL,
+  p_adj_method = "BH",
+  p_cutoff = 0.05,
+  q_cutoff = 0.2
+)
+```
+
+## Arguments
+
+- dea_res:
+
+  Differential analysis result. Can be one of:
+
+  - Result from
+    [`glystats::gly_limma()`](https://glycoverse.github.io/glystats/reference/gly_limma.html)
+    (two groups),
+    [`glystats::gly_ttest()`](https://glycoverse.github.io/glystats/reference/gly_ttest.html),
+    or
+    [`glystats::gly_wilcox()`](https://glycoverse.github.io/glystats/reference/gly_wilcox.html),
+    called on an
+    [`glyexp::experiment()`](https://glycoverse.github.io/glyexp/reference/experiment.html)
+    of "traitproteomics" type.
+
+  - A tibble with the following columns:
+
+    - `protein`: Uniprot ID of proteins
+
+    - `trait`: A glycosylation trait (e.g. "TFc" for proportion of
+      core-fucosylated glycans)
+
+    - `p_val`: p-values, preferably adjusted p-values
+
+    - `log2FC`: log2 of fold change
+
+- by:
+
+  A column to group the proteins by.
+
+  - If `dea_res` is a
+    [`glyexp::experiment()`](https://glycoverse.github.io/glyexp/reference/experiment.html):
+    the column name in `var_info` of the experiment.
+
+  - If `dea_res` is a tibble: the column name in the tibble (defaults to
+    "trait").
+
+- dea_p_cutoff:
+
+  P-value cutoff for statistical significance. Defaults to 0.05. For
+  `glystats` result input, adjusted p-values are used.
+
+- dea_log2fc_cutoff:
+
+  Log2 fold change cutoff statistical significance. A length-2 numeric
+  vector, being negative and positive boundaries, respectively. For
+  example, `c(-1, 1)` means "log2FC \< -1 or log2FC \> 1", and
+  `c(-Inf, 1)` means "log2FC \> 1". Defaults to `c(-1, 1)`.
+
+- organism:
+
+  KEGG organism code. Passed to `organism` of
+  [`clusterProfiler::enrichKEGG()`](https://rdrr.io/pkg/clusterProfiler/man/enrichKEGG.html).
+  Defaults to "hsa" (Homo sapiens). Common codes: "hsa" (human), "mmu"
+  (mouse), "rno" (rat).
+
+- universe:
+
+  Background genes. If a character vector, directly passed to `universe`
+  of the downstream `clusterProfiler` function. You can also provide a
+  [`glyexp::experiment()`](https://glycoverse.github.io/glyexp/reference/experiment.html)
+  object with "glycoproteomics" type. In this case all detected proteins
+  in this experiment will be extracted and passed to the
+  `clusterProfiler` function.
+
+- p_adj_method:
+
+  Passed to `pAdjustMethod` of the downstream `clusterProfiler`
+  function.
+
+- p_cutoff:
+
+  Passed to `pvalueCutoff` of the downstream `clusterProfiler` function.
+
+- q_cutoff:
+
+  Passed to `qvalueCutoff` of the downstream `clusterProfiler` function.
+
+## Value
+
+A list with two elements:
+
+- `tidy_result`: A tibble with enrichment results containing the
+  following columns:
+
+  - `trait`: Glycan trait
+
+  - `id`: KEGG pathway ID
+
+  - `description`: Pathway description
+
+  - `gene_ratio`: Ratio of genes in the pathway to total genes in the
+    input
+
+  - `bg_ratio`: Ratio of genes in the pathway to total genes in the
+    background
+
+  - `rich_factor`: Proportion of the pathway's total background genes
+    found in the input
+
+  - `fold_enrichment`: Ratio of `gene_ratio` to `bg_ratio` (magnitude of
+    enrichment)
+
+  - `z_score`: Directional trend of regulation (positive for up,
+    negative for down)
+
+  - `p_val`: Raw p-value from hypergeometric test
+
+  - `p_adj`: Adjusted p-value
+
+  - `q_val`: Q-value (FDR)
+
+  - `gene_id`: Gene IDs in the pathway (separated by "/")
+
+  - `count`: Number of genes in the pathway
+
+- `raw_result`: The raw clusterProfiler clusterProfResult object The
+  list has classes `glyfun_ora_kegg_res` and `glyfun_ora_res`.
+
+## What is glycan-centric enrichment?
+
+In traditional glycoproteomics data analysis, we usually perform
+differential expression analysis (DEA) on glycoforms, extract proteins
+that have dysregulated glycosylation, then perform functional enrichment
+(e.g. KEGG) on these proteins. This is what all the enrichment functions
+in glystats do (e.g.
+[`glystats::gly_enrich_kegg()`](https://glycoverse.github.io/glystats/reference/gly_enrich_kegg.html)).
+
+`glyfun` functions differ in that they link specific glycan traits with
+functional annotations. Instead of answering the question "Which
+functions are enriched in dysregulated glycoproteins?", `glyfun` answers
+questions like "Which pathways are enriched in proteins with
+dysregulated core-fucosylation?" Higher specificity, deeper insights. By
+focusing on distinct glycan motifs, glyfun helps you pinpoint the
+functional relevance of specific glycosylation changes.
+
+## Common usage pattern
+
+A common pattern of using this function is:
+
+    # 1. Use `glydet` to calculate derived traits or motif quantification.
+    trait_exp <- derive_traits(exp)  # or `quantify_motifs()`
+
+    # 2. Perform differential analysis with `glystats`.
+    dea_res <- gly_ttest(trait_exp)
+
+    # 3. Use this function.
+    kegg_res <- gc_ora_kegg(dea_res)
+
+## See also
+
+[`clusterProfiler::compareCluster()`](https://rdrr.io/pkg/clusterProfiler/man/compareCluster.html),
+[`clusterProfiler::enrichKEGG()`](https://rdrr.io/pkg/clusterProfiler/man/enrichKEGG.html)
