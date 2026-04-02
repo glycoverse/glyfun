@@ -1,9 +1,12 @@
 #' Glycan-Centric GO Over Representation Analysis
 #'
 #' @description
-#' This function first groups the proteins in `dea_res` according to `by`,
-#' then performs GO ORA analysis with `clusterProfiler::compareCluster()` and
-#' `clusterProfiler::enrichGO()`
+#' Performs glycan-centric Gene Ontology (GO) Over-Representation Analysis (ORA).
+#' Instead of traditional protein-centric enrichment, this function links specific
+#' glycan traits (e.g., core-fucosylation, sialylation) to functional annotations.
+#' It identifies which biological functions are significantly enriched in proteins
+#' exhibiting specific glycosylation changes, grouping the differential analysis
+#' results by trait before performing ORA.
 #'
 #' @details
 #' # What is glycan-centric enrichment?
@@ -117,9 +120,12 @@ gc_ora_go <- function(
 #' Glycan-Centric KEGG Over Representation Analysis
 #'
 #' @description
-#' This function first groups the proteins in `dea_res` according to `by`,
-#' then performs KEGG ORA analysis with `clusterProfiler::compareCluster()` and
-#' `clusterProfiler::enrichKEGG()`
+#' Performs glycan-centric KEGG pathway Over-Representation Analysis (ORA).
+#' Instead of traditional protein-centric enrichment, this function links specific
+#' glycan traits to biological pathways. It helps answer questions like "Which
+#' pathways are enriched in proteins with a specific dysregulated glycan motif?",
+#' by grouping differential analysis results by glycan traits and computing
+#' pathway enrichment for each trait.
 #'
 #' @details
 #' # What is glycan-centric enrichment?

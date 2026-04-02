@@ -82,9 +82,12 @@ The list has classes \code{glyfun_ora_kegg_res} and \code{glyfun_ora_res}.
 }
 }
 \description{
-This function first groups the proteins in \code{dea_res} according to \code{by},
-then performs KEGG ORA analysis with \code{clusterProfiler::compareCluster()} and
-\code{clusterProfiler::enrichKEGG()}
+Performs glycan-centric KEGG pathway Over-Representation Analysis (ORA).
+Instead of traditional protein-centric enrichment, this function links specific
+glycan traits to biological pathways. It helps answer questions like "Which
+pathways are enriched in proteins with a specific dysregulated glycan motif?",
+by grouping differential analysis results by glycan traits and computing
+pathway enrichment for each trait.
 }
 \section{What is glycan-centric enrichment?}{
 In traditional glycoproteomics data analysis,
