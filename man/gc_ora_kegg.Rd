@@ -93,14 +93,14 @@ pathway enrichment for each trait.
 In traditional glycoproteomics data analysis,
 we usually perform differential expression analysis (DEA) on glycoforms,
 extract proteins that have dysregulated glycosylation,
-then perform functional enrichment (e.g. KEGG) on these proteins.
-This is what all the enrichment functions in glystats do (e.g. \code{glystats::gly_enrich_kegg()}).
+then perform functional enrichment (e.g. GO) on these proteins.
+This is what all the enrichment functions in glystats do (e.g. \code{glystats::gly_enrich_go()}).
 
 \code{glyfun} functions differ in that they link specific glycan traits with functional annotations.
 Instead of answering the question
 "Which functions are enriched in dysregulated glycoproteins?",
 \code{glyfun} answers questions like
-"Which pathways are enriched in proteins with dysregulated core-fucosylation?"
+“Which functions are enriched in proteins with dysregulated core-fucosylation?”
 Higher specificity, deeper insights. By focusing on distinct glycan motifs,
 glyfun helps you pinpoint the functional relevance of specific glycosylation changes.
 }
@@ -115,7 +115,7 @@ trait_exp <- derive_traits(exp)  # or `quantify_motifs()`
 dea_res <- gly_ttest(trait_exp)
 
 # 3. Use this function.
-kegg_res <- gc_ora_kegg(dea_res)
+go_res <- gc_ora_go(dea_res)  # or other glyfun functions
 }\if{html}{\out{</div>}}
 }
 

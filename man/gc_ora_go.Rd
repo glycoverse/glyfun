@@ -117,7 +117,7 @@ trait_exp <- derive_traits(exp)  # or `quantify_motifs()`
 dea_res <- gly_ttest(trait_exp)
 
 # 3. Use this function.
-go_res <- gc_ora_go(dea_res)
+go_res <- gc_ora_go(dea_res)  # or other glyfun functions
 }\if{html}{\out{</div>}}
 }
 

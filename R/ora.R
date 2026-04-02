@@ -37,7 +37,7 @@
 #' dea_res <- gly_ttest(trait_exp)
 #'
 #' # 3. Use this function.
-#' go_res <- gc_ora_go(dea_res)
+#' go_res <- gc_ora_go(dea_res)  # or other glyfun functions
 #' ```
 #'
 #' @param dea_res Differential analysis result. Can be one of:
@@ -127,37 +127,8 @@ gc_ora_go <- function(
 #' by grouping differential analysis results by glycan traits and computing
 #' pathway enrichment for each trait.
 #'
-#' @details
-#' # What is glycan-centric enrichment?
-#'
-#' In traditional glycoproteomics data analysis,
-#' we usually perform differential expression analysis (DEA) on glycoforms,
-#' extract proteins that have dysregulated glycosylation,
-#' then perform functional enrichment (e.g. KEGG) on these proteins.
-#' This is what all the enrichment functions in glystats do (e.g. `glystats::gly_enrich_kegg()`).
-#'
-#' `glyfun` functions differ in that they link specific glycan traits with functional annotations.
-#' Instead of answering the question
-#' "Which functions are enriched in dysregulated glycoproteins?",
-#' `glyfun` answers questions like
-#' "Which pathways are enriched in proteins with dysregulated core-fucosylation?"
-#' Higher specificity, deeper insights. By focusing on distinct glycan motifs,
-#' glyfun helps you pinpoint the functional relevance of specific glycosylation changes.
-#'
-#' # Common usage pattern
-#'
-#' A common pattern of using this function is:
-#'
-#' ```r
-#' # 1. Use `glydet` to calculate derived traits or motif quantification.
-#' trait_exp <- derive_traits(exp)  # or `quantify_motifs()`
-#'
-#' # 2. Perform differential analysis with `glystats`.
-#' dea_res <- gly_ttest(trait_exp)
-#'
-#' # 3. Use this function.
-#' kegg_res <- gc_ora_kegg(dea_res)
-#' ```
+#' @inheritSection gc_ora_go What is glycan-centric enrichment?
+#' @inheritSection gc_ora_go Common usage pattern
 #'
 #' @inheritParams gc_ora_go
 #' @param organism KEGG organism code. Passed to `organism` of [clusterProfiler::enrichKEGG()].
