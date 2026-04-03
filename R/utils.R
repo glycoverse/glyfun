@@ -1,6 +1,6 @@
-#' Check class of `dea_res`
+#' Check argument `dea_res`
 #' @noRd
-.check_dea_res_type <- function(dea_res) {
+.check_dea_res <- function(dea_res) {
   # Check type
   basic_class <- class(dea_res)[[1]]
   supported_classes <- c(
@@ -25,6 +25,14 @@
         "x" = "Got {.val {exp_type}}"
       ))
     }
+  }
+
+  # Check columns
+  if (!"protein" %in% colnames(dea_res)) {
+    cli::cli_abort(c(
+      "A {.field protein} column must be in {.arg dea_res}",
+      "i" = "Did you mistakenly set {.arg add_info} to `FALSE` when calling the {.pkg glystats} function?"
+    ))
   }
 
   # For glystats_limma_res, check number of groups.
@@ -165,3 +173,4 @@
     )
   }
 }
+

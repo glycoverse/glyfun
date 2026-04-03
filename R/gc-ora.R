@@ -77,7 +77,7 @@ enrich_gc_ora_go <- function(
   p_cutoff = 0.05,
   q_cutoff = 0.2
 ) {
-  .check_dea_res_type(dea_res)
+  .check_dea_res(dea_res)
   .gc_ora(
     dea_res,
     enrich_fun = "enrichGO",
@@ -144,7 +144,7 @@ enrich_gc_ora_kegg <- function(
   p_cutoff = 0.05,
   q_cutoff = 0.2
 ) {
-  .check_dea_res_type(dea_res)
+  .check_dea_res(dea_res)
   .gc_ora(
     dea_res,
     enrich_fun = "enrichKEGG",
