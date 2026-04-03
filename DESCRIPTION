@@ -19,8 +19,9 @@ Imports:
     dplyr,
     glystats (>= 0.7.0.9000),
     janitor,
+    org.Hs.eg.db,
     rlang,
     tibble,
     tidyselect
-Remotes:  
+Remotes: 
     glycoverse/glystats
