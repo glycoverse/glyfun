@@ -34,7 +34,12 @@ test_that("enrich_gc_ora_go returns correct structure on happy path (integration
   dea_res <- .mock_dea_res()
 
   result <- suppressMessages(
-    enrich_gc_ora_go(dea_res, orgdb = "org.Hs.eg.db", ont = "MF", p_cutoff = 0.05)
+    enrich_gc_ora_go(
+      dea_res,
+      orgdb = "org.Hs.eg.db",
+      ont = "MF",
+      p_cutoff = 0.05
+    )
   )
 
   expect_s3_class(

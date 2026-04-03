@@ -191,12 +191,14 @@ enrich_gc_ora_kegg <- function(
     "Enriching for {.val {n_traits}} glycan traits... (This can take long)"
   )
 
-  suppressWarnings(ck <- rlang::exec(
-    clusterProfiler::compareCluster,
-    protein_list,
-    fun = enrich_fun,
-    ...
-  ))
+  suppressWarnings(
+    ck <- rlang::exec(
+      clusterProfiler::compareCluster,
+      protein_list,
+      fun = enrich_fun,
+      ...
+    )
+  )
 
   if (is.null(ck)) {
     cli::cli_alert_warning("No terms were enriched. `NULL` will be returned.")
