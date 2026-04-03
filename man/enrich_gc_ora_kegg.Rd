@@ -78,7 +78,7 @@ A list with two elements:
 \item \code{count}: Number of genes in the pathway
 }
 \item \code{raw_result}: The raw clusterProfiler clusterProfResult object
-The list has classes \code{glyfun_ora_kegg_res} and \code{glyfun_ora_res}.
+The list has classes \code{glyfun_gc_ora_kegg_res}, \code{glyfun_gc_ora_res}, and \code{glyfun_res}.
 }
 }
 \description{

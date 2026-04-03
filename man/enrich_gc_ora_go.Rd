@@ -80,7 +80,7 @@ A list with two elements:
 \item \code{count}: Number of genes in the term
 }
 \item \code{raw_result}: The raw clusterProfiler clusterProfResult object
-The list has classes \code{glystats_go_ora_res} and \code{glystats_res}.
+The list has classes \code{glyfun_gc_ora_go_res}, \code{glyfun_gc_ora_res}, and \code{glyfun_res}.
 }
 }
 \description{

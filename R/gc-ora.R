@@ -83,7 +83,7 @@
 #'    - `gene_id`: Gene IDs in the term (separated by "/")
 #'    - `count`: Number of genes in the term
 #'  - `raw_result`: The raw clusterProfiler clusterProfResult object
-#' The list has classes `glystats_go_ora_res` and `glystats_res`.
+#' The list has classes `glyfun_gc_ora_go_res`, `glyfun_gc_ora_res`, and `glyfun_res`.
 #'
 #' @seealso [clusterProfiler::compareCluster()], [clusterProfiler::enrichGO()]
 #' @export
@@ -103,7 +103,7 @@ enrich_gc_ora_go <- function(
   .gc_ora(
     dea_res,
     enrich_fun = "enrichGO",
-    result_class = "glyfun_ora_go_res",
+    result_class = "glyfun_gc_ora_go_res",
     by = by,
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
@@ -157,7 +157,7 @@ enrich_gc_ora_go <- function(
 #'    - `gene_id`: Gene IDs in the pathway (separated by "/")
 #'    - `count`: Number of genes in the pathway
 #'  - `raw_result`: The raw clusterProfiler clusterProfResult object
-#' The list has classes `glyfun_ora_kegg_res` and `glyfun_ora_res`.
+#' The list has classes `glyfun_gc_ora_kegg_res`, `glyfun_gc_ora_res`, and `glyfun_res`.
 #'
 #' @seealso [clusterProfiler::compareCluster()], [clusterProfiler::enrichKEGG()]
 #' @export
@@ -176,7 +176,7 @@ enrich_gc_ora_kegg <- function(
   .gc_ora(
     dea_res,
     enrich_fun = "enrichKEGG",
-    result_class = "glyfun_ora_kegg_res",
+    result_class = "glyfun_gc_ora_kegg_res",
     by = by,
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
@@ -241,5 +241,5 @@ enrich_gc_ora_kegg <- function(
       "q_val" = "qvalue"
     )))
   res <- list(tidy_result = tidy_res, raw_result = ck)
-  structure(res, class = c(result_class, "glyfun_ora_res", "glyfun_res"))
+  structure(res, class = c(result_class, "glyfun_gc_ora_res", "glyfun_res"))
 }
