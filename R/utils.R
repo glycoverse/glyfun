@@ -1,6 +1,7 @@
 #' Check class of `dea_res`
 #' @noRd
 .check_dea_res_type <- function(dea_res) {
+  # Check type
   basic_class <- class(dea_res)[[1]]
   supported_classes <- c(
     "glystats_limma_res",
@@ -13,6 +14,17 @@
       "i" = "Expected: {.cls {supported_classes}}",
       "x" = "Got: {.cls {basic_class}}"
     ))
+  }
+
+  # Check meta-data
+  exp_type <- dea_res$meta_data$exp_type
+  if (!is.null(exp_type)) {
+    if (!exp_type %in% c("glycoproteomics", "traitproteomics")) {
+      cli::cli_abort(c(
+        "The experiment for glystats DEA functions must be of {.val glycoproteomics} or {.val traitproteomics} type.",
+        "x" = "Got {.val {exp_type}}"
+      ))
+    }
   }
 
   # For glystats_limma_res, check number of groups.
