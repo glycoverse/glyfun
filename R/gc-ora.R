@@ -41,10 +41,6 @@
 #' ```
 #'
 #' @inheritParams enrich_ora_go
-#' @param by A column to group the proteins by.
-#'   - If `dea_res` is a [glyexp::experiment()]: the column name in `var_info` of the experiment.
-#'   - If `dea_res` is a tibble: the column name in the tibble (defaults to "trait").
-#'
 #' @return A list with two elements:
 #'  - `tidy_result`: A tibble with enrichment results containing the following columns:
 #'    - `trait`: Glycan trait
@@ -67,7 +63,6 @@
 #' @export
 enrich_gc_ora_go <- function(
   dea_res,
-  by = NULL,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
   orgdb = "org.Hs.eg.db",
@@ -81,7 +76,6 @@ enrich_gc_ora_go <- function(
     dea_res,
     enrich_fun = "enrichGO",
     result_class = "glyfun_gc_ora_go_res",
-    by = by,
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
     keyType = "UNIPROT",
@@ -108,10 +102,6 @@ enrich_gc_ora_go <- function(
 #' @inheritSection enrich_gc_ora_go Common usage pattern
 #'
 #' @inheritParams enrich_ora_kegg
-#' @param by A column to group the proteins by.
-#'   - If `dea_res` is a [glyexp::experiment()]: the column name in `var_info` of the experiment.
-#'   - If `dea_res` is a tibble: the column name in the tibble (defaults to "trait").
-#'
 #' @return A list with two elements:
 #'  - `tidy_result`: A tibble with enrichment results containing the following columns:
 #'    - `trait`: Glycan trait
@@ -134,7 +124,6 @@ enrich_gc_ora_go <- function(
 #' @export
 enrich_gc_ora_kegg <- function(
   dea_res,
-  by = NULL,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
   organism = "hsa",
@@ -147,7 +136,6 @@ enrich_gc_ora_kegg <- function(
     dea_res,
     enrich_fun = "enrichKEGG",
     result_class = "glyfun_gc_ora_kegg_res",
-    by = by,
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
     keyType = "uniprot",
@@ -163,15 +151,26 @@ enrich_gc_ora_kegg <- function(
   dea_res,
   enrich_fun,
   result_class,
-  by = NULL,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
   ...
 ) {
   .check_dea_res(dea_res)
-  by <- .process_by_arg_glystats(dea_res, by)
   .check_p_cutoff_arg(dea_p_cutoff)
   .check_log2fc_cutoff_arg(dea_log2fc_cutoff)
+
+  tidy_res <- glystats::get_tidy_result(dea_res)
+  by <- dplyr::case_when(
+    "glycan_structure" %in% colnames(tidy_res) ~ "glycan_structure",
+    "glycan_composition" %in% colnames(tidy_res) ~ "glycan_composition",
+    "trait" %in% colnames(tidy_res) ~ "trait",
+    "motif" %in% colnames(tidy_res) ~ "motif"
+  )
+  if (is.na(by)) {
+    cli::cli_abort(
+      "Cannot determine grouping column. Expected one of: glycan_structure, glycan_composition, trait, or motif."
+    )
+  }
 
   protein_list <- dea_res |>
     glystats::get_tidy_result() |>

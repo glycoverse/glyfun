@@ -6,7 +6,6 @@
 \usage{
 enrich_gc_ora_kegg(
   dea_res,
-  by = NULL,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
   organism = "hsa",
@@ -29,12 +28,6 @@ called on an \code{\link[glyexp:experiment]{glyexp::experiment()}} of "traitprot
 \item \code{p_val}: p-values, preferably adjusted p-values
 \item \code{log2FC}: log2 of fold change
 }
-}}
-
-\item{by}{A column to group the proteins by.
-\itemize{
-\item If \code{dea_res} is a \code{\link[glyexp:experiment]{glyexp::experiment()}}: the column name in \code{var_info} of the experiment.
-\item If \code{dea_res} is a tibble: the column name in the tibble (defaults to "trait").
 }}
 
 \item{dea_p_cutoff}{P-value cutoff for statistical significance. Defaults to 0.05.
