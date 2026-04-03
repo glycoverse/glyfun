@@ -159,12 +159,12 @@ enrich_gc_ora_kegg <- function(
   .check_p_cutoff_arg(dea_p_cutoff)
   .check_log2fc_cutoff_arg(dea_log2fc_cutoff)
 
-  tidy_res <- glystats::get_tidy_result(dea_res)
+  tidy_dea_res <- glystats::get_tidy_result(dea_res)
   by <- dplyr::case_when(
-    "glycan_structure" %in% colnames(tidy_res) ~ "glycan_structure",
-    "glycan_composition" %in% colnames(tidy_res) ~ "glycan_composition",
-    "trait" %in% colnames(tidy_res) ~ "trait",
-    "motif" %in% colnames(tidy_res) ~ "motif"
+    "glycan_structure" %in% colnames(tidy_dea_res) ~ "glycan_structure",
+    "glycan_composition" %in% colnames(tidy_dea_res) ~ "glycan_composition",
+    "trait" %in% colnames(tidy_dea_res) ~ "trait",
+    "motif" %in% colnames(tidy_dea_res) ~ "motif"
   )
   if (is.na(by)) {
     cli::cli_abort(
@@ -172,8 +172,7 @@ enrich_gc_ora_kegg <- function(
     )
   }
 
-  protein_list <- dea_res |>
-    glystats::get_tidy_result() |>
+  protein_list <- tidy_dea_res |>
     dplyr::filter(
       .data$p_adj < dea_p_cutoff,
       .data$log2fc < dea_log2fc_cutoff[[1]] |
