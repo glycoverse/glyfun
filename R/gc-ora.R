@@ -107,13 +107,13 @@ enrich_gc_ora_go <- function(
     by = by,
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
-    keytype = "UNIPROT",
-    orgdb = orgdb,
+    keyType = "UNIPROT",
+    OrgDb = orgdb,
     ont = ont,
     universe = universe,
-    p_adj_method = p_adj_method,
-    p_cutoff = p_cutoff,
-    q_cutoff = q_cutoff
+    pAdjustMethod = p_adj_method,
+    pvalueCutoff = p_cutoff,
+    qvalueCutoff = q_cutoff
   )
 }
 
@@ -180,12 +180,12 @@ enrich_gc_ora_kegg <- function(
     by = by,
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
-    keytype = "uniprot",
+    keyType = "uniprot",
     organism = organism,
     universe = universe,
-    p_adj_method = p_adj_method,
-    p_cutoff = p_cutoff,
-    q_cutoff = q_cutoff
+    pAdjustMethod = p_adj_method,
+    pvalueCutoff = p_cutoff,
+    qvalueCutoff = q_cutoff
   )
 }
 
@@ -220,13 +220,12 @@ enrich_gc_ora_kegg <- function(
     "Enriching for {.val {n_traits}} glycan traits... (This can take long)"
   )
 
-  suppressWarnings(
-    ck <- .call_compare_cluster(
-      protein_list,
-      fun = enrich_fun,
-      ...
-    )
-  )
+  suppressWarnings(ck <- rlang::exec(
+    clusterProfiler::compareCluster,
+    protein_list,
+    fun = enrich_fun,
+    ...
+  ))
 
   if (is.null(ck)) {
     cli::cli_alert_warning("No terms were enriched. `NULL` will be returned.")

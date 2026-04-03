@@ -153,35 +153,3 @@
     )
   }
 }
-
-#' Rename parameters and call `clusterProfiler::compareCluster()`
-#' @param ... Parameters to be passed.
-#' @noRd
-.call_compare_cluster <- function(proteins, ...) {
-  dots <- rlang::list2(...)
-  param_name_mapping <- c(
-    "orgdb" = "OrgDb",
-    "keytype" = "keyType",
-    "p_adj_method" = "pAdjustMethod",
-    "p_cutoff" = "pvalueCutoff",
-    "q_cutoff" = "qvalueCutoff"
-  )
-  dots <- .rename_list(dots, param_name_mapping)
-  rlang::exec(clusterProfiler::compareCluster, proteins, !!!dots)
-}
-
-#' Rename a list with a mapping
-#'
-#' If a name in `x` is in the names of `mapping`, it will be replaced.
-#' Otherwise, the old names are used.
-#'
-#' @param x The list to be renamed.
-#' @param mapping A character vector of name mapping, with the format `c("old_name" = "new_name")`.
-#' @returns The renamed list.
-#' @noRd
-.rename_list <- function(x, mapping) {
-  old_names <- names(x)
-  new_names <- mapping[old_names]
-  new_names <- ifelse(is.na(new_names), old_names, new_names)
-  rlang::set_names(x, new_names)
-}
