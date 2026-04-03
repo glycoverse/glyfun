@@ -25,6 +25,7 @@ called on an \code{\link[glyexp:experiment]{glyexp::experiment()}} of "traitprot
 \itemize{
 \item \code{protein}: Uniprot ID of proteins
 \item \code{trait}: A glycosylation trait (e.g. "TFc" for proportion of core-fucosylated glycans)
+\item \code{site}: The glycosylation site.
 \item \code{p_val}: p-values, preferably adjusted p-values
 \item \code{log2FC}: log2 of fold change
 }
@@ -80,13 +81,10 @@ on glycoproteins with dysregulated glycosylation.
 \section{Common usage pattern}{
 A common pattern of using this function is:
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{# 1. Use `glydet` to calculate derived traits or motif quantification.
-trait_exp <- derive_traits(exp)  # or `quantify_motifs()`
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{# 1. Perform differential analysis with `glystats`.
+dea_res <- gly_ttest(exp)
 
-# 2. Perform differential analysis with `glystats`.
-dea_res <- gly_ttest(trait_exp)
-
-# 3. Use this function.
+# 2. Use this function.
 go_res <- enrich_gc_ora_go(dea_res)  # or other glyfun functions
 }\if{html}{\out{</div>}}
 }

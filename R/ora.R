@@ -4,7 +4,18 @@
 #' Performs Gene Ontology (GO) Over-Representation Analysis (ORA)
 #' on glycoproteins with dysregulated glycosylation.
 #'
-#' @inheritSection enrich_gc_ora_go Common usage pattern
+#' @details
+#' # Common usage pattern
+#'
+#' A common pattern of using this function is:
+#'
+#' ```r
+#' # 1. Perform differential analysis with `glystats`.
+#' dea_res <- gly_ttest(exp)
+#'
+#' # 2. Use this function.
+#' go_res <- enrich_gc_ora_go(dea_res)  # or other glyfun functions
+#' ```
 #'
 #' @param dea_res Differential analysis result. Can be one of:
 #'   - Result from [glystats::gly_limma()] (two groups), [glystats::gly_ttest()], or [glystats::gly_wilcox()],
@@ -12,6 +23,7 @@
 #'   - A tibble with the following columns:
 #'     - `protein`: Uniprot ID of proteins
 #'     - `trait`: A glycosylation trait (e.g. "TFc" for proportion of core-fucosylated glycans)
+#'     - `site`: The glycosylation site.
 #'     - `p_val`: p-values, preferably adjusted p-values
 #'     - `log2FC`: log2 of fold change
 #' @param dea_p_cutoff P-value cutoff for statistical significance. Defaults to 0.05.
@@ -83,22 +95,9 @@ enrich_ora_go <- function(
 #' Performs KEGG pathway Over-Representation Analysis (ORA)
 #' on glycoproteins with dysregulated glycosylation.
 #'
-#' @inheritSection enrich_gc_ora_go Common usage pattern
+#' @inheritSection enrich_ora_go Common usage pattern
 #'
-#' @param dea_res Differential analysis result. Can be one of:
-#'   - Result from [glystats::gly_limma()] (two groups), [glystats::gly_ttest()], or [glystats::gly_wilcox()],
-#'     called on an [glyexp::experiment()] of "traitproteomics" type.
-#'   - A tibble with the following columns:
-#'     - `protein`: Uniprot ID of proteins
-#'     - `trait`: A glycosylation trait (e.g. "TFc" for proportion of core-fucosylated glycans)
-#'     - `p_val`: p-values, preferably adjusted p-values
-#'     - `log2FC`: log2 of fold change
-#' @param dea_p_cutoff P-value cutoff for statistical significance. Defaults to 0.05.
-#'   For `glystats` result input, adjusted p-values are used.
-#' @param dea_log2fc_cutoff Log2 fold change cutoff statistical significance.
-#'   A length-2 numeric vector, being negative and positive boundaries, respectively.
-#'   For example, `c(-1, 1)` means "log2FC < -1 or log2FC > 1", and `c(-Inf, 1)` means "log2FC > 1".
-#'   Defaults to `c(-1, 1)`.
+#' @inheritParams enrich_ora_go
 #' @param organism KEGG organism code. Passed to `organism` of [clusterProfiler::enrichKEGG()].
 #'   Defaults to "hsa" (Homo sapiens). Common codes: "hsa" (human), "mmu" (mouse), "rno" (rat).
 #' @param universe Background genes. If a character vector, directly passed to `universe` of [clusterProfiler::enrichKEGG()].

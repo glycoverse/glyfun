@@ -25,6 +25,7 @@ called on an \code{\link[glyexp:experiment]{glyexp::experiment()}} of "traitprot
 \itemize{
 \item \code{protein}: Uniprot ID of proteins
 \item \code{trait}: A glycosylation trait (e.g. "TFc" for proportion of core-fucosylated glycans)
+\item \code{site}: The glycosylation site.
 \item \code{p_val}: p-values, preferably adjusted p-values
 \item \code{log2FC}: log2 of fold change
 }
@@ -94,15 +95,15 @@ In traditional glycoproteomics data analysis,
 we usually perform differential expression analysis (DEA) on glycoforms,
 extract proteins that have dysregulated glycosylation,
 then perform functional enrichment (e.g. GO) on these proteins.
-This is what all the enrichment functions in glystats do (e.g. \code{glystats::gly_enrich_go()}).
+This is what \code{enrich_xxx()} functions do (e.g. \code{\link[=enrich_ora_go]{enrich_ora_go()}}).
 
-\code{glyfun} functions differ in that they link specific glycan traits with functional annotations.
+\code{enrich_gc_xxx()} functions differ in that they link specific glycan traits with functional annotations.
 Instead of answering the question
 "Which functions are enriched in dysregulated glycoproteins?",
-\code{glyfun} answers questions like
+\code{enrich_gc_xxx()} answers questions like
 “Which functions are enriched in proteins with dysregulated core-fucosylation?”
 Higher specificity, deeper insights. By focusing on distinct glycan motifs,
-glyfun helps you pinpoint the functional relevance of specific glycosylation changes.
+it helps you pinpoint the functional relevance of specific glycosylation changes.
 }
 
 \section{Common usage pattern}{
@@ -115,7 +116,7 @@ trait_exp <- derive_traits(exp)  # or `quantify_motifs()`
 dea_res <- gly_ttest(trait_exp)
 
 # 3. Use this function.
-go_res <- enrich_gc_ora_go(dea_res)  # or other glyfun functions
+go_res <- enrich_gc_ora_go(dea_res)  # or other `enrich_gc_xxx()` functions
 }\if{html}{\out{</div>}}
 }
 

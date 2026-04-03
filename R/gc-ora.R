@@ -15,15 +15,15 @@
 #' we usually perform differential expression analysis (DEA) on glycoforms,
 #' extract proteins that have dysregulated glycosylation,
 #' then perform functional enrichment (e.g. GO) on these proteins.
-#' This is what all the enrichment functions in glystats do (e.g. `glystats::gly_enrich_go()`).
+#' This is what `enrich_xxx()` functions do (e.g. [enrich_ora_go()]).
 #'
-#' `glyfun` functions differ in that they link specific glycan traits with functional annotations.
+#' `enrich_gc_xxx()` functions differ in that they link specific glycan traits with functional annotations.
 #' Instead of answering the question
 #' "Which functions are enriched in dysregulated glycoproteins?",
-#' `glyfun` answers questions like
+#' `enrich_gc_xxx()` answers questions like
 #' “Which functions are enriched in proteins with dysregulated core-fucosylation?”
 #' Higher specificity, deeper insights. By focusing on distinct glycan motifs,
-#' glyfun helps you pinpoint the functional relevance of specific glycosylation changes.
+#' it helps you pinpoint the functional relevance of specific glycosylation changes.
 #'
 #' # Common usage pattern
 #'
@@ -37,35 +37,13 @@
 #' dea_res <- gly_ttest(trait_exp)
 #'
 #' # 3. Use this function.
-#' go_res <- enrich_gc_ora_go(dea_res)  # or other glyfun functions
+#' go_res <- enrich_gc_ora_go(dea_res)  # or other `enrich_gc_xxx()` functions
 #' ```
 #'
-#' @param dea_res Differential analysis result. Can be one of:
-#'   - Result from [glystats::gly_limma()] (two groups), [glystats::gly_ttest()], or [glystats::gly_wilcox()],
-#'     called on an [glyexp::experiment()] of "traitproteomics" type.
-#'   - A tibble with the following columns:
-#'     - `protein`: Uniprot ID of proteins
-#'     - `trait`: A glycosylation trait (e.g. "TFc" for proportion of core-fucosylated glycans)
-#'     - `p_val`: p-values, preferably adjusted p-values
-#'     - `log2FC`: log2 of fold change
+#' @inheritParams enrich_ora_go
 #' @param by A column to group the proteins by.
 #'   - If `dea_res` is a [glyexp::experiment()]: the column name in `var_info` of the experiment.
 #'   - If `dea_res` is a tibble: the column name in the tibble (defaults to "trait").
-#' @param dea_p_cutoff P-value cutoff for statistical significance. Defaults to 0.05.
-#'   For `glystats` result input, adjusted p-values are used.
-#' @param dea_log2fc_cutoff Log2 fold change cutoff statistical significance.
-#'   A length-2 numeric vector, being negative and positive boundaries, respectively.
-#'   For example, `c(-1, 1)` means "log2FC < -1 or log2FC > 1", and `c(-Inf, 1)` means "log2FC > 1".
-#'   Defaults to `c(-1, 1)`.
-#' @param orgdb Passed to `OrgDb` of [clusterProfiler::enrichGO()].
-#' @param ont Passed to `ont` of [clusterProfiler::enrichGO()]. "BP", "MF", "CC", or "ALL". Defaults to "MF".
-#' @param universe Background genes. If a character vector, directly passed to `universe` of [clusterProfiler::enrichGO()].
-#'   You can also provide a [glyexp::experiment()] object with "glycoproteomics" type.
-#'   In this case all detected proteins in this experiment will be extracted and passed to
-#'   [clusterProfiler::enrichGO()].
-#' @param p_adj_method Passed to `pAdjustMethod` of [clusterProfiler::enrichGO()].
-#' @param p_cutoff Passed to `pvalueCutoff` of [clusterProfiler::enrichGO()].
-#' @param q_cutoff Passed to `qvalueCutoff` of [clusterProfiler::enrichGO()].
 #'
 #' @return A list with two elements:
 #'  - `tidy_result`: A tibble with enrichment results containing the following columns:
@@ -130,16 +108,10 @@ enrich_gc_ora_go <- function(
 #' @inheritSection enrich_gc_ora_go What is glycan-centric enrichment?
 #' @inheritSection enrich_gc_ora_go Common usage pattern
 #'
-#' @inheritParams enrich_gc_ora_go
-#' @param organism KEGG organism code. Passed to `organism` of [clusterProfiler::enrichKEGG()].
-#'   Defaults to "hsa" (Homo sapiens). Common codes: "hsa" (human), "mmu" (mouse), "rno" (rat).
-#' @param universe Background genes. If a character vector, directly passed to `universe` of [clusterProfiler::enrichKEGG()].
-#'   You can also provide a [glyexp::experiment()] object with "glycoproteomics" type.
-#'   In this case all detected proteins in this experiment will be extracted and passed to
-#'   [clusterProfiler::enrichKEGG()].
-#' @param p_adj_method Passed to `pAdjustMethod` of [clusterProfiler::enrichKEGG()].
-#' @param p_cutoff Passed to `pvalueCutoff` of [clusterProfiler::enrichKEGG()].
-#' @param q_cutoff Passed to `qvalueCutoff` of [clusterProfiler::enrichKEGG()].
+#' @inheritParams enrich_ora_kegg
+#' @param by A column to group the proteins by.
+#'   - If `dea_res` is a [glyexp::experiment()]: the column name in `var_info` of the experiment.
+#'   - If `dea_res` is a tibble: the column name in the tibble (defaults to "trait").
 #'
 #' @return A list with two elements:
 #'  - `tidy_result`: A tibble with enrichment results containing the following columns:
