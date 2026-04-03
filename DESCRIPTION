@@ -17,8 +17,10 @@ Imports:
     cli,
     clusterProfiler,
     dplyr,
-    glystats,
+    glystats (>= 0.7.0.9000),
     janitor,
     rlang,
     tibble,
     tidyselect
+Remotes:  
+    glycoverse/glystats
