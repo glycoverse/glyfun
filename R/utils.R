@@ -14,6 +14,15 @@
       "x" = "Got: {.cls {basic_class}}"
     ))
   }
+
+  # For glystats_limma_res, check number of groups.
+  if (inherits(dea_res, "glystats_limma_res")) {
+    tidy_res <- glystats::get_tidy_result(dea_res)
+    contrasts <- paste0(tidy_res$ref_group, "-", tidy_res$test_group)
+    if (length(unique(contrasts)) > 1) {
+      cli::cli_abort("{.pkg glyfun} functions does not support multi-group {.fn glystats::gly_limma} results.")
+    }
+  }
 }
 
 #' Process `by` argument for glystats input
