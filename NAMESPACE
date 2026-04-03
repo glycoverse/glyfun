@@ -2,4 +2,5 @@
 
 export(enrich_gc_ora_go)
 export(enrich_gc_ora_kegg)
+export(enrich_ora_go)
 importFrom(rlang,.data)
