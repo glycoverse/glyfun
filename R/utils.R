@@ -28,7 +28,7 @@
   }
 
   # Check columns
-  if (!"protein" %in% colnames(dea_res)) {
+  if (!"protein" %in% colnames(dea_res$tidy_res)) {
     cli::cli_abort(c(
       "A {.field protein} column must be in {.arg dea_res}",
       "i" = "Did you mistakenly set {.arg add_info} to `FALSE` when calling the {.pkg glystats} function?"

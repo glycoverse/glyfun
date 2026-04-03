@@ -77,7 +77,6 @@ enrich_gc_ora_go <- function(
   p_cutoff = 0.05,
   q_cutoff = 0.2
 ) {
-  .check_dea_res(dea_res)
   .gc_ora(
     dea_res,
     enrich_fun = "enrichGO",
@@ -144,7 +143,6 @@ enrich_gc_ora_kegg <- function(
   p_cutoff = 0.05,
   q_cutoff = 0.2
 ) {
-  .check_dea_res(dea_res)
   .gc_ora(
     dea_res,
     enrich_fun = "enrichKEGG",
@@ -170,6 +168,7 @@ enrich_gc_ora_kegg <- function(
   dea_log2fc_cutoff = c(-1, 1),
   ...
 ) {
+  .check_dea_res(dea_res)
   by <- .process_by_arg_glystats(dea_res, by)
   .check_p_cutoff_arg(dea_p_cutoff)
   .check_log2fc_cutoff_arg(dea_log2fc_cutoff)
