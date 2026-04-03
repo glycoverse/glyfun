@@ -30,11 +30,11 @@ skip_if_not_installed("org.Hs.eg.db")
   )
 }
 
-test_that("gc_ora_go returns correct structure on happy path (integration)", {
+test_that("enrich_gc_ora_go returns correct structure on happy path (integration)", {
   dea_res <- .mock_dea_res()
 
   result <- suppressMessages(
-    gc_ora_go(dea_res, orgdb = "org.Hs.eg.db", ont = "MF", p_cutoff = 0.05)
+    enrich_gc_ora_go(dea_res, orgdb = "org.Hs.eg.db", ont = "MF", p_cutoff = 0.05)
   )
 
   expect_s3_class(
@@ -62,14 +62,14 @@ test_that("gc_ora_go returns correct structure on happy path (integration)", {
   expect_true(all(expected_cols %in% colnames(result$tidy_result)))
 })
 
-test_that("gc_ora_kegg returns correct structure on happy path (integration)", {
+test_that("enrich_gc_ora_kegg returns correct structure on happy path (integration)", {
   skip_if_offline()
 
   dea_res <- .mock_dea_res()
 
   result <- try(
     suppressMessages(
-      gc_ora_kegg(dea_res, organism = "hsa", p_cutoff = 0.05)
+      enrich_gc_ora_kegg(dea_res, organism = "hsa", p_cutoff = 0.05)
     ),
     silent = TRUE
   )

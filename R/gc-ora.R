@@ -37,7 +37,7 @@
 #' dea_res <- gly_ttest(trait_exp)
 #'
 #' # 3. Use this function.
-#' go_res <- gc_ora_go(dea_res)  # or other glyfun functions
+#' go_res <- enrich_gc_ora_go(dea_res)  # or other glyfun functions
 #' ```
 #'
 #' @param dea_res Differential analysis result. Can be one of:
@@ -87,7 +87,7 @@
 #'
 #' @seealso [clusterProfiler::compareCluster()], [clusterProfiler::enrichGO()]
 #' @export
-gc_ora_go <- function(
+enrich_gc_ora_go <- function(
   dea_res,
   by = NULL,
   dea_p_cutoff = 0.05,
@@ -127,10 +127,10 @@ gc_ora_go <- function(
 #' by grouping differential analysis results by glycan traits and computing
 #' pathway enrichment for each trait.
 #'
-#' @inheritSection gc_ora_go What is glycan-centric enrichment?
-#' @inheritSection gc_ora_go Common usage pattern
+#' @inheritSection enrich_gc_ora_go What is glycan-centric enrichment?
+#' @inheritSection enrich_gc_ora_go Common usage pattern
 #'
-#' @inheritParams gc_ora_go
+#' @inheritParams enrich_gc_ora_go
 #' @param organism KEGG organism code. Passed to `organism` of [clusterProfiler::enrichKEGG()].
 #'   Defaults to "hsa" (Homo sapiens). Common codes: "hsa" (human), "mmu" (mouse), "rno" (rat).
 #' @param universe Background genes. If a character vector, directly passed to `universe` of [clusterProfiler::enrichKEGG()].
@@ -161,7 +161,7 @@ gc_ora_go <- function(
 #'
 #' @seealso [clusterProfiler::compareCluster()], [clusterProfiler::enrichKEGG()]
 #' @export
-gc_ora_kegg <- function(
+enrich_gc_ora_kegg <- function(
   dea_res,
   by = NULL,
   dea_p_cutoff = 0.05,
