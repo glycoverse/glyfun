@@ -103,11 +103,8 @@ test_that("enrich_ora_kegg returns correct structure on happy path (integration)
 
   dea_res <- .mock_dea_res()
 
-  result <- try(
-    suppressMessages(
-      enrich_ora_kegg(dea_res, organism = "hsa", p_cutoff = 0.05)
-    ),
-    silent = TRUE
+  suppressMessages(
+    result <- enrich_ora_kegg(dea_res, organism = "hsa", p_cutoff = 0.05)
   )
 
   expect_s3_class(
