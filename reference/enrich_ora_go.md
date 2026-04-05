@@ -73,13 +73,7 @@ enrich_ora_go(
 
 - universe:
 
-  Background genes. If a character vector, directly passed to `universe`
-  of
-  [`clusterProfiler::enrichGO()`](https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html).
-  You can also provide a
-  [`glyexp::experiment()`](https://glycoverse.github.io/glyexp/reference/experiment.html)
-  object with "glycoproteomics" type. In this case all detected proteins
-  in this experiment will be extracted and passed to
+  Background genes Uniprot IDs, directly passed to `universe` of
   [`clusterProfiler::enrichGO()`](https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html).
 
 - p_adj_method:
@@ -97,42 +91,43 @@ enrich_ora_go(
   Passed to `qvalueCutoff` of
   [`clusterProfiler::enrichGO()`](https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html).
 
-  \#' @return A list with two elements:
+## Value
 
-  - `tidy_result`: A tibble with enrichment results containing the
-    following columns:
+A list with two elements:
 
-    - `id`: Term ID
+- `tidy_result`: A tibble with enrichment results containing the
+  following columns:
 
-    - `description`: Term description
+  - `id`: Term ID
 
-    - `gene_ratio`: Ratio of genes in the term to total genes in the
-      input
+  - `description`: Term description
 
-    - `bg_ratio`: Ratio of genes in the term to total genes in the
-      background
+  - `gene_ratio`: Ratio of genes in the term to total genes in the input
 
-    - `rich_factor`: Proportion of the term's total background genes
-      found in the input
+  - `bg_ratio`: Ratio of genes in the term to total genes in the
+    background
 
-    - `fold_enrichment`: Ratio of `gene_ratio` to `bg_ratio` (magnitude
-      of enrichment)
+  - `rich_factor`: Proportion of the term's total background genes found
+    in the input
 
-    - `z_score`: Directional trend of regulation (positive for up,
-      negative for down)
+  - `fold_enrichment`: Ratio of `gene_ratio` to `bg_ratio` (magnitude of
+    enrichment)
 
-    - `p_val`: Raw p-value from hypergeometric test
+  - `z_score`: Directional trend of regulation (positive for up,
+    negative for down)
 
-    - `p_adj`: Adjusted p-value
+  - `p_val`: Raw p-value from hypergeometric test
 
-    - `q_val`: Q-value (FDR)
+  - `p_adj`: Adjusted p-value
 
-    - `gene_id`: Gene IDs in the term (separated by "/")
+  - `q_val`: Q-value (FDR)
 
-    - `count`: Number of genes in the term
+  - `gene_id`: Gene IDs in the term (separated by "/")
 
-  - `raw_result`: The raw clusterProfiler
-    ``` enrichResult`` object The list has classes  ```glyfun_gc_ora_go_res`, `glyfun_gc_ora_res`, and `glyfun_res\`.
+  - `count`: Number of genes in the term
+
+- `raw_result`: The raw clusterProfiler
+  ``` enrichResult`` object The list has classes  ```glyfun_gc_ora_go_res`, `glyfun_gc_ora_res`, and `glyfun_res\`.
 
 ## Common usage pattern
 

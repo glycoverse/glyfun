@@ -12,7 +12,6 @@ by glycan traits and computing pathway enrichment for each trait.
 ``` r
 enrich_gc_ora_kegg(
   dea_res,
-  by = NULL,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
   organism = "hsa",
@@ -52,17 +51,6 @@ enrich_gc_ora_kegg(
 
     - `log2FC`: log2 of fold change
 
-- by:
-
-  A column to group the proteins by.
-
-  - If `dea_res` is a
-    [`glyexp::experiment()`](https://glycoverse.github.io/glyexp/reference/experiment.html):
-    the column name in `var_info` of the experiment.
-
-  - If `dea_res` is a tibble: the column name in the tibble (defaults to
-    "trait").
-
 - dea_p_cutoff:
 
   P-value cutoff for statistical significance. Defaults to 0.05. For
@@ -84,29 +72,23 @@ enrich_gc_ora_kegg(
 
 - universe:
 
-  Background genes. If a character vector, directly passed to `universe`
-  of
-  [`clusterProfiler::enrichKEGG()`](https://rdrr.io/pkg/clusterProfiler/man/enrichKEGG.html).
-  You can also provide a
-  [`glyexp::experiment()`](https://glycoverse.github.io/glyexp/reference/experiment.html)
-  object with "glycoproteomics" type. In this case all detected proteins
-  in this experiment will be extracted and passed to
-  [`clusterProfiler::enrichKEGG()`](https://rdrr.io/pkg/clusterProfiler/man/enrichKEGG.html).
+  Background genes Uniprot IDs, directly passed to `universe` of
+  [`clusterProfiler::enrichGO()`](https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html).
 
 - p_adj_method:
 
   Passed to `pAdjustMethod` of
-  [`clusterProfiler::enrichKEGG()`](https://rdrr.io/pkg/clusterProfiler/man/enrichKEGG.html).
+  [`clusterProfiler::enrichGO()`](https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html).
 
 - p_cutoff:
 
   Passed to `pvalueCutoff` of
-  [`clusterProfiler::enrichKEGG()`](https://rdrr.io/pkg/clusterProfiler/man/enrichKEGG.html).
+  [`clusterProfiler::enrichGO()`](https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html).
 
 - q_cutoff:
 
   Passed to `qvalueCutoff` of
-  [`clusterProfiler::enrichKEGG()`](https://rdrr.io/pkg/clusterProfiler/man/enrichKEGG.html).
+  [`clusterProfiler::enrichGO()`](https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html).
 
 ## Value
 

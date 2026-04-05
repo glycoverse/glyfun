@@ -53,7 +53,6 @@ pathway enrichment for each trait.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">enrich_gc_ora_kegg</span><span class="op">(</span></span>
 <span>  <span class="va">dea_res</span>,</span>
-<span>  by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dea_p_cutoff <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  dea_log2fc_cutoff <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  organism <span class="op">=</span> <span class="st">"hsa"</span>,</span>
@@ -80,12 +79,6 @@ called on an <code><a href="https://glycoverse.github.io/glyexp/reference/experi
 </ul></dd>
 
 
-<dt id="arg-by">by<a class="anchor" aria-label="anchor" href="#arg-by"></a></dt>
-<dd><p>A column to group the proteins by.</p><ul><li><p>If <code>dea_res</code> is a <code><a href="https://glycoverse.github.io/glyexp/reference/experiment.html" class="external-link">glyexp::experiment()</a></code>: the column name in <code>var_info</code> of the experiment.</p></li>
-<li><p>If <code>dea_res</code> is a tibble: the column name in the tibble (defaults to "trait").</p></li>
-</ul></dd>
-
-
 <dt id="arg-dea-p-cutoff">dea_p_cutoff<a class="anchor" aria-label="anchor" href="#arg-dea-p-cutoff"></a></dt>
 <dd><p>P-value cutoff for statistical significance. Defaults to 0.05.
 For <code>glystats</code> result input, adjusted p-values are used.</p></dd>
@@ -104,22 +97,19 @@ Defaults to "hsa" (Homo sapiens). Common codes: "hsa" (human), "mmu" (mouse), "r
 
 
 <dt id="arg-universe">universe<a class="anchor" aria-label="anchor" href="#arg-universe"></a></dt>
-<dd><p>Background genes. If a character vector, directly passed to <code>universe</code> of <code><a href="https://rdrr.io/pkg/clusterProfiler/man/enrichKEGG.html" class="external-link">clusterProfiler::enrichKEGG()</a></code>.
-You can also provide a <code><a href="https://glycoverse.github.io/glyexp/reference/experiment.html" class="external-link">glyexp::experiment()</a></code> object with "glycoproteomics" type.
-In this case all detected proteins in this experiment will be extracted and passed to
-<code><a href="https://rdrr.io/pkg/clusterProfiler/man/enrichKEGG.html" class="external-link">clusterProfiler::enrichKEGG()</a></code>.</p></dd>
+<dd><p>Background genes Uniprot IDs, directly passed to <code>universe</code> of <code><a href="https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html" class="external-link">clusterProfiler::enrichGO()</a></code>.</p></dd>
 
 
 <dt id="arg-p-adj-method">p_adj_method<a class="anchor" aria-label="anchor" href="#arg-p-adj-method"></a></dt>
-<dd><p>Passed to <code>pAdjustMethod</code> of <code><a href="https://rdrr.io/pkg/clusterProfiler/man/enrichKEGG.html" class="external-link">clusterProfiler::enrichKEGG()</a></code>.</p></dd>
+<dd><p>Passed to <code>pAdjustMethod</code> of <code><a href="https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html" class="external-link">clusterProfiler::enrichGO()</a></code>.</p></dd>
 
 
 <dt id="arg-p-cutoff">p_cutoff<a class="anchor" aria-label="anchor" href="#arg-p-cutoff"></a></dt>
-<dd><p>Passed to <code>pvalueCutoff</code> of <code><a href="https://rdrr.io/pkg/clusterProfiler/man/enrichKEGG.html" class="external-link">clusterProfiler::enrichKEGG()</a></code>.</p></dd>
+<dd><p>Passed to <code>pvalueCutoff</code> of <code><a href="https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html" class="external-link">clusterProfiler::enrichGO()</a></code>.</p></dd>
 
 
 <dt id="arg-q-cutoff">q_cutoff<a class="anchor" aria-label="anchor" href="#arg-q-cutoff"></a></dt>
-<dd><p>Passed to <code>qvalueCutoff</code> of <code><a href="https://rdrr.io/pkg/clusterProfiler/man/enrichKEGG.html" class="external-link">clusterProfiler::enrichKEGG()</a></code>.</p></dd>
+<dd><p>Passed to <code>qvalueCutoff</code> of <code><a href="https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html" class="external-link">clusterProfiler::enrichGO()</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
