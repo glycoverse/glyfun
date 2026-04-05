@@ -147,6 +147,68 @@ enrich_gc_ora_kegg <- function(
   )
 }
 
+#' Glycan-Centric Reactome Pathway Over Representation Analysis
+#'
+#' @description
+#' Performs glycan-centric Reactome pathway Over-Representation Analysis (ORA).
+#' Instead of traditional protein-centric enrichment, this function links specific
+#' glycan traits to biological pathways. It helps answer questions like "Which
+#' Reactome pathways are enriched in proteins with a specific dysregulated glycan motif?",
+#' by grouping differential analysis results by glycan traits and computing
+#' pathway enrichment for each trait.
+#'
+#' @inheritSection enrich_gc_ora_go What is glycan-centric enrichment?
+#' @inheritSection enrich_gc_ora_go Common usage pattern
+#'
+#' @inheritParams enrich_ora_reactome
+#' @return A list with two elements:
+#'  - `tidy_result`: A tibble with enrichment results containing the following columns:
+#'    - `trait`: Glycan trait
+#'    - `id`: Reactome pathway ID
+#'    - `description`: Pathway description
+#'    - `gene_ratio`: Ratio of genes in the pathway to total genes in the input
+#'    - `bg_ratio`: Ratio of genes in the pathway to total genes in the background
+#'    - `rich_factor`: Proportion of the pathway's total background genes found in the input
+#'    - `fold_enrichment`: Ratio of `gene_ratio` to `bg_ratio` (magnitude of enrichment)
+#'    - `z_score`: Directional trend of regulation (positive for up, negative for down)
+#'    - `p_val`: Raw p-value from hypergeometric test
+#'    - `p_adj`: Adjusted p-value
+#'    - `q_val`: Q-value (FDR)
+#'    - `gene_id`: Gene IDs in the pathway (separated by "/")
+#'    - `count`: Number of genes in the pathway
+#'  - `raw_result`: The raw clusterProfiler clusterProfResult object
+#' The list has classes `glyfun_gc_ora_reactome_res`, `glyfun_gc_ora_res`, and `glyfun_res`.
+#'
+#' @seealso [clusterProfiler::compareCluster()], [ReactomePA::enrichPathway()]
+#' @export
+enrich_gc_ora_reactome <- function(
+  dea_res,
+  dea_p_cutoff = 0.05,
+  dea_log2fc_cutoff = c(-1, 1),
+  orgdb = "org.Hs.eg.db",
+  organism = "human",
+  universe = NULL,
+  p_adj_method = "BH",
+  p_cutoff = 0.05,
+  q_cutoff = 0.2
+) {
+  rlang::check_installed("ReactomePA")
+  .gc_ora(
+    dea_res,
+    enrich_fun = "enrichPathway",
+    result_class = "glyfun_gc_ora_reactome_res",
+    dea_p_cutoff = dea_p_cutoff,
+    dea_log2fc_cutoff = dea_log2fc_cutoff,
+    OrgDb = orgdb,
+    organism = organism,
+    universe = universe,
+    pAdjustMethod = p_adj_method,
+    pvalueCutoff = p_cutoff,
+    qvalueCutoff = q_cutoff,
+    uniprot_to_entrez = TRUE
+  )
+}
+
 #' Perform Glycan-Centric ORA
 #' @param dea_res DEA result from glystats or a tibble.
 #' @param enrich_fun An enrichment function name (string).
@@ -270,8 +332,10 @@ enrich_gc_ora_kegg <- function(
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
   ...,
-  pro_list_fun = NULL
+  pro_list_fun = NULL,
+  uniprot_to_entrez = FALSE
 ) {
+  dots <- rlang::list2(...)
   # Argument validation
   .check_dea_res(dea_res)
   .check_p_cutoff_arg(dea_p_cutoff)
@@ -280,17 +344,29 @@ enrich_gc_ora_kegg <- function(
   # Performing enrichment
   protein_list <- pro_list_fun(dea_res)
 
+  # Convert Uniprot IDs to Entrez IDs if needed (for ReactomePA)
+  if (uniprot_to_entrez) {
+    orgdb <- dots[["OrgDb"]]
+    dots[["OrgDb"]] <- NULL
+    protein_list <- purrr::map(protein_list, ~ .uniprot_to_entrez(.x, orgdb))
+  }
+
   n_traits <- length(names(protein_list))
   cli::cli_alert_info(
     "Enriching for {.val {n_traits}} glycan traits... (This can take long)"
   )
 
   suppressWarnings(
-    ck <- rlang::exec(
-      clusterProfiler::compareCluster,
-      protein_list,
-      fun = enrich_fun,
-      ...
+    ck <- suppressPackageStartupMessages(
+      withr::with_temp_libpaths(
+        rlang::exec(
+          clusterProfiler::compareCluster,
+          protein_list,
+          fun = enrich_fun,
+          !!!dots
+        ),
+        action = "replace"
+      )
     )
   )
 
