@@ -177,33 +177,24 @@ enrich_ora_kegg <- function(
   dea_log2fc_cutoff = c(-1, 1),
   ...
 ) {
-  .check_dea_res(dea_res)
-  .check_p_cutoff_arg(dea_p_cutoff)
-  .check_log2fc_cutoff_arg(dea_log2fc_cutoff)
-
-  proteins <- dea_res |>
-    dplyr::filter(
-      .data$p_val < dea_p_cutoff,
-      .data$log2FC < dea_log2fc_cutoff[[1]] |
-        .data$log2FC > dea_log2fc_cutoff[[2]]
-    ) |>
-    dplyr::pull(.data$protein)
-
-  suppressWarnings(res <- rlang::exec(enrich_fun, proteins, ...))
-
-  if (is.null(res)) {
-    cli::cli_alert_warning("No terms were enriched. `NULL` will be returned.")
-    return(NULL)
+  pro_fun <- function(dea_res) {
+    dea_res |>
+      dplyr::filter(
+        .data$p_val < dea_p_cutoff,
+        .data$log2FC < dea_log2fc_cutoff[[1]] |
+          .data$log2FC > dea_log2fc_cutoff[[2]]
+      ) |>
+      dplyr::pull(.data$protein)
   }
-  tidy_res <- tibble::as_tibble(res) |>
-    janitor::clean_names() |>
-    dplyr::rename(tidyselect::all_of(c(
-      "p_val" = "pvalue",
-      "p_adj" = "p_adjust",
-      "q_val" = "qvalue"
-    )))
-  res <- list(tidy_result = tidy_res, raw_result = res)
-  structure(res, class = c(result_class, "glyfun_ora_res", "glyfun_res"))
+  .ora_impl(
+    dea_res,
+    enrich_fun = enrich_fun,
+    result_class = result_class,
+    dea_p_cutoff = dea_p_cutoff,
+    dea_log2fc_cutoff = dea_log2fc_cutoff,
+    ...,
+    pro_fun = pro_fun
+  )
 }
 
 .ora.glystats_res <- function(
@@ -214,25 +205,62 @@ enrich_ora_kegg <- function(
   dea_log2fc_cutoff = c(-1, 1),
   ...
 ) {
+  pro_fun <- function(dea_res) {
+    dea_res |>
+      glystats::get_tidy_result() |>
+      dplyr::filter(
+        .data$p_adj < dea_p_cutoff,
+        .data$log2fc < dea_log2fc_cutoff[[1]] |
+          .data$log2fc > dea_log2fc_cutoff[[2]]
+      ) |>
+      dplyr::pull(.data$protein)
+  }
+  .ora_impl(
+    dea_res,
+    enrich_fun = enrich_fun,
+    result_class = result_class,
+    dea_p_cutoff = dea_p_cutoff,
+    dea_log2fc_cutoff = dea_log2fc_cutoff,
+    ...,
+    pro_fun = pro_fun
+  )
+}
+
+#' The implementation templete of ora functions
+#'
+#' The only difference between different `.ora` methods is how to extract proteins.
+#' Other operations, like argument validation, performing enrichment,
+#' and packaging the result list, are exactly the same.
+#' This function uses a `pro_fun` parameter to enable caller functions
+#' provide their custom protein extraction logic.
+#'
+#' @inheritParams .ora
+#' @param pro_fun A function with signature `function(dea_res)` that returns a
+#'   character vector of protein Uniprot IDs.
+#' @noRd
+.ora_impl <- function(
+  dea_res,
+  enrich_fun,
+  result_class,
+  dea_p_cutoff = 0.05,
+  dea_log2fc_cutoff = c(-1, 1),
+  ...,
+  pro_fun = NULL
+) {
+  # Argument validation
   .check_dea_res(dea_res)
   .check_p_cutoff_arg(dea_p_cutoff)
   .check_log2fc_cutoff_arg(dea_log2fc_cutoff)
 
-  proteins <- dea_res |>
-    glystats::get_tidy_result() |>
-    dplyr::filter(
-      .data$p_adj < dea_p_cutoff,
-      .data$log2fc < dea_log2fc_cutoff[[1]] |
-        .data$log2fc > dea_log2fc_cutoff[[2]]
-    ) |>
-    dplyr::pull(.data$protein)
-
+  # Performing enrichment
+  proteins <- pro_fun(dea_res)
   suppressWarnings(res <- rlang::exec(enrich_fun, proteins, ...))
-
   if (is.null(res)) {
     cli::cli_alert_warning("No terms were enriched. `NULL` will be returned.")
     return(NULL)
   }
+
+  # Packaging the result
   tidy_res <- tibble::as_tibble(res) |>
     janitor::clean_names() |>
     dplyr::rename(tidyselect::all_of(c(
