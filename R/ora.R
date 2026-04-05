@@ -34,15 +34,12 @@
 #'   Defaults to `c(-1, 1)`.
 #' @param orgdb Passed to `OrgDb` of [clusterProfiler::enrichGO()].
 #' @param ont Passed to `ont` of [clusterProfiler::enrichGO()]. "BP", "MF", "CC", or "ALL". Defaults to "MF".
-#' @param universe Background genes. If a character vector, directly passed to `universe` of [clusterProfiler::enrichGO()].
-#'   You can also provide a [glyexp::experiment()] object with "glycoproteomics" type.
-#'   In this case all detected proteins in this experiment will be extracted and passed to
-#'   [clusterProfiler::enrichGO()].
+#' @param universe Background genes Uniprot IDs, directly passed to `universe` of [clusterProfiler::enrichGO()].
 #' @param p_adj_method Passed to `pAdjustMethod` of [clusterProfiler::enrichGO()].
 #' @param p_cutoff Passed to `pvalueCutoff` of [clusterProfiler::enrichGO()].
 #' @param q_cutoff Passed to `qvalueCutoff` of [clusterProfiler::enrichGO()].
 #'
-#' #' @return A list with two elements:
+#' @return A list with two elements:
 #'  - `tidy_result`: A tibble with enrichment results containing the following columns:
 #'    - `id`: Term ID
 #'    - `description`: Term description
@@ -99,13 +96,6 @@ enrich_ora_go <- function(
 #' @inheritParams enrich_ora_go
 #' @param organism KEGG organism code. Passed to `organism` of [clusterProfiler::enrichKEGG()].
 #'   Defaults to "hsa" (Homo sapiens). Common codes: "hsa" (human), "mmu" (mouse), "rno" (rat).
-#' @param universe Background genes. If a character vector, directly passed to `universe` of [clusterProfiler::enrichKEGG()].
-#'   You can also provide a [glyexp::experiment()] object with "glycoproteomics" type.
-#'   In this case all detected proteins in this experiment will be extracted and passed to
-#'   [clusterProfiler::enrichKEGG()].
-#' @param p_adj_method Passed to `pAdjustMethod` of [clusterProfiler::enrichKEGG()].
-#' @param p_cutoff Passed to `pvalueCutoff` of [clusterProfiler::enrichKEGG()].
-#' @param q_cutoff Passed to `qvalueCutoff` of [clusterProfiler::enrichKEGG()].
 #'
 #' @return A list with two elements:
 #'  - `tidy_result`: A tibble with enrichment results containing the following columns:

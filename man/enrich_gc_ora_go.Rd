@@ -43,36 +43,13 @@ Defaults to \code{c(-1, 1)}.}
 
 \item{ont}{Passed to \code{ont} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}. "BP", "MF", "CC", or "ALL". Defaults to "MF".}
 
-\item{universe}{Background genes. If a character vector, directly passed to \code{universe} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.
-You can also provide a \code{\link[glyexp:experiment]{glyexp::experiment()}} object with "glycoproteomics" type.
-In this case all detected proteins in this experiment will be extracted and passed to
-\code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
+\item{universe}{Background genes Uniprot IDs, directly passed to \code{universe} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
 
 \item{p_adj_method}{Passed to \code{pAdjustMethod} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
 
 \item{p_cutoff}{Passed to \code{pvalueCutoff} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
 
-\item{q_cutoff}{Passed to \code{qvalueCutoff} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.
-
-#' @return A list with two elements:
-\itemize{
-\item \code{tidy_result}: A tibble with enrichment results containing the following columns:
-\itemize{
-\item \code{id}: Term ID
-\item \code{description}: Term description
-\item \code{gene_ratio}: Ratio of genes in the term to total genes in the input
-\item \code{bg_ratio}: Ratio of genes in the term to total genes in the background
-\item \code{rich_factor}: Proportion of the term's total background genes found in the input
-\item \code{fold_enrichment}: Ratio of \code{gene_ratio} to \code{bg_ratio} (magnitude of enrichment)
-\item \code{z_score}: Directional trend of regulation (positive for up, negative for down)
-\item \code{p_val}: Raw p-value from hypergeometric test
-\item \code{p_adj}: Adjusted p-value
-\item \code{q_val}: Q-value (FDR)
-\item \code{gene_id}: Gene IDs in the term (separated by "/")
-\item \code{count}: Number of genes in the term
-}
-\item \code{raw_result}: The raw clusterProfiler \verb{enrichResult`` object The list has classes }glyfun_gc_ora_go_res\verb{, }glyfun_gc_ora_res\verb{, and }glyfun_res`.
-}}
+\item{q_cutoff}{Passed to \code{qvalueCutoff} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
 }
 \value{
 A list with two elements:

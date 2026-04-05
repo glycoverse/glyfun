@@ -43,18 +43,16 @@ Defaults to \code{c(-1, 1)}.}
 
 \item{ont}{Passed to \code{ont} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}. "BP", "MF", "CC", or "ALL". Defaults to "MF".}
 
-\item{universe}{Background genes. If a character vector, directly passed to \code{universe} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.
-You can also provide a \code{\link[glyexp:experiment]{glyexp::experiment()}} object with "glycoproteomics" type.
-In this case all detected proteins in this experiment will be extracted and passed to
-\code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
+\item{universe}{Background genes Uniprot IDs, directly passed to \code{universe} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
 
 \item{p_adj_method}{Passed to \code{pAdjustMethod} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
 
 \item{p_cutoff}{Passed to \code{pvalueCutoff} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
 
-\item{q_cutoff}{Passed to \code{qvalueCutoff} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.
-
-#' @return A list with two elements:
+\item{q_cutoff}{Passed to \code{qvalueCutoff} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
+}
+\value{
+A list with two elements:
 \itemize{
 \item \code{tidy_result}: A tibble with enrichment results containing the following columns:
 \itemize{
@@ -72,7 +70,7 @@ In this case all detected proteins in this experiment will be extracted and pass
 \item \code{count}: Number of genes in the term
 }
 \item \code{raw_result}: The raw clusterProfiler \verb{enrichResult`` object The list has classes }glyfun_gc_ora_go_res\verb{, }glyfun_gc_ora_res\verb{, and }glyfun_res`.
-}}
+}
 }
 \description{
 Performs Gene Ontology (GO) Over-Representation Analysis (ORA)

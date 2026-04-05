@@ -41,16 +41,13 @@ Defaults to \code{c(-1, 1)}.}
 \item{organism}{KEGG organism code. Passed to \code{organism} of \code{\link[clusterProfiler:enrichKEGG]{clusterProfiler::enrichKEGG()}}.
 Defaults to "hsa" (Homo sapiens). Common codes: "hsa" (human), "mmu" (mouse), "rno" (rat).}
 
-\item{universe}{Background genes. If a character vector, directly passed to \code{universe} of \code{\link[clusterProfiler:enrichKEGG]{clusterProfiler::enrichKEGG()}}.
-You can also provide a \code{\link[glyexp:experiment]{glyexp::experiment()}} object with "glycoproteomics" type.
-In this case all detected proteins in this experiment will be extracted and passed to
-\code{\link[clusterProfiler:enrichKEGG]{clusterProfiler::enrichKEGG()}}.}
+\item{universe}{Background genes Uniprot IDs, directly passed to \code{universe} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
 
-\item{p_adj_method}{Passed to \code{pAdjustMethod} of \code{\link[clusterProfiler:enrichKEGG]{clusterProfiler::enrichKEGG()}}.}
+\item{p_adj_method}{Passed to \code{pAdjustMethod} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
 
-\item{p_cutoff}{Passed to \code{pvalueCutoff} of \code{\link[clusterProfiler:enrichKEGG]{clusterProfiler::enrichKEGG()}}.}
+\item{p_cutoff}{Passed to \code{pvalueCutoff} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
 
-\item{q_cutoff}{Passed to \code{qvalueCutoff} of \code{\link[clusterProfiler:enrichKEGG]{clusterProfiler::enrichKEGG()}}.}
+\item{q_cutoff}{Passed to \code{qvalueCutoff} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
 }
 \value{
 A list with two elements:
