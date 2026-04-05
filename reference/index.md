@@ -7,9 +7,6 @@
 
   Helper function to prepare the `universe` parameter
 
-- [`.ora()`](https://glycoverse.github.io/glyfun/reference/dot-ora.md) :
-  Perform ORA
-
 - [`enrich_gc_ora_go()`](https://glycoverse.github.io/glyfun/reference/enrich_gc_ora_go.md)
   : Glycan-Centric GO Over Representation Analysis
 
