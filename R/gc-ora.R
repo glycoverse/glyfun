@@ -348,7 +348,7 @@ enrich_gc_ora_reactome <- function(
   if (uniprot_to_entrez) {
     orgdb <- dots[["OrgDb"]]
     dots[["OrgDb"]] <- NULL
-    protein_list <- purrr::map(protein_list, ~ .uniprot_to_entrez(.x, orgdb))
+    protein_list <- .uniprot_to_entrez_prolist(protein_list, orgdb)
   }
 
   n_traits <- length(names(protein_list))

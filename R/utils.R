@@ -116,3 +116,46 @@
   }
   entrez_ids
 }
+
+#' Convert UniProt IDs to Entrez IDs for a named list of proteins
+#'
+#' This is more efficient than calling `.uniprot_to_entrez()` on each list
+#' element separately, as it performs the mapping in a single database query.
+#'
+#' @param pro_list A named list where values are character vectors of UniProt IDs.
+#' @param orgdb An OrgDb object.
+#' @returns A named list with the same structure as `pro_list`, containing Entrez IDs.
+#' @noRd
+.uniprot_to_entrez_prolist <- function(pro_list, orgdb) {
+  # Get all unique proteins
+  all_proteins <- unique(unlist(pro_list, use.names = FALSE))
+
+  # Build mapping in a single bitr call
+  mapping <- suppressWarnings(suppressMessages(withr::with_temp_libpaths(
+    clusterProfiler::bitr(
+      all_proteins,
+      fromType = "UNIPROT",
+      toType = "ENTREZID",
+      OrgDb = orgdb
+    ),
+    action = "replace"
+  )))
+
+  # Report conversion failures
+  n_failed <- length(all_proteins) - length(unique(mapping$UNIPROT))
+  if (n_failed > 0) {
+    pct_failed <- round(n_failed / length(all_proteins) * 100, 1)
+    cli::cli_alert_warning(
+      "{.val {n_failed}} of {.val {length(all_proteins)}} ({.val {pct_failed}}%) proteins failed to map to Entrez IDs."
+    )
+  }
+
+  # Create lookup table: uniprot -> entrez
+  lookup <- setNames(mapping$ENTREZID, mapping$UNIPROT)
+
+  # Map each list element
+  purrr::map(pro_list, function(proteins) {
+    entrez_ids <- lookup[proteins]
+    entrez_ids[!is.na(entrez_ids)]
+  })
+}
