@@ -284,9 +284,17 @@ enrich_ora_reactome <- function(
     orgdb <- dots[["OrgDb"]]
     dots[["OrgDb"]] <- NULL
     proteins <- .uniprot_to_entrez(proteins, orgdb)
-    universe <- if (is.null(universe)) universe else .uniprot_to_entrez(universe, orgdb)
+    universe <- if (is.null(universe)) {
+      universe
+    } else {
+      .uniprot_to_entrez(universe, orgdb)
+    }
   }
-  suppressWarnings(res <- rlang::exec(enrich_fun, proteins, universe = universe, !!!dots))
+  suppressWarnings(
+    res <- suppressPackageStartupMessages(
+      rlang::exec(enrich_fun, proteins, universe = universe, !!!dots)
+    )
+  )
   if (is.null(res)) {
     cli::cli_alert_warning("No terms were enriched. `NULL` will be returned.")
     return(NULL)
