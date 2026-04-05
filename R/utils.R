@@ -95,14 +95,17 @@
 #' @returns The transformed Entrez IDs.
 #' @noRd
 .uniprot_to_entrez <- function(uniprot, orgdb) {
-  suppressWarnings(suppressMessages(
+  suppressWarnings(suppressMessages(withr::with_temp_libpaths(
+    # Use temporary libpaths to isolate package loading and prevent namespace
+    # pollution (e.g., org.Hs.eg.db masks base functions when attached)
     entrez_ids <- clusterProfiler::bitr(
       uniprot,
       fromType = "UNIPROT",
       toType = "ENTREZID",
       OrgDb = orgdb
-    )$ENTREZID
-  ))
+    )$ENTREZID,
+    action = "replace"
+  )))
   entrez_ids <- entrez_ids[!is.na(entrez_ids)]
   n_failed <- length(uniprot) - length(entrez_ids)
   if (n_failed > 0) {
