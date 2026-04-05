@@ -331,6 +331,7 @@ enrich_gc_ora_reactome <- function(
   result_class,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
+  universe = NULL,
   ...,
   pro_list_fun = NULL,
   uniprot_to_entrez = FALSE
@@ -349,6 +350,9 @@ enrich_gc_ora_reactome <- function(
     orgdb <- dots[["OrgDb"]]
     dots[["OrgDb"]] <- NULL
     protein_list <- .uniprot_to_entrez_prolist(protein_list, orgdb)
+    if (!is.null(universe)) {
+      universe <- .uniprot_to_entrez(universe, orgdb)
+    }
   }
 
   n_traits <- length(names(protein_list))
@@ -363,6 +367,7 @@ enrich_gc_ora_reactome <- function(
           clusterProfiler::compareCluster,
           protein_list,
           fun = enrich_fun,
+          universe = universe,
           !!!dots
         ),
         action = "replace"

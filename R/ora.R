@@ -284,10 +284,8 @@ enrich_ora_reactome <- function(
     orgdb <- dots[["OrgDb"]]
     dots[["OrgDb"]] <- NULL
     proteins <- .uniprot_to_entrez(proteins, orgdb)
-    universe <- if (is.null(universe)) {
-      universe
-    } else {
-      .uniprot_to_entrez(universe, orgdb)
+    if (!is.null(universe)) {
+      universe <- .uniprot_to_entrez(universe, orgdb)
     }
   }
   suppressWarnings(
