@@ -144,6 +144,36 @@ enrich_ora_kegg <- function(
   )
 }
 
+#' Reactome Over Representation Analysis
+#' @export
+enrich_ora_reactome <- function(
+  dea_res,
+  dea_p_cutoff = 0.05,
+  dea_log2fc_cutoff = c(-1, 1),
+  orgdb = "org.Hs.eg.db",
+  organism = "human",
+  universe = NULL,
+  p_adj_method = "BH",
+  p_cutoff = 0.05,
+  q_cutoff = 0.2
+) {
+  rlang::check_installed("ReactomePA")
+  .ora(
+    dea_res,
+    enrich_fun = ReactomePA::enrichPathway,
+    result_class = "glyfun_ora_reactome_res",
+    dea_p_cutoff = dea_p_cutoff,
+    dea_log2fc_cutoff = dea_log2fc_cutoff,
+    OrgDb = orgdb,
+    organism = organism,
+    universe = universe,
+    pAdjustMethod = p_adj_method,
+    pvalueCutoff = p_cutoff,
+    qvalueCutoff = q_cutoff,
+    uniprot_to_entrez = TRUE
+  )
+}
+
 #' Perform ORA
 #' @param dea_res DEA result from glystats.
 #' @param enrich_fun An enrichment function.
@@ -237,9 +267,12 @@ enrich_ora_kegg <- function(
   result_class,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
+  universe = NULL,
   ...,
-  pro_fun = NULL
+  pro_fun = NULL,
+  uniprot_to_entrez = FALSE
 ) {
+  dots <- rlang::list2(...)
   # Argument validation
   .check_dea_res(dea_res)
   .check_p_cutoff_arg(dea_p_cutoff)
@@ -247,7 +280,13 @@ enrich_ora_kegg <- function(
 
   # Performing enrichment
   proteins <- pro_fun(dea_res)
-  suppressWarnings(res <- rlang::exec(enrich_fun, proteins, ...))
+  if (uniprot_to_entrez) {
+    orgdb <- dots[["OrgDb"]]
+    dots[["OrgDb"]] <- NULL
+    proteins <- .uniprot_to_entrez(proteins, orgdb)
+    universe <- if (is.null(universe)) universe else .uniprot_to_entrez(universe, orgdb)
+  }
+  suppressWarnings(res <- rlang::exec(enrich_fun, proteins, universe = universe, !!!dots))
   if (is.null(res)) {
     cli::cli_alert_warning("No terms were enriched. `NULL` will be returned.")
     return(NULL)

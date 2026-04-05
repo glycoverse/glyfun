@@ -88,3 +88,28 @@
     )
   }
 }
+
+#' Convert UniProt IDs to Entrez IDs
+#' @param uniprot The UniProt IDs.
+#' @param orgdb An OrgDb object.
+#' @returns The transformed Entrez IDs.
+#' @noRd
+.uniprot_to_entrez <- function(uniprot, orgdb) {
+  suppressWarnings(suppressMessages(
+    entrez_ids <- clusterProfiler::bitr(
+      uniprot,
+      fromType = "UNIPROT",
+      toType = "ENTREZID",
+      OrgDb = orgdb
+    )$ENTREZID
+  ))
+  entrez_ids <- entrez_ids[!is.na(entrez_ids)]
+  n_failed <- length(uniprot) - length(entrez_ids)
+  if (n_failed > 0) {
+    pct_failed <- round(n_failed / length(uniprot) * 100, 1)
+    cli::cli_alert_warning(
+      "{.val {n_failed}} of {.val {length(uniprot)}} ({.val {pct_failed}}%) proteins failed to map to Entrez IDs."
+    )
+  }
+  entrez_ids
+}
