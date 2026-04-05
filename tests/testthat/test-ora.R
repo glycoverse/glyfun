@@ -110,11 +110,6 @@ test_that("enrich_ora_kegg returns correct structure on happy path (integration)
     silent = TRUE
   )
 
-  skip_if(
-    inherits(result, "try-error"),
-    "KEGG enrichment failed, likely due to network issues"
-  )
-
   expect_s3_class(
     result,
     c("glyfun_ora_kegg_res", "glyfun_ora_res", "glyfun_res")
