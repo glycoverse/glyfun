@@ -199,7 +199,7 @@ enrich_gc_ora_reactome <- function(
     result_class = "glyfun_gc_ora_reactome_res",
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
-    OrgDb = orgdb,
+    bitr_orgdb = orgdb,
     organism = organism,
     universe = universe,
     pAdjustMethod = p_adj_method,
@@ -215,6 +215,7 @@ enrich_gc_ora_reactome <- function(
 #' @param result_class A string of the concrete result class.
 #' @param dea_p_cutoff P-value cutoff to define statistical significance.
 #' @param dea_log2fc_cutoff Log2FC cutoffs to define statistical significance.
+#' @param bitr_orgdb OrgDb object for bitr conversion.
 #' @param ... Parameters passed to downstream enrichment package.
 #' @noRd
 .gc_ora <- function(
@@ -223,6 +224,7 @@ enrich_gc_ora_reactome <- function(
   result_class,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
+  bitr_orgdb = NULL,
   ...
 ) {
   UseMethod(".gc_ora")
@@ -234,6 +236,7 @@ enrich_gc_ora_reactome <- function(
   result_class,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
+  bitr_orgdb = NULL,
   ...
 ) {
   pro_list_fun <- function(dea_res) {
@@ -255,6 +258,7 @@ enrich_gc_ora_reactome <- function(
     result_class = result_class,
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
+    bitr_orgdb = bitr_orgdb,
     ...,
     pro_list_fun = pro_list_fun
   )
@@ -266,6 +270,7 @@ enrich_gc_ora_reactome <- function(
   result_class,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
+  bitr_orgdb = NULL,
   ...
 ) {
   pro_list_fun <- function(dea_res) {
@@ -308,6 +313,7 @@ enrich_gc_ora_reactome <- function(
     result_class = result_class,
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
+    bitr_orgdb = bitr_orgdb,
     ...,
     pro_list_fun = pro_list_fun
   )
@@ -332,12 +338,17 @@ enrich_gc_ora_reactome <- function(
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
   universe = NULL,
+  bitr_orgdb = NULL,
   ...,
   pro_list_fun = NULL,
   uniprot_to_entrez = FALSE
 ) {
-  dots <- rlang::list2(...)
   # Argument validation
+  if (uniprot_to_entrez && is.null(bitr_orgdb)) {
+    cli::cli_abort(
+      "{.arg bitr_orgdb} must be provided when {.arg uniprot_to_entrez} is TRUE."
+    )
+  }
   .check_dea_res(dea_res)
   .check_p_cutoff_arg(dea_p_cutoff)
   .check_log2fc_cutoff_arg(dea_log2fc_cutoff)
@@ -347,11 +358,9 @@ enrich_gc_ora_reactome <- function(
 
   # Convert Uniprot IDs to Entrez IDs if needed (for ReactomePA)
   if (uniprot_to_entrez) {
-    orgdb <- dots[["OrgDb"]]
-    dots[["OrgDb"]] <- NULL
-    protein_list <- .uniprot_to_entrez_prolist(protein_list, orgdb)
+    protein_list <- .uniprot_to_entrez_prolist(protein_list, bitr_orgdb)
     if (!is.null(universe)) {
-      universe <- .uniprot_to_entrez(universe, orgdb)
+      universe <- .uniprot_to_entrez(universe, bitr_orgdb)
     }
   }
 
@@ -368,7 +377,7 @@ enrich_gc_ora_reactome <- function(
           protein_list,
           fun = enrich_fun,
           universe = universe,
-          !!!dots
+          ...
         ),
         action = "replace"
       )
