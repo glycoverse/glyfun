@@ -261,3 +261,51 @@ test_that("enrich_gc_ora_go errors on invalid dea_log2fc_cutoff", {
     "Assertion on 'log2fc_cutoff' failed"
   )
 })
+
+test_that("enrich_gc_ora_go returns NULL when no terms are enriched", {
+  # Use fake proteins that won't match any GO terms
+  tidy_result <- tibble::tibble(
+    variable = paste0("var", 1:3),
+    trait = rep("trait_A", 3),
+    protein = c("FAKE1", "FAKE2", "FAKE3"),
+    p_val = rep(0.001, 3),
+    p_adj = rep(0.001, 3),
+    log2fc = c(2.5, 3.0, 1.5),
+    estimate = rep(1, 3)
+  )
+  dea_res <- structure(
+    list(tidy_result = tidy_result, raw_result = list()),
+    class = c("glystats_ttest_res", "glystats_res")
+  )
+
+  result <- suppressMessages(
+    suppressWarnings(enrich_gc_ora_go(
+      dea_res,
+      orgdb = "org.Hs.eg.db",
+      ont = "MF"
+    ))
+  )
+
+  expect_null(result)
+})
+
+test_that("enrich_gc_ora_go errors when glycan trait columns are missing", {
+  # Create a glystats_res without glycan_structure, glycan_composition, trait, or motif columns
+  tidy_result <- tibble::tibble(
+    variable = paste0("var", 1:5),
+    protein = c("P01308", "P04637", "P42345", "P00533", "P42336"),
+    p_val = rep(0.001, 5),
+    p_adj = rep(0.001, 5),
+    log2fc = c(2.5, 3.0, 1.5, 2.0, 2.2),
+    estimate = rep(1, 5)
+  )
+  dea_res <- structure(
+    list(tidy_result = tidy_result, raw_result = list()),
+    class = c("glystats_ttest_res", "glystats_res")
+  )
+
+  expect_error(
+    enrich_gc_ora_go(dea_res),
+    "Cannot determine glycan traits"
+  )
+})
