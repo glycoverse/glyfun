@@ -1,6 +1,12 @@
+# TODO: Add a `check_parameters()` function.
+
 #' Check argument `dea_res`
 #' @noRd
 .check_dea_res <- function(dea_res) {
+  UseMethod(".check_dea_res")
+}
+
+.check_dea_res.glystats_res <- function(dea_res) {
   # Check type
   basic_class <- class(dea_res)[[1]]
   supported_classes <- c(
@@ -44,6 +50,18 @@
         "{.pkg glyfun} functions does not support multi-group {.fn glystats::gly_limma} results."
       )
     }
+  }
+}
+
+.check_dea_res.data.frame <- function(dea_res) {
+  expected_cols <- c("protein", "site", "trait", "p_val", "log2FC")
+  missing_cols <- setdiff(expected_cols, colnames(dea_res))
+  if (length(missing_cols) > 0) {
+    cli::cli_abort(c(
+      "{.arg dea_res} must have all expected columns.",
+      "i" = "Expected columns: {.field {expected_cols}}",
+      "x" = "Missing columns: {.field {missing_cols}}"
+    ))
   }
 }
 

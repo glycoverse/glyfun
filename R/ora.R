@@ -166,6 +166,54 @@ enrich_ora_kegg <- function(
   dea_log2fc_cutoff = c(-1, 1),
   ...
 ) {
+  UseMethod(".ora")
+}
+
+.ora.data.frame <- function(
+  dea_res,
+  enrich_fun,
+  result_class,
+  dea_p_cutoff = 0.05,
+  dea_log2fc_cutoff = c(-1, 1),
+  ...
+) {
+  .check_dea_res(dea_res)
+  .check_p_cutoff_arg(dea_p_cutoff)
+  .check_log2fc_cutoff_arg(dea_log2fc_cutoff)
+
+  proteins <- dea_res |>
+    dplyr::filter(
+      .data$p_val < dea_p_cutoff,
+      .data$log2FC < dea_log2fc_cutoff[[1]] |
+        .data$log2FC > dea_log2fc_cutoff[[2]]
+    ) |>
+    dplyr::pull(.data$protein)
+
+  suppressWarnings(res <- rlang::exec(enrich_fun, proteins, ...))
+
+  if (is.null(res)) {
+    cli::cli_alert_warning("No terms were enriched. `NULL` will be returned.")
+    return(NULL)
+  }
+  tidy_res <- tibble::as_tibble(res) |>
+    janitor::clean_names() |>
+    dplyr::rename(tidyselect::all_of(c(
+      "p_val" = "pvalue",
+      "p_adj" = "p_adjust",
+      "q_val" = "qvalue"
+    )))
+  res <- list(tidy_result = tidy_res, raw_result = res)
+  structure(res, class = c(result_class, "glyfun_ora_res", "glyfun_res"))
+}
+
+.ora.glystats_res <- function(
+  dea_res,
+  enrich_fun,
+  result_class,
+  dea_p_cutoff = 0.05,
+  dea_log2fc_cutoff = c(-1, 1),
+  ...
+) {
   .check_dea_res(dea_res)
   .check_p_cutoff_arg(dea_p_cutoff)
   .check_log2fc_cutoff_arg(dea_log2fc_cutoff)
