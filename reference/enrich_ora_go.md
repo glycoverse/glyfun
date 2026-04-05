@@ -75,6 +75,11 @@ enrich_ora_go(
 
   Background genes Uniprot IDs, directly passed to `universe` of
   [`clusterProfiler::enrichGO()`](https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html).
+  If `NULL` (default), all genes in the data will be used. Another
+  common pattern is to use all detected proteins as backgroud genes. You
+  can use
+  [`detected_universe()`](https://glycoverse.github.io/glyfun/reference/detected_universe.md)
+  to help you.
 
 - p_adj_method:
 
