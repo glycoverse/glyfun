@@ -280,3 +280,80 @@ test_that("enrich_ora_go errors on invalid dea_log2fc_cutoff", {
     "Assertion on 'log2fc_cutoff' failed"
   )
 })
+
+test_that("enrich_ora_go errors on unsupported glystats_res class", {
+  dea_res <- list(tidy_res = tibble::tibble(), raw_res = list())
+  class(dea_res) <- c("glystats_invalid_res", "glystats_res")
+
+  expect_error(
+    enrich_ora_go(dea_res),
+    "Unsupported input class for `dea_res`"
+  )
+})
+
+test_that("enrich_ora_go errors on glystats_res with invalid experiment type", {
+  tidy_result <- tibble::tibble(
+    variable = paste0("var", 1:5),
+    protein = c("P01308", "P04637", "P42345", "P00533", "P42336"),
+    p_val = rep(0.001, 5),
+    p_adj = rep(0.001, 5),
+    log2fc = c(2.5, 3.0, 1.5, 2.0, 2.2),
+    estimate = rep(1, 5)
+  )
+  dea_res <- structure(
+    list(
+      tidy_result = tidy_result,
+      raw_result = list(),
+      meta_data = list(exp_type = "invalid_type")
+    ),
+    class = c("glystats_ttest_res", "glystats_res")
+  )
+
+  expect_error(
+    enrich_ora_go(dea_res),
+    "must be of"
+  )
+})
+
+test_that("enrich_ora_go errors on glystats_res without protein column", {
+  tidy_result <- tibble::tibble(
+    variable = paste0("var", 1:5),
+    p_val = rep(0.001, 5),
+    p_adj = rep(0.001, 5),
+    log2fc = c(2.5, 3.0, 1.5, 2.0, 2.2),
+    estimate = rep(1, 5)
+  )
+  dea_res <- structure(
+    list(tidy_result = tidy_result, raw_result = list()),
+    class = c("glystats_ttest_res", "glystats_res")
+  )
+
+  expect_error(
+    enrich_ora_go(dea_res),
+    "A protein column must be in `dea_res`"
+  )
+})
+
+test_that("enrich_ora_go errors on multi-group glystats_limma_res", {
+  # Create a glystats_limma_res mock with multi-group contrasts
+  tidy_result <- tibble::tibble(
+    variable = paste0("var", 1:10),
+    protein = rep(c("P01308", "P04637"), 5),
+    p_val = rep(0.001, 10),
+    p_adj = rep(0.001, 10),
+    log2fc = c(2.5, 3.0, 1.5, 2.0, 2.2, -2.5, -3.0, -1.5, -2.0, -2.2),
+    estimate = rep(1, 10),
+    ref_group = rep(c("A", "B"), each = 5),
+    test_group = rep(c("C", "D"), each = 5)
+  )
+  # Use tidy_result (not tidy_res) to match glystats convention
+  dea_res <- structure(
+    list(tidy_result = tidy_result, raw_result = list()),
+    class = c("glystats_limma_res", "glystats_res")
+  )
+
+  expect_error(
+    enrich_ora_go(dea_res),
+    "does not support multi-group"
+  )
+})
