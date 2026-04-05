@@ -151,7 +151,7 @@
   }
 
   # Create lookup table: uniprot -> entrez
-  lookup <- setNames(mapping$ENTREZID, mapping$UNIPROT)
+  lookup <- rlang::set_names(mapping$ENTREZID, mapping$UNIPROT)
 
   # Map each list element
   purrr::map(pro_list, function(proteins) {
