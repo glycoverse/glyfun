@@ -147,6 +147,14 @@ enrich_gc_ora_kegg <- function(
   )
 }
 
+#' Perform Glycan-Centric ORA
+#' @param dea_res DEA result from glystats or a tibble.
+#' @param enrich_fun An enrichment function name (string).
+#' @param result_class A string of the concrete result class.
+#' @param dea_p_cutoff P-value cutoff to define statistical significance.
+#' @param dea_log2fc_cutoff Log2FC cutoffs to define statistical significance.
+#' @param ... Parameters passed to downstream enrichment package.
+#' @noRd
 .gc_ora <- function(
   dea_res,
   enrich_fun,
@@ -155,34 +163,109 @@ enrich_gc_ora_kegg <- function(
   dea_log2fc_cutoff = c(-1, 1),
   ...
 ) {
+  UseMethod(".gc_ora")
+}
+
+.gc_ora.data.frame <- function(
+  dea_res,
+  enrich_fun,
+  result_class,
+  dea_p_cutoff = 0.05,
+  dea_log2fc_cutoff = c(-1, 1),
+  ...
+) {
+  pro_list_fun <- function(dea_res) {
+    dea_res |>
+      dplyr::filter(
+        .data$p_val < dea_p_cutoff,
+        .data$log2FC < dea_log2fc_cutoff[[1]] |
+          .data$log2FC > dea_log2fc_cutoff[[2]]
+      ) |>
+      dplyr::summarise(
+        proteins = list(unique(.data$protein)),
+        .by = "trait"
+      ) |>
+      tibble::deframe()
+  }
+  .gc_ora_impl(
+    dea_res,
+    enrich_fun = enrich_fun,
+    result_class = result_class,
+    dea_p_cutoff = dea_p_cutoff,
+    dea_log2fc_cutoff = dea_log2fc_cutoff,
+    ...,
+    pro_list_fun = pro_list_fun
+  )
+}
+
+.gc_ora.glystats_res <- function(
+  dea_res,
+  enrich_fun,
+  result_class,
+  dea_p_cutoff = 0.05,
+  dea_log2fc_cutoff = c(-1, 1),
+  ...
+) {
+  pro_list_fun <- function(dea_res) {
+    tidy_dea_res <- glystats::get_tidy_result(dea_res)
+    by <- dplyr::case_when(
+      "glycan_structure" %in% colnames(tidy_dea_res) ~ "glycan_structure",
+      "glycan_composition" %in% colnames(tidy_dea_res) ~ "glycan_composition",
+      "trait" %in% colnames(tidy_dea_res) ~ "trait",
+      "motif" %in% colnames(tidy_dea_res) ~ "motif"
+    )
+
+    tidy_dea_res |>
+      dplyr::filter(
+        .data$p_adj < dea_p_cutoff,
+        .data$log2fc < dea_log2fc_cutoff[[1]] |
+          .data$log2fc > dea_log2fc_cutoff[[2]]
+      ) |>
+      dplyr::summarise(
+        proteins = list(unique(.data$protein)),
+        .by = tidyselect::all_of(by)
+      ) |>
+      tibble::deframe()
+  }
+  .gc_ora_impl(
+    dea_res,
+    enrich_fun = enrich_fun,
+    result_class = result_class,
+    dea_p_cutoff = dea_p_cutoff,
+    dea_log2fc_cutoff = dea_log2fc_cutoff,
+    ...,
+    pro_list_fun = pro_list_fun
+  )
+}
+
+#' The implementation template of gc_ora functions
+#'
+#' The only difference between different `.gc_ora` methods is how to extract protein lists.
+#' Other operations, like argument validation, performing enrichment,
+#' and packaging the result list, are exactly the same.
+#' This function uses a `pro_list_fun` parameter to enable caller functions
+#' provide their custom protein list extraction logic.
+#'
+#' @inheritParams .gc_ora
+#' @param pro_list_fun A function with signature `function(dea_res)` that returns a
+#'   named list where names are trait names and values are character vectors of protein Uniprot IDs.
+#' @noRd
+.gc_ora_impl <- function(
+  dea_res,
+  enrich_fun,
+  result_class,
+  dea_p_cutoff = 0.05,
+  dea_log2fc_cutoff = c(-1, 1),
+  ...,
+  pro_list_fun = NULL
+) {
+  # Argument validation
   .check_dea_res(dea_res)
   .check_p_cutoff_arg(dea_p_cutoff)
   .check_log2fc_cutoff_arg(dea_log2fc_cutoff)
 
-  tidy_dea_res <- glystats::get_tidy_result(dea_res)
-  by <- dplyr::case_when(
-    "glycan_structure" %in% colnames(tidy_dea_res) ~ "glycan_structure",
-    "glycan_composition" %in% colnames(tidy_dea_res) ~ "glycan_composition",
-    "trait" %in% colnames(tidy_dea_res) ~ "trait",
-    "motif" %in% colnames(tidy_dea_res) ~ "motif"
-  )
-  if (is.na(by)) {
-    cli::cli_abort(
-      "Cannot determine grouping column. Expected one of: glycan_structure, glycan_composition, trait, or motif."
-    )
-  }
-
-  protein_list <- tidy_dea_res |>
-    dplyr::filter(
-      .data$p_adj < dea_p_cutoff,
-      .data$log2fc < dea_log2fc_cutoff[[1]] |
-        .data$log2fc > dea_log2fc_cutoff[[2]]
-    ) |>
-    dplyr::summarise(
-      proteins = list(unique(.data$protein)),
-      .by = tidyselect::all_of(by)
-    ) |>
-    tibble::deframe()
+  # Performing enrichment
+  protein_list <- pro_list_fun(dea_res)
 
   n_traits <- length(names(protein_list))
   cli::cli_alert_info(
