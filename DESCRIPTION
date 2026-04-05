@@ -26,5 +26,4 @@ Imports:
     purrr,
     rlang,
     tibble,
-    tidyselect,
-    withr
+    tidyselect

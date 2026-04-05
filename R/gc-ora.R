@@ -371,15 +371,12 @@ enrich_gc_ora_reactome <- function(
 
   suppressWarnings(
     ck <- suppressPackageStartupMessages(
-      withr::with_temp_libpaths(
-        rlang::exec(
-          clusterProfiler::compareCluster,
-          protein_list,
-          fun = enrich_fun,
-          universe = universe,
-          ...
-        ),
-        action = "replace"
+      rlang::exec(
+        clusterProfiler::compareCluster,
+        protein_list,
+        fun = enrich_fun,
+        universe = universe,
+        ...
       )
     )
   )

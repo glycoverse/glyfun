@@ -95,17 +95,16 @@
 #' @returns The transformed Entrez IDs.
 #' @noRd
 .uniprot_to_entrez <- function(uniprot, orgdb) {
-  suppressWarnings(suppressMessages(withr::with_temp_libpaths(
-    # Use temporary libpaths to isolate package loading and prevent namespace
-    # pollution (e.g., org.Hs.eg.db masks base functions when attached)
-    entrez_ids <- clusterProfiler::bitr(
-      uniprot,
-      fromType = "UNIPROT",
-      toType = "ENTREZID",
-      OrgDb = orgdb
-    )$ENTREZID,
-    action = "replace"
-  )))
+  suppressWarnings(
+    suppressMessages(
+      entrez_ids <- clusterProfiler::bitr(
+        uniprot,
+        fromType = "UNIPROT",
+        toType = "ENTREZID",
+        OrgDb = orgdb
+      )$ENTREZID
+    )
+  )
   entrez_ids <- entrez_ids[!is.na(entrez_ids)]
   n_failed <- length(uniprot) - length(entrez_ids)
   if (n_failed > 0) {
@@ -131,15 +130,16 @@
   all_proteins <- unique(unlist(pro_list, use.names = FALSE))
 
   # Build mapping in a single bitr call
-  mapping <- suppressWarnings(suppressMessages(withr::with_temp_libpaths(
-    clusterProfiler::bitr(
-      all_proteins,
-      fromType = "UNIPROT",
-      toType = "ENTREZID",
-      OrgDb = orgdb
-    ),
-    action = "replace"
-  )))
+  mapping <- suppressWarnings(
+    suppressMessages(
+      clusterProfiler::bitr(
+        all_proteins,
+        fromType = "UNIPROT",
+        toType = "ENTREZID",
+        OrgDb = orgdb
+      )
+    )
+  )
 
   # Report conversion failures
   n_failed <- length(all_proteins) - length(unique(mapping$UNIPROT))

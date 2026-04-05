@@ -334,12 +334,7 @@ enrich_ora_reactome <- function(
   }
   suppressWarnings(
     res <- suppressPackageStartupMessages(
-      withr::with_temp_libpaths(
-        # Use temporary libpaths to isolate package loading and prevent namespace
-        # pollution (e.g., org.Hs.eg.db masks base functions when attached)
-        rlang::exec(enrich_fun, proteins, universe = universe, ...),
-        action = "replace"
-      )
+      rlang::exec(enrich_fun, proteins, universe = universe, ...)
     )
   )
   if (is.null(res)) {
