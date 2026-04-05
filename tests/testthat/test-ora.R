@@ -133,6 +133,7 @@ test_that("enrich_ora_kegg returns correct structure on happy path (integration)
 
 test_that("enrich_ora_reactome returns correct structure on happy path (integration)", {
   skip_if_not_installed("ReactomePA")
+  skip_if_not_installed("org.Hs.eg.db")
 
   dea_res <- .mock_dea_res()
 
