@@ -17,28 +17,26 @@ detected_universe <- function(x) {
 
 #' @export
 detected_universe.glyexp_experiment <- function(x) {
-  .check_universe_meta_data(x$meta_data)
-  proteins <- x$var_info$protein
-  if (is.null(proteins)) {
+  .check_universe_meta_data(x$meta_data, input_type = "exp")
+  if (!"protein" %in% colnames(x$var_info)) {
     cli::cli_abort(c(
       "There must be a {.field protein} column in the {.field var_info} of the experiment.",
       "i" = "Did you accidentally remove the {.field protein} column?"
     ))
   }
-  proteins
+  x$var_info$protein
 }
 
 #' @export
 detected_universe.glystats_res <- function(x) {
-  .check_universe_meta_data(x$meta_data)
-  proteins <- x$tidy_result$protein
-  if (is.null(proteins)) {
+  .check_universe_meta_data(x$meta_data, input_type = "res")
+  if (!"protein" %in% colnames(x$tidy_result)) {
     cli::cli_abort(c(
       "There must be a {.field protein} column in the {.field var_info} of the experiment.",
       "i" = "Did you accidentally set `add_info = FALSE` when calling the {.pkg glystats} function?"
     ))
   }
-  proteins
+  x$tidy_result$protein
 }
 
 #' Check the meta-data of input for `detected_universe()`
@@ -54,7 +52,7 @@ detected_universe.glystats_res <- function(x) {
     cli::cli_abort(c(
       "Cannot decide experiment type because a {.field meta_data} field is missing.",
       "i" = "You might need to update {.pkg glystats} to the lastest version.",
-      "i" = "Current {.pkg glystats} version: {.val {.get_glystats_version()}}"
+      "i" = "Current {.pkg glystats} version: {.val {(.get_glystats_version())}}"
     ))
   }
 
