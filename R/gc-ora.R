@@ -215,7 +215,12 @@ enrich_gc_ora_kegg <- function(
       "motif" %in% colnames(tidy_dea_res) ~ "motif"
     )
     if (is.na(by)) {
-      required_cols <- c("glycan_structure", "glycan_composition", "trait", "motif")
+      required_cols <- c(
+        "glycan_structure",
+        "glycan_composition",
+        "trait",
+        "motif"
+      )
       cli::cli_abort(c(
         "Cannot determine glycan traits.",
         "i" = "At least one of these columns is needed: {.field {required_cols}}",
