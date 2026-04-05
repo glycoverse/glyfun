@@ -35,6 +35,9 @@
 #' @param orgdb Passed to `OrgDb` of [clusterProfiler::enrichGO()].
 #' @param ont Passed to `ont` of [clusterProfiler::enrichGO()]. "BP", "MF", "CC", or "ALL". Defaults to "MF".
 #' @param universe Background genes Uniprot IDs, directly passed to `universe` of [clusterProfiler::enrichGO()].
+#'   If `NULL` (default), all genes in the data will be used.
+#'   Another common pattern is to use all detected proteins as backgroud genes.
+#'   You can use [detected_universe()] to help you.
 #' @param p_adj_method Passed to `pAdjustMethod` of [clusterProfiler::enrichGO()].
 #' @param p_cutoff Passed to `pvalueCutoff` of [clusterProfiler::enrichGO()].
 #' @param q_cutoff Passed to `qvalueCutoff` of [clusterProfiler::enrichGO()].
