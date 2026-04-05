@@ -79,7 +79,7 @@ enrich_ora_go <- function(
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
     keyType = "UNIPROT",
-    OrgDb = orgdb,
+    OrgDb = orgdb,  # passed to `clusterProfiler::enrichGO()`
     ont = ont,
     universe = universe,
     pAdjustMethod = p_adj_method,
@@ -164,7 +164,7 @@ enrich_ora_reactome <- function(
     result_class = "glyfun_ora_reactome_res",
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
-    OrgDb = orgdb,
+    bitr_orgdb = orgdb,  # passed to the `bitr_orgdb` parameter
     organism = organism,
     universe = universe,
     pAdjustMethod = p_adj_method,
@@ -180,6 +180,10 @@ enrich_ora_reactome <- function(
 #' @param result_class A string of the concrete result class.
 #' @param dea_p_cutoff P-value cutoff to define statistical significance.
 #' @param dea_log2fc_cutoff Log2FC cutoffs to define statistical significance.
+#' @param bitr_orgdb OrgDb object for bitr conversion.
+#'   Note that for special function like `clusterProfiler::enrichGO()`,
+#'   an `OrgDb` parameter can be passed to `...` to be used by `clusterProfiler::enrichGO()` directly.
+#'   `OrgDb` and `bitr_orgdb` are therefore independent.
 #' @param ... Parameters passed to downstream enrichment package.
 .ora <- function(
   dea_res,
@@ -187,6 +191,7 @@ enrich_ora_reactome <- function(
   result_class,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
+  bitr_orgdb = NULL,
   ...
 ) {
   UseMethod(".ora")
@@ -198,6 +203,7 @@ enrich_ora_reactome <- function(
   result_class,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
+  bitr_orgdb = NULL,
   ...
 ) {
   pro_fun <- function(dea_res) {
@@ -215,6 +221,7 @@ enrich_ora_reactome <- function(
     result_class = result_class,
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
+    bitr_orgdb = bitr_orgdb,
     ...,
     pro_fun = pro_fun
   )
@@ -226,6 +233,7 @@ enrich_ora_reactome <- function(
   result_class,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
+  bitr_orgdb = NULL,
   ...
 ) {
   pro_fun <- function(dea_res) {
@@ -244,6 +252,7 @@ enrich_ora_reactome <- function(
     result_class = result_class,
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
+    bitr_orgdb = bitr_orgdb,
     ...,
     pro_fun = pro_fun
   )
@@ -268,12 +277,15 @@ enrich_ora_reactome <- function(
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
   universe = NULL,
+  bitr_orgdb = NULL,
   ...,
   pro_fun = NULL,
   uniprot_to_entrez = FALSE
 ) {
-  dots <- rlang::list2(...)
   # Argument validation
+  if (uniprot_to_entrez && is.null(bitr_orgdb)) {
+    cli::cli_abort("{.arg bitr_orgdb} must be provided when {.arg uniprot_to_entrez} is TRUE.")
+  }
   .check_dea_res(dea_res)
   .check_p_cutoff_arg(dea_p_cutoff)
   .check_log2fc_cutoff_arg(dea_log2fc_cutoff)
@@ -281,11 +293,9 @@ enrich_ora_reactome <- function(
   # Performing enrichment
   proteins <- pro_fun(dea_res)
   if (uniprot_to_entrez) {
-    orgdb <- dots[["OrgDb"]]
-    dots[["OrgDb"]] <- NULL
-    proteins <- .uniprot_to_entrez(proteins, orgdb)
+    proteins <- .uniprot_to_entrez(proteins, bitr_orgdb)
     if (!is.null(universe)) {
-      universe <- .uniprot_to_entrez(universe, orgdb)
+      universe <- .uniprot_to_entrez(universe, bitr_orgdb)
     }
   }
   suppressWarnings(
@@ -293,7 +303,7 @@ enrich_ora_reactome <- function(
       withr::with_temp_libpaths(
         # Use temporary libpaths to isolate package loading and prevent namespace
         # pollution (e.g., org.Hs.eg.db masks base functions when attached)
-        rlang::exec(enrich_fun, proteins, universe = universe, !!!dots),
+        rlang::exec(enrich_fun, proteins, universe = universe, ...),
         action = "replace"
       )
     )
