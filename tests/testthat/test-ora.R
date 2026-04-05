@@ -131,6 +131,39 @@ test_that("enrich_ora_kegg returns correct structure on happy path (integration)
   expect_true(all(expected_cols %in% colnames(result$tidy_result)))
 })
 
+test_that("enrich_ora_reactome returns correct structure on happy path (integration)", {
+  skip_if_not_installed("ReactomePA")
+
+  dea_res <- .mock_dea_res()
+
+  suppressMessages(
+    result <- enrich_ora_reactome(dea_res, orgdb = "org.Hs.eg.db", organism = "human", p_cutoff = 0.05)
+  )
+
+  expect_s3_class(
+    result,
+    c("glyfun_ora_reactome_res", "glyfun_ora_res", "glyfun_res")
+  )
+  expect_named(result, c("tidy_result", "raw_result"))
+  expect_true(tibble::is_tibble(result$tidy_result))
+
+  expected_cols <- c(
+    "id",
+    "description",
+    "gene_ratio",
+    "bg_ratio",
+    "rich_factor",
+    "fold_enrichment",
+    "z_score",
+    "p_val",
+    "p_adj",
+    "q_val",
+    "gene_id",
+    "count"
+  )
+  expect_true(all(expected_cols %in% colnames(result$tidy_result)))
+})
+
 # Error handling tests ----
 
 test_that("enrich_ora_go errors on data.frame with missing columns", {
