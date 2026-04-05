@@ -16,6 +16,46 @@ enrich_gc_ora_reactome(
   q_cutoff = 0.2
 )
 }
+\arguments{
+\item{dea_res}{Differential analysis result. Can be one of:
+\itemize{
+\item Result from \code{\link[glystats:gly_limma]{glystats::gly_limma()}} (two groups), \code{\link[glystats:gly_ttest]{glystats::gly_ttest()}}, or \code{\link[glystats:gly_wilcox]{glystats::gly_wilcox()}},
+called on an \code{\link[glyexp:experiment]{glyexp::experiment()}} of "traitproteomics" type.
+\item A tibble with the following columns:
+\itemize{
+\item \code{protein}: Uniprot ID of proteins
+\item \code{trait}: A glycosylation trait (e.g. "TFc" for proportion of core-fucosylated glycans)
+\item \code{site}: The glycosylation site.
+\item \code{p_val}: p-values, preferably adjusted p-values
+\item \code{log2FC}: log2 of fold change
+}
+}}
+
+\item{dea_p_cutoff}{P-value cutoff for statistical significance. Defaults to 0.05.
+For \code{glystats} result input, adjusted p-values are used.}
+
+\item{dea_log2fc_cutoff}{Log2 fold change cutoff statistical significance.
+A length-2 numeric vector, being negative and positive boundaries, respectively.
+For example, \code{c(-1, 1)} means "log2FC < -1 or log2FC > 1", and \code{c(-Inf, 1)} means "log2FC > 1".
+Defaults to \code{c(-1, 1)}.}
+
+\item{orgdb}{OrgDb object for converting Uniprot IDs to Entrez IDs.
+Passed to \code{clusterProfiler::bitr()}. Defaults to "org.Hs.eg.db".}
+
+\item{organism}{Reactome organism name. Passed to \code{organism} of \code{\link[ReactomePA:enrichPathway]{ReactomePA::enrichPathway()}}.
+Defaults to "human". Common values: "human", "mouse", "rat".}
+
+\item{universe}{Background genes Uniprot IDs, directly passed to \code{universe} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.
+If \code{NULL} (default), all genes in the data will be used.
+Another common pattern is to use all detected proteins as backgroud genes.
+You can use \code{\link[=detected_universe]{detected_universe()}} to help you.}
+
+\item{p_adj_method}{Passed to \code{pAdjustMethod} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
+
+\item{p_cutoff}{Passed to \code{pvalueCutoff} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
+
+\item{q_cutoff}{Passed to \code{qvalueCutoff} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
+}
 \value{
 A list with two elements:
 \itemize{

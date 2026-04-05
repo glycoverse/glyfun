@@ -137,7 +137,12 @@ test_that("enrich_ora_reactome returns correct structure on happy path (integrat
   dea_res <- .mock_dea_res()
 
   suppressMessages(
-    result <- enrich_ora_reactome(dea_res, orgdb = "org.Hs.eg.db", organism = "human", p_cutoff = 0.05)
+    result <- enrich_ora_reactome(
+      dea_res,
+      orgdb = "org.Hs.eg.db",
+      organism = "human",
+      p_cutoff = 0.05
+    )
   )
 
   expect_s3_class(

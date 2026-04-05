@@ -79,7 +79,7 @@ enrich_ora_go <- function(
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
     keyType = "UNIPROT",
-    OrgDb = orgdb,  # passed to `clusterProfiler::enrichGO()`
+    OrgDb = orgdb, # passed to `clusterProfiler::enrichGO()`
     ont = ont,
     universe = universe,
     pAdjustMethod = p_adj_method,
@@ -145,6 +145,37 @@ enrich_ora_kegg <- function(
 }
 
 #' Reactome Over Representation Analysis
+#'
+#' @description
+#' Performs Reactome pathway Over-Representation Analysis (ORA)
+#' on glycoproteins with dysregulated glycosylation.
+#'
+#' @inheritSection enrich_ora_go Common usage pattern
+#'
+#' @inheritParams enrich_ora_go
+#' @param orgdb OrgDb object for converting Uniprot IDs to Entrez IDs.
+#'   Passed to `clusterProfiler::bitr()`. Defaults to "org.Hs.eg.db".
+#' @param organism Reactome organism name. Passed to `organism` of [ReactomePA::enrichPathway()].
+#'   Defaults to "human". Common values: "human", "mouse", "rat".
+#'
+#' @return A list with two elements:
+#'  - `tidy_result`: A tibble with enrichment results containing the following columns:
+#'    - `id`: Reactome pathway ID
+#'    - `description`: Pathway description
+#'    - `gene_ratio`: Ratio of genes in the pathway to total genes in the input
+#'    - `bg_ratio`: Ratio of genes in the pathway to total genes in the background
+#'    - `rich_factor`: Proportion of the pathway's total background genes found in the input
+#'    - `fold_enrichment`: Ratio of `gene_ratio` to `bg_ratio` (magnitude of enrichment)
+#'    - `z_score`: Directional trend of regulation (positive for up, negative for down)
+#'    - `p_val`: Raw p-value from hypergeometric test
+#'    - `p_adj`: Adjusted p-value
+#'    - `q_val`: Q-value (FDR)
+#'    - `gene_id`: Gene IDs in the pathway (separated by "/")
+#'    - `count`: Number of genes in the pathway
+#'  - `raw_result`: The raw clusterProfiler `enrichResult` object
+#' The list has classes `glyfun_ora_reactome_res`, `glyfun_ora_res`, and `glyfun_res`.
+#'
+#' @seealso [ReactomePA::enrichPathway()]
 #' @export
 enrich_ora_reactome <- function(
   dea_res,
@@ -164,7 +195,7 @@ enrich_ora_reactome <- function(
     result_class = "glyfun_ora_reactome_res",
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
-    bitr_orgdb = orgdb,  # passed to the `bitr_orgdb` parameter
+    bitr_orgdb = orgdb, # passed to the `bitr_orgdb` parameter
     organism = organism,
     universe = universe,
     pAdjustMethod = p_adj_method,
@@ -285,7 +316,9 @@ enrich_ora_reactome <- function(
 ) {
   # Argument validation
   if (uniprot_to_entrez && is.null(bitr_orgdb)) {
-    cli::cli_abort("{.arg bitr_orgdb} must be provided when {.arg uniprot_to_entrez} is TRUE.")
+    cli::cli_abort(
+      "{.arg bitr_orgdb} must be provided when {.arg uniprot_to_entrez} is TRUE."
+    )
   }
   .check_dea_res(dea_res)
   .check_p_cutoff_arg(dea_p_cutoff)
