@@ -185,6 +185,7 @@ enrich_ora_reactome <- function(
 #'   an `OrgDb` parameter can be passed to `...` to be used by `clusterProfiler::enrichGO()` directly.
 #'   `OrgDb` and `bitr_orgdb` are therefore independent.
 #' @param ... Parameters passed to downstream enrichment package.
+#' @noRd
 .ora <- function(
   dea_res,
   enrich_fun,
