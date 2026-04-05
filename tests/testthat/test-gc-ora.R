@@ -152,3 +152,117 @@ test_that("enrich_gc_ora_kegg returns correct structure on happy path (integrati
   )
   expect_true(all(expected_cols %in% colnames(result$tidy_result)))
 })
+
+# Error handling tests ----
+
+test_that("enrich_gc_ora_go errors on data.frame with missing columns", {
+  # Missing 'trait' column
+  dea_res_missing_trait <- tibble::tibble(
+    protein = c("P01308", "P04637", "P42345", "P00533", "P42336"),
+    site = rep("site1", 5),
+    p_val = rep(0.001, 5),
+    log2FC = c(2.5, 3.0, 1.5, 2.0, 2.2)
+  )
+  expect_error(
+    enrich_gc_ora_go(dea_res_missing_trait),
+    "must have all expected columns"
+  )
+
+  # Missing 'protein' column
+  dea_res_missing_protein <- tibble::tibble(
+    site = rep("site1", 5),
+    trait = rep("trait1", 5),
+    p_val = rep(0.001, 5),
+    log2FC = c(2.5, 3.0, 1.5, 2.0, 2.2)
+  )
+  expect_error(
+    enrich_gc_ora_go(dea_res_missing_protein),
+    "must have all expected columns"
+  )
+})
+
+test_that("enrich_gc_ora_go errors on invalid dea_p_cutoff", {
+  dea_res <- tibble::tibble(
+    protein = c("P01308", "P04637", "P42345", "P00533", "P42336"),
+    site = rep("site1", 5),
+    trait = rep(c("trait_A", "trait_B"), c(3, 2)),
+    p_val = rep(0.001, 5),
+    log2FC = c(2.5, 3.0, 1.5, 2.0, 2.2)
+  )
+
+  # Negative p_cutoff
+  expect_error(
+    enrich_gc_ora_go(dea_res, dea_p_cutoff = -0.1),
+    "Assertion on 'p_cutoff' failed"
+  )
+
+  # p_cutoff > 1
+  expect_error(
+    enrich_gc_ora_go(dea_res, dea_p_cutoff = 1.5),
+    "Assertion on 'p_cutoff' failed"
+  )
+
+  # Non-numeric p_cutoff
+  expect_error(
+    enrich_gc_ora_go(dea_res, dea_p_cutoff = "invalid"),
+    "Assertion on 'p_cutoff' failed"
+  )
+
+  # NA value
+  expect_error(
+    enrich_gc_ora_go(dea_res, dea_p_cutoff = NA),
+    "Assertion on 'p_cutoff' failed"
+  )
+
+  # NaN value
+  expect_error(
+    enrich_gc_ora_go(dea_res, dea_p_cutoff = NaN),
+    "Assertion on 'p_cutoff' failed"
+  )
+})
+
+test_that("enrich_gc_ora_go errors on invalid dea_log2fc_cutoff", {
+  dea_res <- tibble::tibble(
+    protein = c("P01308", "P04637", "P42345", "P00533", "P42336"),
+    site = rep("site1", 5),
+    trait = rep(c("trait_A", "trait_B"), c(3, 2)),
+    p_val = rep(0.001, 5),
+    log2FC = c(2.5, 3.0, 1.5, 2.0, 2.2)
+  )
+
+  # Wrong length (1 element)
+  expect_error(
+    enrich_gc_ora_go(dea_res, dea_log2fc_cutoff = c(-1)),
+    "must have exactly 2 elements"
+  )
+
+  # Wrong length (3 elements)
+  expect_error(
+    enrich_gc_ora_go(dea_res, dea_log2fc_cutoff = c(-1, 0, 1)),
+    "must have exactly 2 elements"
+  )
+
+  # First element positive
+  expect_error(
+    enrich_gc_ora_go(dea_res, dea_log2fc_cutoff = c(0.5, 1)),
+    "must be 0 or negative"
+  )
+
+  # Second element negative
+  expect_error(
+    enrich_gc_ora_go(dea_res, dea_log2fc_cutoff = c(-1, -0.5)),
+    "must be 0 or positive"
+  )
+
+  # Non-numeric
+  expect_error(
+    enrich_gc_ora_go(dea_res, dea_log2fc_cutoff = "invalid"),
+    "Assertion on 'log2fc_cutoff' failed"
+  )
+
+  # NULL value
+  expect_error(
+    enrich_gc_ora_go(dea_res, dea_log2fc_cutoff = NULL),
+    "Assertion on 'log2fc_cutoff' failed"
+  )
+})
