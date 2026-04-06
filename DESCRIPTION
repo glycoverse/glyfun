@@ -4,15 +4,18 @@ Version: 0.0.0.9000
 Authors@R:
     person("Bin", "Fu", , "23110220018@m.fudan.edu.cn", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-8567-2997"))
-Description: Provides glycan-centric functional enrichment for glycoproteomics,
-    moving beyond general protein-level descriptions. Instead of asking
-    "Which functions are enriched in dysregulated glycoproteins?", glyfun
-    enables asking "Which functions are enriched in proteins with dysregulated
-    core-fucosylation?" This higher specificity delivers deeper insights by
-    focusing on distinct glycan motifs to pinpoint the functional relevance of
-    specific glycosylation changes. Integrates seamlessly with 'glydet' (for
-    site-specific derived traits and motif quantification) and 'glystats' (for
-    differential expression analysis).
+Description: Provides functional enrichment analysis for glycoproteomics data,
+    including both protein-centric and glycan-centric approaches. The
+    'enrich_xxx()' functions answer "Which functions are enriched for proteins
+    with dysregulated glycosylation?" (traditional protein-level enrichment),
+    while 'enrich_gc_xxx()' functions answer "Which functions are enriched for
+    dysregulated glycan traits?" (glycan-centric, linking glycan traits like
+    core-fucosylation with functional annotations). Supports both Over
+    Representation Analysis (ORA) and Gene Set Enrichment Analysis (GSEA) with
+    common databases including GO, KEGG, Reactome, WikiPathways, DO (Disease
+    Ontology), and NCG (Network of Cancer Genes). Integrates seamlessly with
+    'glydet' (for site-specific derived traits) and 'glystats' (for differential
+    expression analysis).
 License: MIT + file LICENSE
 Suggests: 
     org.Hs.eg.db,
