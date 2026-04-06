@@ -244,7 +244,8 @@ enrich_ora_reactome <- function(
         .data$log2FC < dea_log2fc_cutoff[[1]] |
           .data$log2FC > dea_log2fc_cutoff[[2]]
       ) |>
-      dplyr::pull(.data$protein)
+      dplyr::pull(.data$protein) |>
+      unique()
   }
   .ora_impl(
     dea_res,
@@ -275,7 +276,8 @@ enrich_ora_reactome <- function(
         .data$log2fc < dea_log2fc_cutoff[[1]] |
           .data$log2fc > dea_log2fc_cutoff[[2]]
       ) |>
-      dplyr::pull(.data$protein)
+      dplyr::pull(.data$protein) |>
+      unique()
   }
   .ora_impl(
     dea_res,
