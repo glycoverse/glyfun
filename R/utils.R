@@ -89,6 +89,53 @@
   }
 }
 
+#' Prepare the `orgdb` parameter
+#'
+#' If `orgdb` is an `OrgDb` object, return it directly.
+#' If it is a string, check it the package is installed, then return the `OrgDb` object.
+#'
+#' @param orgdb An `OrgDb` object or a string.
+#' @returns An `OrgDb` object.
+#' @noRd
+.prepare_orgdb <- function(orgdb) {
+  if (inherits(orgdb, "OrgDb")) {
+    return(orgdb)
+  }
+
+  # Deal with character input
+  available <- c(
+    "org.Ag.eg.db",  # Anopheles
+    "org.At.tair.db",  # Arabidopsis
+    "org.Bt.eg.db",  # Bovine
+    "org.Ce.eg.db",  # Worm
+    "org.Cf.eg.db",  # Canine
+    "org.Dm.eg.db",  # Fly
+    "org.Dr.eg.db",  # Zebrafish
+    "org.EcK12.eg.db",  # E coli strain K12
+    "org.EcSakai.eg.db",  # E coli strain Sakai
+    "org.Gg.eg.db",  # Chicken
+    "org.Hbacteriophora.eg.db",  # Heterorhabditis bacteriophora
+    "org.Hs.eg.db",  # Human
+    "org.Mm.eg.db",  # Mouse
+    "org.Mmu.eg.db",  # Rhesus
+    "org.Mxanthus.db",  # Myxococcus xanthus DK 1622
+    "org.Pf.plasmo.db",  # Malaria
+    "org.Pt.eg.db",  # Chimp
+    "org.Rn.eg.db",  # Rat
+    "org.Sc.sgd.db",  # Yeast
+    "org.Ss.eg.db",  # Pig
+    "org.Xl.eg.db"  # Xenopus
+  )
+  if (!orgdb %in% available) {
+    cli::cli_abort(c(
+      "Unsupported OrgDb type: {.val {orgdb}}",
+      "i" = "Available OrgDb: {.val {available}}"
+    ))
+  }
+  rlang::check_installed(orgdb)
+  getExportedValue(orgdb, orgdb)
+}
+
 #' Convert UniProt IDs to Entrez IDs
 #' @param uniprot The UniProt IDs.
 #' @param orgdb An OrgDb object.
