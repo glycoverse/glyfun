@@ -222,3 +222,36 @@
   )
   .prepare_orgdb(orgdb_name)
 }
+
+.wp_orgdb <- function(organism) {
+  checkmate::assert_choice(organism, clusterProfiler::get_wp_organisms())
+  # WikiPathways uses latin names, e.g. Homo sapiens.
+
+  unsupported <- c(
+    "Equus caballus",
+    "Populus trichocarpa",
+    "Solanum lycopersicum",
+    "Zea mays"
+  )
+  if (organism %in% c(unsupported)) {
+    cli::cli_abort("{organism} is not supported yet.")
+  }
+
+  orgdb_name <- dplyr::recode_values(organism,
+    "Anopheles gambiae" ~ "org.Ag.eg.db",
+    "Arabidopsis thaliana" ~ "org.At.tair.db",
+    "Bos taurus" ~ "org.Bt.eg.db",
+    "Caenorhabditis elegans" ~ "org.Ce.eg.db",
+    "Canis familiaris" ~ "org.Cf.eg.db",
+    "Drosophila melanogaster" ~ "org.Dm.eg.db",
+    "Danio rerio" ~ "org.Dr.eg.db",
+    "Gallus gallus" ~ "org.Gg.eg.db",
+    "Homo sapiens" ~ "org.Hs.eg.db",
+    "Mus musculus" ~ "org.Mm.eg.db",
+    "Pan troglodytes" ~ "org.Pt.eg.db",
+    "Rattus norvegicus" ~ "org.Rn.eg.db",
+    "Saccharomyces cerevisiae" ~ "org.Sc.sgd.db",
+    "Sus scrofa" ~ "org.Ss.eg.db"
+  )
+  .prepare_orgdb(orgdb_name)
+}
