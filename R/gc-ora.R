@@ -271,6 +271,70 @@ enrich_gc_ora_wp <- function(
   )
 }
 
+#' Glycan-Centric Disease Ontology (DO) Over Representation Analysis
+#'
+#' @description
+#' Performs glycan-centric Disease Ontology (DO) Over-Representation Analysis (ORA).
+#' Instead of traditional protein-centric enrichment, this function links specific
+#' glycan traits to disease associations. It helps answer questions like "Which
+#' diseases are enriched in proteins with a specific dysregulated glycan motif?",
+#' by grouping differential analysis results by glycan traits and computing
+#' disease enrichment for each trait.
+#'
+#' @inheritSection enrich_gc_ora_go What is glycan-centric enrichment?
+#' @inheritSection enrich_gc_ora_go Common usage pattern
+#'
+#' @inheritParams enrich_ora_do
+#' @return A list with two elements:
+#'  - `tidy_result`: A tibble with enrichment results containing the following columns:
+#'    - `trait`: Glycan trait
+#'    - `id`: DO term ID
+#'    - `description`: Term description
+#'    - `gene_ratio`: Ratio of genes in the term to total genes in the input
+#'    - `bg_ratio`: Ratio of genes in the term to total genes in the background
+#'    - `rich_factor`: Proportion of the term's total background genes found in the input
+#'    - `fold_enrichment`: Ratio of `gene_ratio` to `bg_ratio` (magnitude of enrichment)
+#'    - `z_score`: Directional trend of regulation (positive for up, negative for down)
+#'    - `p_val`: Raw p-value from hypergeometric test
+#'    - `p_adj`: Adjusted p-value
+#'    - `q_val`: Q-value (FDR)
+#'    - `gene_id`: Gene IDs in the term (separated by "/")
+#'    - `count`: Number of genes in the term
+#'  - `raw_result`: The raw clusterProfiler clusterProfResult object
+#' The list has classes `glyfun_gc_ora_do_res`, `glyfun_gc_ora_res`, and `glyfun_res`.
+#'
+#' @seealso [clusterProfiler::compareCluster()], [DOSE::enrichDO()]
+#' @export
+enrich_gc_ora_do <- function(
+  dea_res,
+  dea_p_cutoff = 0.05,
+  dea_log2fc_cutoff = c(-1, 1),
+  ont = "HDO",
+  organism = "hsa",
+  universe = NULL,
+  p_adj_method = "BH",
+  p_cutoff = 0.05,
+  q_cutoff = 0.2
+) {
+  rlang::check_installed("DOSE")
+  orgdb <- .do_orgdb(organism)
+  .gc_ora(
+    dea_res,
+    enrich_fun = DOSE::enrichDO,
+    result_class = "glyfun_gc_ora_do_res",
+    dea_p_cutoff = dea_p_cutoff,
+    dea_log2fc_cutoff = dea_log2fc_cutoff,
+    bitr_orgdb = orgdb,
+    ont = ont,
+    organism = organism,
+    universe = universe,
+    pAdjustMethod = p_adj_method,
+    pvalueCutoff = p_cutoff,
+    qvalueCutoff = q_cutoff,
+    uniprot_to_entrez = TRUE
+  )
+}
+
 #' Perform Glycan-Centric ORA
 #' @param dea_res DEA result from glystats or a tibble.
 #' @param enrich_fun An enrichment function.
