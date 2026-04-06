@@ -104,27 +104,27 @@
 
   # Deal with character input
   available <- c(
-    "org.Ag.eg.db",  # Anopheles
-    "org.At.tair.db",  # Arabidopsis
-    "org.Bt.eg.db",  # Bovine
-    "org.Ce.eg.db",  # Worm
-    "org.Cf.eg.db",  # Canine
-    "org.Dm.eg.db",  # Fly
-    "org.Dr.eg.db",  # Zebrafish
-    "org.EcK12.eg.db",  # E coli strain K12
-    "org.EcSakai.eg.db",  # E coli strain Sakai
-    "org.Gg.eg.db",  # Chicken
-    "org.Hbacteriophora.eg.db",  # Heterorhabditis bacteriophora
-    "org.Hs.eg.db",  # Human
-    "org.Mm.eg.db",  # Mouse
-    "org.Mmu.eg.db",  # Rhesus
-    "org.Mxanthus.db",  # Myxococcus xanthus DK 1622
-    "org.Pf.plasmo.db",  # Malaria
-    "org.Pt.eg.db",  # Chimp
-    "org.Rn.eg.db",  # Rat
-    "org.Sc.sgd.db",  # Yeast
-    "org.Ss.eg.db",  # Pig
-    "org.Xl.eg.db"  # Xenopus
+    "org.Ag.eg.db", # Anopheles
+    "org.At.tair.db", # Arabidopsis
+    "org.Bt.eg.db", # Bovine
+    "org.Ce.eg.db", # Worm
+    "org.Cf.eg.db", # Canine
+    "org.Dm.eg.db", # Fly
+    "org.Dr.eg.db", # Zebrafish
+    "org.EcK12.eg.db", # E coli strain K12
+    "org.EcSakai.eg.db", # E coli strain Sakai
+    "org.Gg.eg.db", # Chicken
+    "org.Hbacteriophora.eg.db", # Heterorhabditis bacteriophora
+    "org.Hs.eg.db", # Human
+    "org.Mm.eg.db", # Mouse
+    "org.Mmu.eg.db", # Rhesus
+    "org.Mxanthus.db", # Myxococcus xanthus DK 1622
+    "org.Pf.plasmo.db", # Malaria
+    "org.Pt.eg.db", # Chimp
+    "org.Rn.eg.db", # Rat
+    "org.Sc.sgd.db", # Yeast
+    "org.Ss.eg.db", # Pig
+    "org.Xl.eg.db" # Xenopus
   )
   if (!orgdb %in% available) {
     cli::cli_abort(c(
@@ -208,11 +208,15 @@
 }
 
 .reactome_orgdb <- function(organism) {
-  checkmate::assert_choice(organism, c("human", "rat", "mouse", "celegans", "yeast", "zebrafish", "fly"))
+  checkmate::assert_choice(
+    organism,
+    c("human", "rat", "mouse", "celegans", "yeast", "zebrafish", "fly")
+  )
   if (organism == "celegans") {
     cli::cli_abort("Celegans is not supported yet.")
   }
-  orgdb_name <- dplyr::recode_values(organism,
+  orgdb_name <- dplyr::recode_values(
+    organism,
     "human" ~ "org.Hs.eg.db",
     "rat" ~ "org.Rn.eg.db",
     "mouse" ~ "org.Mm.eg.db",
@@ -237,7 +241,8 @@
     cli::cli_abort("{organism} is not supported yet.")
   }
 
-  orgdb_name <- dplyr::recode_values(organism,
+  orgdb_name <- dplyr::recode_values(
+    organism,
     "Anopheles gambiae" ~ "org.Ag.eg.db",
     "Arabidopsis thaliana" ~ "org.At.tair.db",
     "Bos taurus" ~ "org.Bt.eg.db",
