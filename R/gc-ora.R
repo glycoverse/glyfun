@@ -75,7 +75,7 @@ enrich_gc_ora_go <- function(
   orgdb <- .prepare_orgdb(orgdb)
   .gc_ora(
     dea_res,
-    enrich_fun = "enrichGO",
+    enrich_fun = clusterProfiler::enrichGO,
     result_class = "glyfun_gc_ora_go_res",
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
@@ -135,7 +135,7 @@ enrich_gc_ora_kegg <- function(
 ) {
   .gc_ora(
     dea_res,
-    enrich_fun = "enrichKEGG",
+    enrich_fun = clusterProfiler::enrichKEGG,
     result_class = "glyfun_gc_ora_kegg_res",
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
@@ -196,7 +196,7 @@ enrich_gc_ora_reactome <- function(
   orgdb <- .reactome_orgdb(organism)
   .gc_ora(
     dea_res,
-    enrich_fun = "enrichPathway",
+    enrich_fun = ReactomePA::enrichPathway,
     result_class = "glyfun_gc_ora_reactome_res",
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
@@ -212,7 +212,7 @@ enrich_gc_ora_reactome <- function(
 
 #' Perform Glycan-Centric ORA
 #' @param dea_res DEA result from glystats or a tibble.
-#' @param enrich_fun An enrichment function name (string).
+#' @param enrich_fun An enrichment function.
 #' @param result_class A string of the concrete result class.
 #' @param dea_p_cutoff P-value cutoff to define statistical significance.
 #' @param dea_log2fc_cutoff Log2FC cutoffs to define statistical significance.
