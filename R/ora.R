@@ -262,6 +262,70 @@ enrich_ora_wp <- function(
   )
 }
 
+#' Disease Ontology (DO) Over Representation Analysis
+#'
+#' @description
+#' Performs Disease Ontology (DO) Over-Representation Analysis (ORA)
+#' on glycoproteins with dysregulated glycosylation.
+#'
+#' @inheritSection enrich_ora_go Common usage pattern
+#'
+#' @inheritParams enrich_ora_go
+#' @param ont One of "HDO" (Human Disease Ontology), "MPO" (Mammalian Phenotype Ontology),
+#'   or "VDO" (Vector Disease Ontology). Passed to `ont` of [DOSE::enrichDO()].
+#'   Defaults to "HDO".
+#' @param organism "hsa" (Homo sapiens) or "mmu" (Mus musculus).
+#'   Passed to `organism` of [DOSE::enrichDO()]. Defaults to "hsa".
+#'
+#' @return A list with two elements:
+#'  - `tidy_result`: A tibble with enrichment results containing the following columns:
+#'    - `id`: DO term ID
+#'    - `description`: Term description
+#'    - `gene_ratio`: Ratio of genes in the term to total genes in the input
+#'    - `bg_ratio`: Ratio of genes in the term to total genes in the background
+#'    - `rich_factor`: Proportion of the term's total background genes found in the input
+#'    - `fold_enrichment`: Ratio of `gene_ratio` to `bg_ratio` (magnitude of enrichment)
+#'    - `z_score`: Directional trend of regulation (positive for up, negative for down)
+#'    - `p_val`: Raw p-value from hypergeometric test
+#'    - `p_adj`: Adjusted p-value
+#'    - `q_val`: Q-value (FDR)
+#'    - `gene_id`: Gene IDs in the term (separated by "/")
+#'    - `count`: Number of genes in the term
+#'  - `raw_result`: The raw clusterProfiler `enrichResult` object
+#' The list has classes `glyfun_ora_do_res`, `glyfun_ora_res`, and `glyfun_res`.
+#'
+#' @seealso [DOSE::enrichDO()]
+#' @export
+enrich_ora_do <- function(
+  dea_res,
+  dea_p_cutoff = 0.05,
+  dea_log2fc_cutoff = c(-1, 1),
+  ont = "HDO",
+  organism = "hsa",
+  universe = NULL,
+  p_adj_method = "BH",
+  p_cutoff = 0.05,
+  q_cutoff = 0.2
+) {
+  rlang::check_installed("DOSE")
+  orgdb <- .do_orgdb(organism)
+  .ora(
+    dea_res,
+    enrich_fun = DOSE::enrichDO,
+    result_class = "glyfun_ora_do_res",
+    dea_p_cutoff = dea_p_cutoff,
+    dea_log2fc_cutoff = dea_log2fc_cutoff,
+    bitr_orgdb = orgdb, # passed to the `bitr_orgdb` parameter
+    ont = ont,
+    organism = organism,
+    universe = universe,
+    pAdjustMethod = p_adj_method,
+    pvalueCutoff = p_cutoff,
+    qvalueCutoff = q_cutoff,
+    uniprot_to_entrez = TRUE
+  )
+}
+
 #' Perform ORA
 #' @param dea_res DEA result from glystats.
 #' @param enrich_fun An enrichment function.

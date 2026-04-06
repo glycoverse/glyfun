@@ -20,6 +20,7 @@ License: MIT + file LICENSE
 Suggests: 
     org.Hs.eg.db,
     ReactomePA,
+    DOSE,
     glyexp,
     glyrepr,
     testthat (>= 3.0.0)

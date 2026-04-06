@@ -260,3 +260,9 @@
   )
   .prepare_orgdb(orgdb_name)
 }
+
+.do_orgdb <- function(organism) {
+  checkmate::assert_choice(organism, c("hsa", "mmu"))
+  orgdb_name <- switch(organism, hsa = "org.Hs.eg.db", mmu = "org.Mm.eg.db")
+  .prepare_orgdb(orgdb_name)
+}
