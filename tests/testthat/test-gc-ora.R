@@ -186,6 +186,7 @@ test_that("enrich_gc_ora_reactome returns correct structure on happy path (integ
 })
 
 test_that("enrich_gc_ora_wp returns correct structure on happy path (integration)", {
+  skip("Unstable internal connection.")
   skip_if_offline()
   skip_if_not_installed("org.Hs.eg.db")
 

@@ -170,7 +170,9 @@ test_that("enrich_ora_reactome returns correct structure on happy path (integrat
 })
 
 test_that("enrich_ora_wp returns correct structure on happy path (integration)", {
+  skip("Unstable internal connection.")
   skip_if_offline()
+  skip_if_not_installed("org.Hs.eg.db")
 
   dea_res <- .mock_dea_res()
 
