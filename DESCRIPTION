@@ -1,9 +1,18 @@
 Package: glyfun
-Title: What the Package Does (One Line, Title Case)
+Title: Glycan-Centric Functional Enrichment Analysis
 Version: 0.0.0.9000
-Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Authors@R:
+    person("Bin", "Fu", , "23110220018@m.fudan.edu.cn", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-8567-2997"))
+Description: Provides glycan-centric functional enrichment for glycoproteomics,
+    moving beyond general protein-level descriptions. Instead of asking
+    "Which functions are enriched in dysregulated glycoproteins?", glyfun
+    enables asking "Which functions are enriched in proteins with dysregulated
+    core-fucosylation?" This higher specificity delivers deeper insights by
+    focusing on distinct glycan motifs to pinpoint the functional relevance of
+    specific glycosylation changes. Integrates seamlessly with 'glydet' (for
+    site-specific derived traits and motif quantification) and 'glystats' (for
+    differential expression analysis).
 License: MIT + file LICENSE
 Suggests: 
     org.Hs.eg.db,
