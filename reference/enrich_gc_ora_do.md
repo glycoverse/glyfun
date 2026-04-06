@@ -1,21 +1,22 @@
-# Glycan-Centric Reactome Pathway Over Representation Analysis
+# Glycan-Centric Disease Ontology (DO) Over Representation Analysis
 
-Performs glycan-centric Reactome pathway Over-Representation Analysis
-(ORA). Instead of traditional protein-centric enrichment, this function
-links specific glycan traits to biological pathways. It helps answer
-questions like "Which Reactome pathways are enriched in proteins with a
+Performs glycan-centric Disease Ontology (DO) Over-Representation
+Analysis (ORA). Instead of traditional protein-centric enrichment, this
+function links specific glycan traits to disease associations. It helps
+answer questions like "Which diseases are enriched in proteins with a
 specific dysregulated glycan motif?", by grouping differential analysis
-results by glycan traits and computing pathway enrichment for each
+results by glycan traits and computing disease enrichment for each
 trait.
 
 ## Usage
 
 ``` r
-enrich_gc_ora_reactome(
+enrich_gc_ora_do(
   dea_res,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
-  organism = "human",
+  ont = "HDO",
+  organism = "hsa",
   universe = NULL,
   p_adj_method = "BH",
   p_cutoff = 0.05,
@@ -64,12 +65,18 @@ enrich_gc_ora_reactome(
   example, `c(-1, 1)` means "log2FC \< -1 or log2FC \> 1", and
   `c(-Inf, 1)` means "log2FC \> 1". Defaults to `c(-1, 1)`.
 
+- ont:
+
+  One of "HDO" (Human Disease Ontology), "MPO" (Mammalian Phenotype
+  Ontology), or "VDO" (Vector Disease Ontology). Passed to `ont` of
+  [`DOSE::enrichDO()`](https://rdrr.io/pkg/DOSE/man/enrichDO.html).
+  Defaults to "HDO".
+
 - organism:
 
-  Reactome organism name. Passed to `organism` of
-  [`ReactomePA::enrichPathway()`](https://rdrr.io/pkg/ReactomePA/man/enrichPathway.html).
-  One of "human", "rat", "mouse", "celegans", "yeast", "zebrafish",
-  "fly". Defaults to "human".
+  "hsa" (Homo sapiens) or "mmu" (Mus musculus). Passed to `organism` of
+  [`DOSE::enrichDO()`](https://rdrr.io/pkg/DOSE/man/enrichDO.html).
+  Defaults to "hsa".
 
 - universe:
 
@@ -105,18 +112,17 @@ A list with two elements:
 
   - `trait`: Glycan trait
 
-  - `id`: Reactome pathway ID
+  - `id`: DO term ID
 
-  - `description`: Pathway description
+  - `description`: Term description
 
-  - `gene_ratio`: Ratio of genes in the pathway to total genes in the
-    input
+  - `gene_ratio`: Ratio of genes in the term to total genes in the input
 
-  - `bg_ratio`: Ratio of genes in the pathway to total genes in the
+  - `bg_ratio`: Ratio of genes in the term to total genes in the
     background
 
-  - `rich_factor`: Proportion of the pathway's total background genes
-    found in the input
+  - `rich_factor`: Proportion of the term's total background genes found
+    in the input
 
   - `fold_enrichment`: Ratio of `gene_ratio` to `bg_ratio` (magnitude of
     enrichment)
@@ -130,13 +136,13 @@ A list with two elements:
 
   - `q_val`: Q-value (FDR)
 
-  - `gene_id`: Gene IDs in the pathway (separated by "/")
+  - `gene_id`: Gene IDs in the term (separated by "/")
 
-  - `count`: Number of genes in the pathway
+  - `count`: Number of genes in the term
 
 - `raw_result`: The raw clusterProfiler clusterProfResult object The
-  list has classes `glyfun_gc_ora_reactome_res`, `glyfun_gc_ora_res`,
-  and `glyfun_res`.
+  list has classes `glyfun_gc_ora_do_res`, `glyfun_gc_ora_res`, and
+  `glyfun_res`.
 
 ## What is glycan-centric enrichment?
 
@@ -171,4 +177,4 @@ A common pattern of using this function is:
 ## See also
 
 [`clusterProfiler::compareCluster()`](https://rdrr.io/pkg/clusterProfiler/man/compareCluster.html),
-[`ReactomePA::enrichPathway()`](https://rdrr.io/pkg/ReactomePA/man/enrichPathway.html)
+[`DOSE::enrichDO()`](https://rdrr.io/pkg/DOSE/man/enrichDO.html)

@@ -1,21 +1,20 @@
-# Glycan-Centric Reactome Pathway Over Representation Analysis
+# Glycan-Centric WikiPathways Over Representation Analysis
 
-Performs glycan-centric Reactome pathway Over-Representation Analysis
-(ORA). Instead of traditional protein-centric enrichment, this function
-links specific glycan traits to biological pathways. It helps answer
-questions like "Which Reactome pathways are enriched in proteins with a
-specific dysregulated glycan motif?", by grouping differential analysis
-results by glycan traits and computing pathway enrichment for each
-trait.
+Performs glycan-centric WikiPathways Over-Representation Analysis (ORA).
+Instead of traditional protein-centric enrichment, this function links
+specific glycan traits to biological pathways. It helps answer questions
+like "Which WikiPathways are enriched in proteins with a specific
+dysregulated glycan motif?", by grouping differential analysis results
+by glycan traits and computing pathway enrichment for each trait.
 
 ## Usage
 
 ``` r
-enrich_gc_ora_reactome(
+enrich_gc_ora_wp(
   dea_res,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
-  organism = "human",
+  organism = "Homo sapiens",
   universe = NULL,
   p_adj_method = "BH",
   p_cutoff = 0.05,
@@ -66,10 +65,11 @@ enrich_gc_ora_reactome(
 
 - organism:
 
-  Reactome organism name. Passed to `organism` of
-  [`ReactomePA::enrichPathway()`](https://rdrr.io/pkg/ReactomePA/man/enrichPathway.html).
-  One of "human", "rat", "mouse", "celegans", "yeast", "zebrafish",
-  "fly". Defaults to "human".
+  WikiPathways organism name. Passed to `organism` of
+  [`clusterProfiler::enrichWP()`](https://rdrr.io/pkg/clusterProfiler/man/enrichWP.html).
+  Defaults to "Homo sapiens". Use
+  [`clusterProfiler::get_wp_organisms()`](https://rdrr.io/pkg/clusterProfiler/man/get_wp_organisms.html)
+  to see available organisms.
 
 - universe:
 
@@ -105,7 +105,7 @@ A list with two elements:
 
   - `trait`: Glycan trait
 
-  - `id`: Reactome pathway ID
+  - `id`: WikiPathways pathway ID
 
   - `description`: Pathway description
 
@@ -135,8 +135,8 @@ A list with two elements:
   - `count`: Number of genes in the pathway
 
 - `raw_result`: The raw clusterProfiler clusterProfResult object The
-  list has classes `glyfun_gc_ora_reactome_res`, `glyfun_gc_ora_res`,
-  and `glyfun_res`.
+  list has classes `glyfun_gc_ora_wp_res`, `glyfun_gc_ora_res`, and
+  `glyfun_res`.
 
 ## What is glycan-centric enrichment?
 
@@ -171,4 +171,4 @@ A common pattern of using this function is:
 ## See also
 
 [`clusterProfiler::compareCluster()`](https://rdrr.io/pkg/clusterProfiler/man/compareCluster.html),
-[`ReactomePA::enrichPathway()`](https://rdrr.io/pkg/ReactomePA/man/enrichPathway.html)
+[`clusterProfiler::enrichWP()`](https://rdrr.io/pkg/clusterProfiler/man/enrichWP.html)

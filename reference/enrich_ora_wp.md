@@ -1,21 +1,16 @@
-# Glycan-Centric Reactome Pathway Over Representation Analysis
+# WikiPathways Over Representation Analysis
 
-Performs glycan-centric Reactome pathway Over-Representation Analysis
-(ORA). Instead of traditional protein-centric enrichment, this function
-links specific glycan traits to biological pathways. It helps answer
-questions like "Which Reactome pathways are enriched in proteins with a
-specific dysregulated glycan motif?", by grouping differential analysis
-results by glycan traits and computing pathway enrichment for each
-trait.
+Performs WikiPathways Over-Representation Analysis (ORA) on
+glycoproteins with dysregulated glycosylation.
 
 ## Usage
 
 ``` r
-enrich_gc_ora_reactome(
+enrich_ora_wp(
   dea_res,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
-  organism = "human",
+  organism = "Homo sapiens",
   universe = NULL,
   p_adj_method = "BH",
   p_cutoff = 0.05,
@@ -66,10 +61,11 @@ enrich_gc_ora_reactome(
 
 - organism:
 
-  Reactome organism name. Passed to `organism` of
-  [`ReactomePA::enrichPathway()`](https://rdrr.io/pkg/ReactomePA/man/enrichPathway.html).
-  One of "human", "rat", "mouse", "celegans", "yeast", "zebrafish",
-  "fly". Defaults to "human".
+  WikiPathways organism name. Passed to `organism` of
+  [`clusterProfiler::enrichWP()`](https://rdrr.io/pkg/clusterProfiler/man/enrichWP.html).
+  Defaults to "Homo sapiens". Use
+  [`clusterProfiler::get_wp_organisms()`](https://rdrr.io/pkg/clusterProfiler/man/get_wp_organisms.html)
+  to see available organisms.
 
 - universe:
 
@@ -103,9 +99,7 @@ A list with two elements:
 - `tidy_result`: A tibble with enrichment results containing the
   following columns:
 
-  - `trait`: Glycan trait
-
-  - `id`: Reactome pathway ID
+  - `id`: WikiPathways pathway ID
 
   - `description`: Pathway description
 
@@ -134,41 +128,19 @@ A list with two elements:
 
   - `count`: Number of genes in the pathway
 
-- `raw_result`: The raw clusterProfiler clusterProfResult object The
-  list has classes `glyfun_gc_ora_reactome_res`, `glyfun_gc_ora_res`,
-  and `glyfun_res`.
-
-## What is glycan-centric enrichment?
-
-In traditional glycoproteomics data analysis, we usually perform
-differential expression analysis (DEA) on glycoforms, extract proteins
-that have dysregulated glycosylation, then perform functional enrichment
-(e.g. GO) on these proteins. This is what `enrich_xxx()` functions do
-(e.g.
-[`enrich_ora_go()`](https://glycoverse.github.io/glyfun/reference/enrich_ora_go.md)).
-
-`enrich_gc_xxx()` functions differ in that they link specific glycan
-traits with functional annotations. Instead of answering the question
-"Which functions are enriched in dysregulated glycoproteins?",
-`enrich_gc_xxx()` answers questions like “Which functions are enriched
-in proteins with dysregulated core-fucosylation?” Higher specificity,
-deeper insights. By focusing on distinct glycan motifs, it helps you
-pinpoint the functional relevance of specific glycosylation changes.
+- `raw_result`: The raw clusterProfiler `enrichResult` object The list
+  has classes `glyfun_ora_wp_res`, `glyfun_ora_res`, and `glyfun_res`.
 
 ## Common usage pattern
 
 A common pattern of using this function is:
 
-    # 1. Use `glydet` to calculate derived traits or motif quantification.
-    trait_exp <- derive_traits(exp)  # or `quantify_motifs()`
+    # 1. Perform differential analysis with `glystats`.
+    dea_res <- gly_ttest(exp)
 
-    # 2. Perform differential analysis with `glystats`.
-    dea_res <- gly_ttest(trait_exp)
-
-    # 3. Use this function.
-    go_res <- enrich_gc_ora_go(dea_res)  # or other `enrich_gc_xxx()` functions
+    # 2. Use this function.
+    go_res <- enrich_gc_ora_go(dea_res)  # or other glyfun functions
 
 ## See also
 
-[`clusterProfiler::compareCluster()`](https://rdrr.io/pkg/clusterProfiler/man/compareCluster.html),
-[`ReactomePA::enrichPathway()`](https://rdrr.io/pkg/ReactomePA/man/enrichPathway.html)
+[`clusterProfiler::enrichWP()`](https://rdrr.io/pkg/clusterProfiler/man/enrichWP.html)

@@ -43,7 +43,6 @@ on glycoproteins with dysregulated glycosylation.</p>
 <span>  <span class="va">dea_res</span>,</span>
 <span>  dea_p_cutoff <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  dea_log2fc_cutoff <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  orgdb <span class="op">=</span> <span class="st">"org.Hs.eg.db"</span>,</span>
 <span>  organism <span class="op">=</span> <span class="st">"human"</span>,</span>
 <span>  universe <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  p_adj_method <span class="op">=</span> <span class="st">"BH"</span>,</span>
@@ -80,14 +79,9 @@ For example, <code>c(-1, 1)</code> means "log2FC &lt; -1 or log2FC &gt; 1", and 
 Defaults to <code>c(-1, 1)</code>.</p></dd>
 
 
-<dt id="arg-orgdb">orgdb<a class="anchor" aria-label="anchor" href="#arg-orgdb"></a></dt>
-<dd><p>OrgDb object for converting Uniprot IDs to Entrez IDs.
-Passed to <code><a href="https://rdrr.io/pkg/clusterProfiler/man/bitr.html" class="external-link">clusterProfiler::bitr()</a></code>. Defaults to "org.Hs.eg.db".</p></dd>
-
-
 <dt id="arg-organism">organism<a class="anchor" aria-label="anchor" href="#arg-organism"></a></dt>
 <dd><p>Reactome organism name. Passed to <code>organism</code> of <code><a href="https://rdrr.io/pkg/ReactomePA/man/enrichPathway.html" class="external-link">ReactomePA::enrichPathway()</a></code>.
-Defaults to "human". Common values: "human", "mouse", "rat".</p></dd>
+One of "human", "rat", "mouse", "celegans", "yeast", "zebrafish", "fly". Defaults to "human".</p></dd>
 
 
 <dt id="arg-universe">universe<a class="anchor" aria-label="anchor" href="#arg-universe"></a></dt>
@@ -146,7 +140,7 @@ The list has classes <code>glyfun_ora_reactome_res</code>, <code>glyfun_ora_res<
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by First Last.</p>
+  <p>Developed by Bin Fu.</p>
 </div>
 
 <div class="pkgdown-footer-right">

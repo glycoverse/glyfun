@@ -2,16 +2,17 @@
 
 ## Authors
 
-- **First Last**. Author, maintainer.
+- **Bin Fu**. Author, maintainer.
+  [](https://orcid.org/0000-0001-8567-2997)
 
 ## Citation
 
-Last F (2026). *glyfun: What the Package Does (One Line, Title Case)*. R
+Fu B (2026). *glyfun: Glycan-Centric Functional Enrichment Analysis*. R
 package version 0.0.0.9000, <https://glycoverse.github.io/glyfun/>.
 
     @Manual{,
-      title = {glyfun: What the Package Does (One Line, Title Case)},
-      author = {First Last},
+      title = {glyfun: Glycan-Centric Functional Enrichment Analysis},
+      author = {Bin Fu},
       year = {2026},
       note = {R package version 0.0.0.9000},
       url = {https://glycoverse.github.io/glyfun/},

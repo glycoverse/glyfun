@@ -10,7 +10,6 @@ enrich_ora_reactome(
   dea_res,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
-  orgdb = "org.Hs.eg.db",
   organism = "human",
   universe = NULL,
   p_adj_method = "BH",
@@ -60,17 +59,12 @@ enrich_ora_reactome(
   example, `c(-1, 1)` means "log2FC \< -1 or log2FC \> 1", and
   `c(-Inf, 1)` means "log2FC \> 1". Defaults to `c(-1, 1)`.
 
-- orgdb:
-
-  OrgDb object for converting Uniprot IDs to Entrez IDs. Passed to
-  [`clusterProfiler::bitr()`](https://rdrr.io/pkg/clusterProfiler/man/bitr.html).
-  Defaults to "org.Hs.eg.db".
-
 - organism:
 
   Reactome organism name. Passed to `organism` of
   [`ReactomePA::enrichPathway()`](https://rdrr.io/pkg/ReactomePA/man/enrichPathway.html).
-  Defaults to "human". Common values: "human", "mouse", "rat".
+  One of "human", "rat", "mouse", "celegans", "yeast", "zebrafish",
+  "fly". Defaults to "human".
 
 - universe:
 
