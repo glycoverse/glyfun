@@ -72,6 +72,7 @@ enrich_gc_ora_go <- function(
   p_cutoff = 0.05,
   q_cutoff = 0.2
 ) {
+  orgdb <- .prepare_orgdb(orgdb)
   .gc_ora(
     dea_res,
     enrich_fun = "enrichGO",
