@@ -22,13 +22,16 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/glycoverse/glyfun/graph/badge.svg)](https://app.codecov.io/gh/glycoverse/glyfun)
 <!-- badges: end -->
 
-`glyfun` provides glycan-centric functional enrichment for glycoproteomics, moving beyond general protein-level descriptions.
+`glyfun` provides functional enrichment analysis for glycoproteomics data.
+It provides two sets of functions, answering different questions:
 
-- Traditional: "Which functions are enriched in dysregulated glycoproteins?"
-- `glyfun`: "Which functions are enriched in proteins with dysregulated core-fucosylation?"
+- `enrich_xxx()`: "Which functions are enriched for proteins with dysregulated glycosylation?"
+- `enrich_gc_xxx()`: "Which functions are enriched for dyregulated glycan traits?"
 
-Higher specificity, deeper insights.
-By focusing on distinct glycan motifs, glyfun helps you pinpoint the functional relevance of specific glycosylation changes.
+`gc` is for "glycan-centric", which means connecting glycan traits (e.g. core-fucosylation) with functional annotations.
+
+Both Over Representation Analysis (ORA) and Gene Set Enrichment Analysis (GSEA) are supported,
+with common databases including GO, KEGG, Reactome, WikiPathways, DO (Disease Ontology), and NCG (Network of Cancer Genes).
 
 ## Installation
 
