@@ -154,10 +154,8 @@ enrich_ora_kegg <- function(
 #' @inheritSection enrich_ora_go Common usage pattern
 #'
 #' @inheritParams enrich_ora_go
-#' @param orgdb OrgDb object for converting Uniprot IDs to Entrez IDs.
-#'   Passed to `clusterProfiler::bitr()`. Defaults to "org.Hs.eg.db".
 #' @param organism Reactome organism name. Passed to `organism` of [ReactomePA::enrichPathway()].
-#'   Defaults to "human". Common values: "human", "mouse", "rat".
+#'   One of "human", "rat", "mouse", "celegans", "yeast", "zebrafish", "fly". Defaults to "human".
 #'
 #' @return A list with two elements:
 #'  - `tidy_result`: A tibble with enrichment results containing the following columns:
@@ -182,7 +180,6 @@ enrich_ora_reactome <- function(
   dea_res,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
-  orgdb = "org.Hs.eg.db",
   organism = "human",
   universe = NULL,
   p_adj_method = "BH",
@@ -190,6 +187,7 @@ enrich_ora_reactome <- function(
   q_cutoff = 0.2
 ) {
   rlang::check_installed("ReactomePA")
+  orgdb <- .reactome_orgdb(organism)
   .ora(
     dea_res,
     enrich_fun = ReactomePA::enrichPathway,

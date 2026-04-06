@@ -206,3 +206,19 @@
     entrez_ids[!is.na(entrez_ids)]
   })
 }
+
+.reactome_orgdb <- function(organism) {
+  checkmate::assert_choice(organism, c("human", "rat", "mouse", "celegans", "yeast", "zebrafish", "fly"))
+  if (organism == "celegans") {
+    cli::cli_abort("Celegans is not supported yet.")
+  }
+  orgdb_name <- dplyr::recode_values(organism,
+    "human" ~ "org.Hs.eg.db",
+    "rat" ~ "org.Rn.eg.db",
+    "mouse" ~ "org.Mm.eg.db",
+    "yeast" ~ "org.Sc.sgd.db",
+    "zebrafish" ~ "org.Dr.eg.db",
+    "fly" ~ "org.Dm.eg.db"
+  )
+  .prepare_orgdb(orgdb_name)
+}

@@ -186,7 +186,6 @@ enrich_gc_ora_reactome <- function(
   dea_res,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
-  orgdb = "org.Hs.eg.db",
   organism = "human",
   universe = NULL,
   p_adj_method = "BH",
@@ -194,6 +193,7 @@ enrich_gc_ora_reactome <- function(
   q_cutoff = 0.2
 ) {
   rlang::check_installed("ReactomePA")
+  orgdb <- .reactome_orgdb(organism)
   .gc_ora(
     dea_res,
     enrich_fun = "enrichPathway",

@@ -155,7 +155,6 @@ test_that("enrich_gc_ora_reactome returns correct structure on happy path (integ
   suppressMessages(
     result <- enrich_gc_ora_reactome(
       dea_res,
-      orgdb = "org.Hs.eg.db",
       organism = "human",
       p_cutoff = 0.05
     )

@@ -8,7 +8,6 @@ enrich_ora_reactome(
   dea_res,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
-  orgdb = "org.Hs.eg.db",
   organism = "human",
   universe = NULL,
   p_adj_method = "BH",
@@ -39,11 +38,8 @@ A length-2 numeric vector, being negative and positive boundaries, respectively.
 For example, \code{c(-1, 1)} means "log2FC < -1 or log2FC > 1", and \code{c(-Inf, 1)} means "log2FC > 1".
 Defaults to \code{c(-1, 1)}.}
 
-\item{orgdb}{OrgDb object for converting Uniprot IDs to Entrez IDs.
-Passed to \code{clusterProfiler::bitr()}. Defaults to "org.Hs.eg.db".}
-
 \item{organism}{Reactome organism name. Passed to \code{organism} of \code{\link[ReactomePA:enrichPathway]{ReactomePA::enrichPathway()}}.
-Defaults to "human". Common values: "human", "mouse", "rat".}
+One of "human", "rat", "mouse", "celegans", "yeast", "zebrafish", "fly". Defaults to "human".}
 
 \item{universe}{Background genes Uniprot IDs, directly passed to \code{universe} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.
 If \code{NULL} (default), all genes in the data will be used.
