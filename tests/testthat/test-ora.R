@@ -463,10 +463,9 @@ test_that("enrich_ora_go errors on multi-group glystats_limma_res", {
 })
 
 test_that("enrich_ora_go returns NULL when no terms are enriched", {
-  # Use fake proteins that won't match any GO terms
   tidy_result <- tibble::tibble(
     variable = paste0("var", 1:3),
-    protein = c("FAKE1", "FAKE2", "FAKE3"),
+    protein = c("P01308", "P04637", "P42345"),
     p_val = rep(0.001, 3),
     p_adj = rep(0.001, 3),
     log2fc = c(2.5, 3.0, 1.5),
@@ -476,6 +475,10 @@ test_that("enrich_ora_go returns NULL when no terms are enriched", {
     list(tidy_result = tidy_result, raw_result = list()),
     class = c("glystats_ttest_res", "glystats_res")
   )
+
+  # Mock clusterProfiler::enrichGO to return NULL
+  mock_enrich_go <- function(...) NULL
+  local_mocked_bindings(enrichGO = mock_enrich_go, .package = "clusterProfiler")
 
   result <- suppressMessages(
     suppressWarnings(enrich_ora_go(dea_res, orgdb = "org.Hs.eg.db", ont = "MF"))
