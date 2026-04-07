@@ -86,6 +86,12 @@ test_that("enrich_gc_ora_go returns correct structure on happy path (integration
     )
   )
 
+  # Bioconductor devel annotation and algorithm updates can make this
+  # fixture produce no significant terms in CI devel only.
+  if (is.null(result) && is_r_devel()) {
+    skip("No enriched GO terms for this fixture under R devel/Bioconductor devel.")
+  }
+
   expect_s3_class(
     result,
     c("glyfun_gc_ora_go_res", "glyfun_gc_ora_res", "glyfun_res")
