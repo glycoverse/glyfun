@@ -205,6 +205,7 @@ test_that("enrich_ora_wp returns correct structure on happy path (integration)",
 })
 
 test_that("enrich_ora_do returns correct structure on happy path (integration)", {
+  skip_if_offline()
   skip_if_not_installed("DOSE")
   skip_if_not_installed("org.Hs.eg.db")
 
