@@ -1,17 +1,15 @@
-# GO Over Representation Analysis
+# Network of Cancer Genes (NCG) Over Representation Analysis
 
-Performs Gene Ontology (GO) Over-Representation Analysis (ORA) on
-glycoproteins with dysregulated glycosylation.
+Performs Network of Cancer Genes (NCG) Over-Representation Analysis
+(ORA) on glycoproteins with dysregulated glycosylation.
 
 ## Usage
 
 ``` r
-enrich_ora_go(
+enrich_ora_ncg(
   dea_res,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
-  orgdb = "org.Hs.eg.db",
-  ont = "MF",
   universe = NULL,
   p_adj_method = "BH",
   p_cutoff = 0.05,
@@ -60,17 +58,6 @@ enrich_ora_go(
   example, `c(-1, 1)` means "log2FC \< -1 or log2FC \> 1", and
   `c(-Inf, 1)` means "log2FC \> 1". Defaults to `c(-1, 1)`.
 
-- orgdb:
-
-  Passed to `OrgDb` of
-  [`clusterProfiler::enrichGO()`](https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html).
-
-- ont:
-
-  Passed to `ont` of
-  [`clusterProfiler::enrichGO()`](https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html).
-  "BP", "MF", "CC", or "ALL". Defaults to "MF".
-
 - universe:
 
   Background genes Uniprot IDs, directly passed to `universe` of
@@ -103,16 +90,16 @@ A list with two elements:
 - `tidy_result`: A tibble with enrichment results containing the
   following columns:
 
-  - `id`: Term ID
+  - `id`: NCG cancer gene set ID
 
-  - `description`: Term description
+  - `description`: Cancer type or gene set description
 
-  - `gene_ratio`: Ratio of genes in the term to total genes in the input
+  - `gene_ratio`: Ratio of genes in the set to total genes in the input
 
-  - `bg_ratio`: Ratio of genes in the term to total genes in the
+  - `bg_ratio`: Ratio of genes in the set to total genes in the
     background
 
-  - `rich_factor`: Proportion of the term's total background genes found
+  - `rich_factor`: Proportion of the set's total background genes found
     in the input
 
   - `fold_enrichment`: Ratio of `gene_ratio` to `bg_ratio` (magnitude of
@@ -127,13 +114,12 @@ A list with two elements:
 
   - `q_val`: Q-value (FDR)
 
-  - `gene_id`: Gene IDs in the term (separated by "/")
+  - `gene_id`: Gene IDs in the set (separated by "/")
 
-  - `count`: Number of genes in the term
+  - `count`: Number of genes in the set
 
 - `raw_result`: The raw clusterProfiler `enrichResult` object The list
-  has classes `glyfun_gc_ora_go_res`, `glyfun_gc_ora_res`, and
-  `glyfun_res`.
+  has classes `glyfun_ora_ncg_res`, `glyfun_ora_res`, and `glyfun_res`.
 
 ## Common usage pattern
 
@@ -147,4 +133,4 @@ A common pattern of using this function is:
 
 ## See also
 
-[`clusterProfiler::enrichGO()`](https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html)
+[`DOSE::enrichNCG()`](https://rdrr.io/pkg/DOSE/man/enrichNCG.html)

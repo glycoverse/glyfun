@@ -16,6 +16,10 @@
 - [`enrich_gc_ora_kegg()`](https://glycoverse.github.io/glyfun/reference/enrich_gc_ora_kegg.md)
   : Glycan-Centric KEGG Over Representation Analysis
 
+- [`enrich_gc_ora_ncg()`](https://glycoverse.github.io/glyfun/reference/enrich_gc_ora_ncg.md)
+  : Glycan-Centric Network of Cancer Genes (NCG) Over Representation
+  Analysis
+
 - [`enrich_gc_ora_reactome()`](https://glycoverse.github.io/glyfun/reference/enrich_gc_ora_reactome.md)
   : Glycan-Centric Reactome Pathway Over Representation Analysis
 
@@ -30,6 +34,9 @@
 
 - [`enrich_ora_kegg()`](https://glycoverse.github.io/glyfun/reference/enrich_ora_kegg.md)
   : KEGG Over Representation Analysis
+
+- [`enrich_ora_ncg()`](https://glycoverse.github.io/glyfun/reference/enrich_ora_ncg.md)
+  : Network of Cancer Genes (NCG) Over Representation Analysis
 
 - [`enrich_ora_reactome()`](https://glycoverse.github.io/glyfun/reference/enrich_ora_reactome.md)
   : Reactome Over Representation Analysis

@@ -1,17 +1,20 @@
-# GO Over Representation Analysis
+# Glycan-Centric Network of Cancer Genes (NCG) Over Representation Analysis
 
-Performs Gene Ontology (GO) Over-Representation Analysis (ORA) on
-glycoproteins with dysregulated glycosylation.
+Performs glycan-centric Network of Cancer Genes (NCG)
+Over-Representation Analysis (ORA). Instead of traditional
+protein-centric enrichment, this function links specific glycan traits
+to cancer gene associations. It helps answer questions like "Which
+cancer gene sets are enriched in proteins with a specific dysregulated
+glycan motif?", by grouping differential analysis results by glycan
+traits and computing cancer gene enrichment for each trait.
 
 ## Usage
 
 ``` r
-enrich_ora_go(
+enrich_gc_ora_ncg(
   dea_res,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
-  orgdb = "org.Hs.eg.db",
-  ont = "MF",
   universe = NULL,
   p_adj_method = "BH",
   p_cutoff = 0.05,
@@ -60,17 +63,6 @@ enrich_ora_go(
   example, `c(-1, 1)` means "log2FC \< -1 or log2FC \> 1", and
   `c(-Inf, 1)` means "log2FC \> 1". Defaults to `c(-1, 1)`.
 
-- orgdb:
-
-  Passed to `OrgDb` of
-  [`clusterProfiler::enrichGO()`](https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html).
-
-- ont:
-
-  Passed to `ont` of
-  [`clusterProfiler::enrichGO()`](https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html).
-  "BP", "MF", "CC", or "ALL". Defaults to "MF".
-
 - universe:
 
   Background genes Uniprot IDs, directly passed to `universe` of
@@ -103,16 +95,18 @@ A list with two elements:
 - `tidy_result`: A tibble with enrichment results containing the
   following columns:
 
-  - `id`: Term ID
+  - `trait`: Glycan trait
 
-  - `description`: Term description
+  - `id`: NCG cancer gene set ID
 
-  - `gene_ratio`: Ratio of genes in the term to total genes in the input
+  - `description`: Cancer type or gene set description
 
-  - `bg_ratio`: Ratio of genes in the term to total genes in the
+  - `gene_ratio`: Ratio of genes in the set to total genes in the input
+
+  - `bg_ratio`: Ratio of genes in the set to total genes in the
     background
 
-  - `rich_factor`: Proportion of the term's total background genes found
+  - `rich_factor`: Proportion of the set's total background genes found
     in the input
 
   - `fold_enrichment`: Ratio of `gene_ratio` to `bg_ratio` (magnitude of
@@ -127,24 +121,45 @@ A list with two elements:
 
   - `q_val`: Q-value (FDR)
 
-  - `gene_id`: Gene IDs in the term (separated by "/")
+  - `gene_id`: Gene IDs in the set (separated by "/")
 
-  - `count`: Number of genes in the term
+  - `count`: Number of genes in the set
 
-- `raw_result`: The raw clusterProfiler `enrichResult` object The list
-  has classes `glyfun_gc_ora_go_res`, `glyfun_gc_ora_res`, and
+- `raw_result`: The raw clusterProfiler clusterProfResult object The
+  list has classes `glyfun_gc_ora_ncg_res`, `glyfun_gc_ora_res`, and
   `glyfun_res`.
+
+## What is glycan-centric enrichment?
+
+In traditional glycoproteomics data analysis, we usually perform
+differential expression analysis (DEA) on glycoforms, extract proteins
+that have dysregulated glycosylation, then perform functional enrichment
+(e.g. GO) on these proteins. This is what `enrich_xxx()` functions do
+(e.g.
+[`enrich_ora_go()`](https://glycoverse.github.io/glyfun/reference/enrich_ora_go.md)).
+
+`enrich_gc_xxx()` functions differ in that they link specific glycan
+traits with functional annotations. Instead of answering the question
+"Which functions are enriched in dysregulated glycoproteins?",
+`enrich_gc_xxx()` answers questions like “Which functions are enriched
+in proteins with dysregulated core-fucosylation?” Higher specificity,
+deeper insights. By focusing on distinct glycan motifs, it helps you
+pinpoint the functional relevance of specific glycosylation changes.
 
 ## Common usage pattern
 
 A common pattern of using this function is:
 
-    # 1. Perform differential analysis with `glystats`.
-    dea_res <- gly_ttest(exp)
+    # 1. Use `glydet` to calculate derived traits or motif quantification.
+    trait_exp <- derive_traits(exp)  # or `quantify_motifs()`
 
-    # 2. Use this function.
-    go_res <- enrich_gc_ora_go(dea_res)  # or other glyfun functions
+    # 2. Perform differential analysis with `glystats`.
+    dea_res <- gly_ttest(trait_exp)
+
+    # 3. Use this function.
+    go_res <- enrich_gc_ora_go(dea_res)  # or other `enrich_gc_xxx()` functions
 
 ## See also
 
-[`clusterProfiler::enrichGO()`](https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html)
+[`clusterProfiler::compareCluster()`](https://rdrr.io/pkg/clusterProfiler/man/compareCluster.html),
+[`DOSE::enrichNCG()`](https://rdrr.io/pkg/DOSE/man/enrichNCG.html)
