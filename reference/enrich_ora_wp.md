@@ -99,18 +99,17 @@ A list with two elements:
 - `tidy_result`: A tibble with enrichment results containing the
   following columns:
 
-  - `id`: WikiPathways pathway ID
+  - `id`: Term ID
 
-  - `description`: Pathway description
+  - `description`: Term description
 
-  - `gene_ratio`: Ratio of genes in the pathway to total genes in the
-    input
+  - `gene_ratio`: Ratio of genes in the term to total genes in the input
 
-  - `bg_ratio`: Ratio of genes in the pathway to total genes in the
+  - `bg_ratio`: Ratio of genes in the term to total genes in the
     background
 
-  - `rich_factor`: Proportion of the pathway's total background genes
-    found in the input
+  - `rich_factor`: Proportion of the term's total background genes found
+    in the input
 
   - `fold_enrichment`: Ratio of `gene_ratio` to `bg_ratio` (magnitude of
     enrichment)
@@ -124,12 +123,11 @@ A list with two elements:
 
   - `q_val`: Q-value (FDR)
 
-  - `gene_id`: Gene IDs in the pathway (separated by "/")
+  - `gene_id`: Gene IDs in the term (separated by "/")
 
-  - `count`: Number of genes in the pathway
+  - `count`: Number of genes in the term
 
-- `raw_result`: The raw clusterProfiler `enrichResult` object The list
-  has classes `glyfun_ora_wp_res`, `glyfun_ora_res`, and `glyfun_res`.
+- `raw_result`: The raw clusterProfiler `enrichResult` object
 
 ## Common usage pattern
 

@@ -105,7 +105,7 @@ A list with two elements:
 - `tidy_result`: A tibble with enrichment results containing the
   following columns:
 
-  - `id`: DO term ID
+  - `id`: Term ID
 
   - `description`: Term description
 
@@ -133,8 +133,7 @@ A list with two elements:
 
   - `count`: Number of genes in the term
 
-- `raw_result`: The raw clusterProfiler `enrichResult` object The list
-  has classes `glyfun_ora_do_res`, `glyfun_ora_res`, and `glyfun_res`.
+- `raw_result`: The raw clusterProfiler `enrichResult` object
 
 ## Common usage pattern
 

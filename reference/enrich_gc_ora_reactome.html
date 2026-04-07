@@ -118,21 +118,20 @@ You can use <code><a href="detected_universe.html">detected_universe()</a></code
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A list with two elements:</p><ul><li><p><code>tidy_result</code>: A tibble with enrichment results containing the following columns:</p><ul><li><p><code>trait</code>: Glycan trait</p></li>
-<li><p><code>id</code>: Reactome pathway ID</p></li>
-<li><p><code>description</code>: Pathway description</p></li>
-<li><p><code>gene_ratio</code>: Ratio of genes in the pathway to total genes in the input</p></li>
-<li><p><code>bg_ratio</code>: Ratio of genes in the pathway to total genes in the background</p></li>
-<li><p><code>rich_factor</code>: Proportion of the pathway's total background genes found in the input</p></li>
+<li><p><code>id</code>: Term ID</p></li>
+<li><p><code>description</code>: Term description</p></li>
+<li><p><code>gene_ratio</code>: Ratio of genes in the term to total genes in the input</p></li>
+<li><p><code>bg_ratio</code>: Ratio of genes in the term to total genes in the background</p></li>
+<li><p><code>rich_factor</code>: Proportion of the term's total background genes found in the input</p></li>
 <li><p><code>fold_enrichment</code>: Ratio of <code>gene_ratio</code> to <code>bg_ratio</code> (magnitude of enrichment)</p></li>
 <li><p><code>z_score</code>: Directional trend of regulation (positive for up, negative for down)</p></li>
 <li><p><code>p_val</code>: Raw p-value from hypergeometric test</p></li>
 <li><p><code>p_adj</code>: Adjusted p-value</p></li>
 <li><p><code>q_val</code>: Q-value (FDR)</p></li>
-<li><p><code>gene_id</code>: Gene IDs in the pathway (separated by "/")</p></li>
-<li><p><code>count</code>: Number of genes in the pathway</p></li>
+<li><p><code>gene_id</code>: Gene IDs in the term (separated by "/")</p></li>
+<li><p><code>count</code>: Number of genes in the term</p></li>
 </ul></li>
-<li><p><code>raw_result</code>: The raw clusterProfiler clusterProfResult object
-The list has classes <code>glyfun_gc_ora_reactome_res</code>, <code>glyfun_gc_ora_res</code>, and <code>glyfun_res</code>.</p></li>
+<li><p><code>raw_result</code>: The raw clusterProfiler clusterProfResult object</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="what-is-glycan-centric-enrichment-">What is glycan-centric enrichment?<a class="anchor" aria-label="anchor" href="#what-is-glycan-centric-enrichment-"></a></h2>

@@ -138,9 +138,7 @@ A list with two elements:
 
   - `count`: Number of genes in the term
 
-- `raw_result`: The raw clusterProfiler clusterProfResult object The
-  list has classes `glyfun_gc_ora_go_res`, `glyfun_gc_ora_res`, and
-  `glyfun_res`.
+- `raw_result`: The raw clusterProfiler clusterProfResult object
 
 ## What is glycan-centric enrichment?
 

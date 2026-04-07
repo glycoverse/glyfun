@@ -112,7 +112,7 @@ A list with two elements:
 
   - `trait`: Glycan trait
 
-  - `id`: DO term ID
+  - `id`: Term ID
 
   - `description`: Term description
 
@@ -140,9 +140,7 @@ A list with two elements:
 
   - `count`: Number of genes in the term
 
-- `raw_result`: The raw clusterProfiler clusterProfResult object The
-  list has classes `glyfun_gc_ora_do_res`, `glyfun_gc_ora_res`, and
-  `glyfun_res`.
+- `raw_result`: The raw clusterProfiler clusterProfResult object
 
 ## What is glycan-centric enrichment?
 
