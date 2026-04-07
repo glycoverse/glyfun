@@ -56,7 +56,7 @@
 #'    - `q_val`: Q-value (FDR)
 #'    - `gene_id`: Gene IDs in the term (separated by "/")
 #'    - `count`: Number of genes in the term
-#'  - `raw_result`: The raw clusterProfiler `enrichResult`` object
+#'  - `raw_result`: The raw clusterProfiler `enrichResult` object
 #' The list has classes `glyfun_gc_ora_go_res`, `glyfun_gc_ora_res`, and `glyfun_res`.
 #'
 #' @seealso [clusterProfiler::enrichGO()]
