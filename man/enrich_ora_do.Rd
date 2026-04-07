@@ -62,7 +62,7 @@ A list with two elements:
 \itemize{
 \item \code{tidy_result}: A tibble with enrichment results containing the following columns:
 \itemize{
-\item \code{id}: DO term ID
+\item \code{id}: Term ID
 \item \code{description}: Term description
 \item \code{gene_ratio}: Ratio of genes in the term to total genes in the input
 \item \code{bg_ratio}: Ratio of genes in the term to total genes in the background
@@ -76,7 +76,6 @@ A list with two elements:
 \item \code{count}: Number of genes in the term
 }
 \item \code{raw_result}: The raw clusterProfiler \code{enrichResult} object
-The list has classes \code{glyfun_ora_do_res}, \code{glyfun_ora_res}, and \code{glyfun_res}.
 }
 }
 \description{

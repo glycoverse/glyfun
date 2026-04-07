@@ -57,7 +57,6 @@
 #'    - `gene_id`: Gene IDs in the term (separated by "/")
 #'    - `count`: Number of genes in the term
 #'  - `raw_result`: The raw clusterProfiler `enrichResult` object
-#' The list has classes `glyfun_gc_ora_go_res`, `glyfun_gc_ora_res`, and `glyfun_res`.
 #'
 #' @seealso [clusterProfiler::enrichGO()]
 #' @export
@@ -101,22 +100,7 @@ enrich_ora_go <- function(
 #' @param organism KEGG organism code. Passed to `organism` of [clusterProfiler::enrichKEGG()].
 #'   Defaults to "hsa" (Homo sapiens). Common codes: "hsa" (human), "mmu" (mouse), "rno" (rat).
 #'
-#' @return A list with two elements:
-#'  - `tidy_result`: A tibble with enrichment results containing the following columns:
-#'    - `id`: KEGG pathway ID
-#'    - `description`: Pathway description
-#'    - `gene_ratio`: Ratio of genes in the pathway to total genes in the input
-#'    - `bg_ratio`: Ratio of genes in the pathway to total genes in the background
-#'    - `rich_factor`: Proportion of the pathway's total background genes found in the input
-#'    - `fold_enrichment`: Ratio of `gene_ratio` to `bg_ratio` (magnitude of enrichment)
-#'    - `z_score`: Directional trend of regulation (positive for up, negative for down)
-#'    - `p_val`: Raw p-value from hypergeometric test
-#'    - `p_adj`: Adjusted p-value
-#'    - `q_val`: Q-value (FDR)
-#'    - `gene_id`: Gene IDs in the pathway (separated by "/")
-#'    - `count`: Number of genes in the pathway
-#'  - `raw_result`: The raw clusterProfiler `enrichResult` object
-#' The list has classes `glyfun_ora_kegg_res`, `glyfun_ora_res`, and `glyfun_res`.
+#' @inherit enrich_ora_go return
 #'
 #' @seealso [clusterProfiler::enrichKEGG()]
 #' @export
@@ -157,22 +141,7 @@ enrich_ora_kegg <- function(
 #' @param organism Reactome organism name. Passed to `organism` of [ReactomePA::enrichPathway()].
 #'   One of "human", "rat", "mouse", "celegans", "yeast", "zebrafish", "fly". Defaults to "human".
 #'
-#' @return A list with two elements:
-#'  - `tidy_result`: A tibble with enrichment results containing the following columns:
-#'    - `id`: Reactome pathway ID
-#'    - `description`: Pathway description
-#'    - `gene_ratio`: Ratio of genes in the pathway to total genes in the input
-#'    - `bg_ratio`: Ratio of genes in the pathway to total genes in the background
-#'    - `rich_factor`: Proportion of the pathway's total background genes found in the input
-#'    - `fold_enrichment`: Ratio of `gene_ratio` to `bg_ratio` (magnitude of enrichment)
-#'    - `z_score`: Directional trend of regulation (positive for up, negative for down)
-#'    - `p_val`: Raw p-value from hypergeometric test
-#'    - `p_adj`: Adjusted p-value
-#'    - `q_val`: Q-value (FDR)
-#'    - `gene_id`: Gene IDs in the pathway (separated by "/")
-#'    - `count`: Number of genes in the pathway
-#'  - `raw_result`: The raw clusterProfiler `enrichResult` object
-#' The list has classes `glyfun_ora_reactome_res`, `glyfun_ora_res`, and `glyfun_res`.
+#' @inherit enrich_ora_go return
 #'
 #' @seealso [ReactomePA::enrichPathway()]
 #' @export
@@ -216,22 +185,7 @@ enrich_ora_reactome <- function(
 #' @param organism WikiPathways organism name. Passed to `organism` of [clusterProfiler::enrichWP()].
 #'   Defaults to "Homo sapiens". Use [clusterProfiler::get_wp_organisms()] to see available organisms.
 #'
-#' @return A list with two elements:
-#'  - `tidy_result`: A tibble with enrichment results containing the following columns:
-#'    - `id`: WikiPathways pathway ID
-#'    - `description`: Pathway description
-#'    - `gene_ratio`: Ratio of genes in the pathway to total genes in the input
-#'    - `bg_ratio`: Ratio of genes in the pathway to total genes in the background
-#'    - `rich_factor`: Proportion of the pathway's total background genes found in the input
-#'    - `fold_enrichment`: Ratio of `gene_ratio` to `bg_ratio` (magnitude of enrichment)
-#'    - `z_score`: Directional trend of regulation (positive for up, negative for down)
-#'    - `p_val`: Raw p-value from hypergeometric test
-#'    - `p_adj`: Adjusted p-value
-#'    - `q_val`: Q-value (FDR)
-#'    - `gene_id`: Gene IDs in the pathway (separated by "/")
-#'    - `count`: Number of genes in the pathway
-#'  - `raw_result`: The raw clusterProfiler `enrichResult` object
-#' The list has classes `glyfun_ora_wp_res`, `glyfun_ora_res`, and `glyfun_res`.
+#' @inherit enrich_ora_go return
 #'
 #' @seealso [clusterProfiler::enrichWP()]
 #' @export
@@ -277,22 +231,7 @@ enrich_ora_wp <- function(
 #' @param organism "hsa" (Homo sapiens) or "mmu" (Mus musculus).
 #'   Passed to `organism` of [DOSE::enrichDO()]. Defaults to "hsa".
 #'
-#' @return A list with two elements:
-#'  - `tidy_result`: A tibble with enrichment results containing the following columns:
-#'    - `id`: DO term ID
-#'    - `description`: Term description
-#'    - `gene_ratio`: Ratio of genes in the term to total genes in the input
-#'    - `bg_ratio`: Ratio of genes in the term to total genes in the background
-#'    - `rich_factor`: Proportion of the term's total background genes found in the input
-#'    - `fold_enrichment`: Ratio of `gene_ratio` to `bg_ratio` (magnitude of enrichment)
-#'    - `z_score`: Directional trend of regulation (positive for up, negative for down)
-#'    - `p_val`: Raw p-value from hypergeometric test
-#'    - `p_adj`: Adjusted p-value
-#'    - `q_val`: Q-value (FDR)
-#'    - `gene_id`: Gene IDs in the term (separated by "/")
-#'    - `count`: Number of genes in the term
-#'  - `raw_result`: The raw clusterProfiler `enrichResult` object
-#' The list has classes `glyfun_ora_do_res`, `glyfun_ora_res`, and `glyfun_res`.
+#' @inherit enrich_ora_go return
 #'
 #' @seealso [DOSE::enrichDO()]
 #' @export
@@ -336,22 +275,7 @@ enrich_ora_do <- function(
 #'
 #' @inheritParams enrich_ora_go
 #'
-#' @return A list with two elements:
-#'  - `tidy_result`: A tibble with enrichment results containing the following columns:
-#'    - `id`: NCG cancer gene set ID
-#'    - `description`: Cancer type or gene set description
-#'    - `gene_ratio`: Ratio of genes in the set to total genes in the input
-#'    - `bg_ratio`: Ratio of genes in the set to total genes in the background
-#'    - `rich_factor`: Proportion of the set's total background genes found in the input
-#'    - `fold_enrichment`: Ratio of `gene_ratio` to `bg_ratio` (magnitude of enrichment)
-#'    - `z_score`: Directional trend of regulation (positive for up, negative for down)
-#'    - `p_val`: Raw p-value from hypergeometric test
-#'    - `p_adj`: Adjusted p-value
-#'    - `q_val`: Q-value (FDR)
-#'    - `gene_id`: Gene IDs in the set (separated by "/")
-#'    - `count`: Number of genes in the set
-#'  - `raw_result`: The raw clusterProfiler `enrichResult` object
-#' The list has classes `glyfun_ora_ncg_res`, `glyfun_ora_res`, and `glyfun_res`.
+#' @inherit enrich_ora_go return
 #'
 #' @seealso [DOSE::enrichNCG()]
 #' @export

@@ -53,21 +53,20 @@ A list with two elements:
 \itemize{
 \item \code{tidy_result}: A tibble with enrichment results containing the following columns:
 \itemize{
-\item \code{id}: NCG cancer gene set ID
-\item \code{description}: Cancer type or gene set description
-\item \code{gene_ratio}: Ratio of genes in the set to total genes in the input
-\item \code{bg_ratio}: Ratio of genes in the set to total genes in the background
-\item \code{rich_factor}: Proportion of the set's total background genes found in the input
+\item \code{id}: Term ID
+\item \code{description}: Term description
+\item \code{gene_ratio}: Ratio of genes in the term to total genes in the input
+\item \code{bg_ratio}: Ratio of genes in the term to total genes in the background
+\item \code{rich_factor}: Proportion of the term's total background genes found in the input
 \item \code{fold_enrichment}: Ratio of \code{gene_ratio} to \code{bg_ratio} (magnitude of enrichment)
 \item \code{z_score}: Directional trend of regulation (positive for up, negative for down)
 \item \code{p_val}: Raw p-value from hypergeometric test
 \item \code{p_adj}: Adjusted p-value
 \item \code{q_val}: Q-value (FDR)
-\item \code{gene_id}: Gene IDs in the set (separated by "/")
-\item \code{count}: Number of genes in the set
+\item \code{gene_id}: Gene IDs in the term (separated by "/")
+\item \code{count}: Number of genes in the term
 }
 \item \code{raw_result}: The raw clusterProfiler \code{enrichResult} object
-The list has classes \code{glyfun_ora_ncg_res}, \code{glyfun_ora_res}, and \code{glyfun_res}.
 }
 }
 \description{
