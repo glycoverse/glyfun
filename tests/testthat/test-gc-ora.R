@@ -89,7 +89,9 @@ test_that("enrich_gc_ora_go returns correct structure on happy path (integration
   # Bioconductor devel annotation and algorithm updates can make this
   # fixture produce no significant terms in CI devel only.
   if (is.null(result) && is_r_devel()) {
-    skip("No enriched GO terms for this fixture under R devel/Bioconductor devel.")
+    skip(
+      "No enriched GO terms for this fixture under R devel/Bioconductor devel."
+    )
   }
 
   expect_s3_class(
@@ -251,6 +253,41 @@ test_that("enrich_gc_ora_do returns correct structure on happy path (integration
   expect_s3_class(
     result,
     c("glyfun_gc_ora_do_res", "glyfun_gc_ora_res", "glyfun_res")
+  )
+  expect_named(result, c("tidy_result", "raw_result"))
+  expect_true(tibble::is_tibble(result$tidy_result))
+
+  expected_cols <- c(
+    "trait",
+    "id",
+    "description",
+    "gene_ratio",
+    "bg_ratio",
+    "rich_factor",
+    "fold_enrichment",
+    "z_score",
+    "p_val",
+    "p_adj",
+    "q_val",
+    "gene_id",
+    "count"
+  )
+  expect_true(all(expected_cols %in% colnames(result$tidy_result)))
+})
+
+test_that("enrich_gc_ora_ncg returns correct structure on happy path (integration)", {
+  skip_if_not_installed("DOSE")
+  skip_if_not_installed("org.Hs.eg.db")
+
+  dea_res <- .mock_dea_res()
+
+  suppressMessages(
+    result <- enrich_gc_ora_ncg(dea_res, p_cutoff = 0.05)
+  )
+
+  expect_s3_class(
+    result,
+    c("glyfun_gc_ora_ncg_res", "glyfun_gc_ora_res", "glyfun_res")
   )
   expect_named(result, c("tidy_result", "raw_result"))
   expect_true(tibble::is_tibble(result$tidy_result))
