@@ -326,6 +326,61 @@ enrich_ora_do <- function(
   )
 }
 
+#' Network of Cancer Genes (NCG) Over Representation Analysis
+#'
+#' @description
+#' Performs Network of Cancer Genes (NCG) Over-Representation Analysis (ORA)
+#' on glycoproteins with dysregulated glycosylation.
+#'
+#' @inheritSection enrich_ora_go Common usage pattern
+#'
+#' @inheritParams enrich_ora_go
+#'
+#' @return A list with two elements:
+#'  - `tidy_result`: A tibble with enrichment results containing the following columns:
+#'    - `id`: NCG cancer gene set ID
+#'    - `description`: Cancer type or gene set description
+#'    - `gene_ratio`: Ratio of genes in the set to total genes in the input
+#'    - `bg_ratio`: Ratio of genes in the set to total genes in the background
+#'    - `rich_factor`: Proportion of the set's total background genes found in the input
+#'    - `fold_enrichment`: Ratio of `gene_ratio` to `bg_ratio` (magnitude of enrichment)
+#'    - `z_score`: Directional trend of regulation (positive for up, negative for down)
+#'    - `p_val`: Raw p-value from hypergeometric test
+#'    - `p_adj`: Adjusted p-value
+#'    - `q_val`: Q-value (FDR)
+#'    - `gene_id`: Gene IDs in the set (separated by "/")
+#'    - `count`: Number of genes in the set
+#'  - `raw_result`: The raw clusterProfiler `enrichResult` object
+#' The list has classes `glyfun_ora_ncg_res`, `glyfun_ora_res`, and `glyfun_res`.
+#'
+#' @seealso [DOSE::enrichNCG()]
+#' @export
+enrich_ora_ncg <- function(
+  dea_res,
+  dea_p_cutoff = 0.05,
+  dea_log2fc_cutoff = c(-1, 1),
+  universe = NULL,
+  p_adj_method = "BH",
+  p_cutoff = 0.05,
+  q_cutoff = 0.2
+) {
+  rlang::check_installed("DOSE")
+  orgdb <- .prepare_orgdb("org.Hs.eg.db")
+  .ora(
+    dea_res,
+    enrich_fun = DOSE::enrichNCG,
+    result_class = "glyfun_ora_ncg_res",
+    dea_p_cutoff = dea_p_cutoff,
+    dea_log2fc_cutoff = dea_log2fc_cutoff,
+    bitr_orgdb = orgdb,
+    universe = universe,
+    pAdjustMethod = p_adj_method,
+    pvalueCutoff = p_cutoff,
+    qvalueCutoff = q_cutoff,
+    uniprot_to_entrez = TRUE
+  )
+}
+
 #' Perform ORA
 #' @param dea_res DEA result from glystats.
 #' @param enrich_fun An enrichment function.

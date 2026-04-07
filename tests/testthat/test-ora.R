@@ -483,3 +483,37 @@ test_that("enrich_ora_go returns NULL when no terms are enriched", {
 
   expect_null(result)
 })
+
+test_that("enrich_ora_ncg returns correct structure on happy path (integration)", {
+  skip_if_not_installed("DOSE")
+  skip_if_not_installed("org.Hs.eg.db")
+
+  dea_res <- .mock_dea_res()
+
+  suppressMessages(
+    result <- enrich_ora_ncg(dea_res, p_cutoff = 0.05)
+  )
+
+  expect_s3_class(
+    result,
+    c("glyfun_ora_ncg_res", "glyfun_ora_res", "glyfun_res")
+  )
+  expect_named(result, c("tidy_result", "raw_result"))
+  expect_true(tibble::is_tibble(result$tidy_result))
+
+  expected_cols <- c(
+    "id",
+    "description",
+    "gene_ratio",
+    "bg_ratio",
+    "rich_factor",
+    "fold_enrichment",
+    "z_score",
+    "p_val",
+    "p_adj",
+    "q_val",
+    "gene_id",
+    "count"
+  )
+  expect_true(all(expected_cols %in% colnames(result$tidy_result)))
+})
