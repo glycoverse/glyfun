@@ -229,6 +229,7 @@ test_that("enrich_gc_ora_do returns correct structure on happy path (integration
   skip_if_offline()
   skip_if_not_installed("DOSE")
   skip_if_not_installed("org.Hs.eg.db")
+  skip_if_no_hdo()
 
   dea_res <- .mock_dea_res()
 
