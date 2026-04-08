@@ -69,7 +69,9 @@ enrich_gc_ora_go <- function(
   universe = NULL,
   p_adj_method = "BH",
   p_cutoff = 0.05,
-  q_cutoff = 0.2
+  q_cutoff = 0.2,
+  min_gs_size = 10,
+  max_gs_size = 500
 ) {
   orgdb <- .prepare_orgdb(orgdb)
   .gc_ora(
@@ -84,7 +86,9 @@ enrich_gc_ora_go <- function(
     universe = universe,
     pAdjustMethod = p_adj_method,
     pvalueCutoff = p_cutoff,
-    qvalueCutoff = q_cutoff
+    qvalueCutoff = q_cutoff,
+    minGSSize = min_gs_size,
+    maxGSSize = max_gs_size
   )
 }
 
@@ -114,7 +118,9 @@ enrich_gc_ora_kegg <- function(
   universe = NULL,
   p_adj_method = "BH",
   p_cutoff = 0.05,
-  q_cutoff = 0.2
+  q_cutoff = 0.2,
+  min_gs_size = 10,
+  max_gs_size = 500
 ) {
   .gc_ora(
     dea_res,
@@ -127,7 +133,9 @@ enrich_gc_ora_kegg <- function(
     universe = universe,
     pAdjustMethod = p_adj_method,
     pvalueCutoff = p_cutoff,
-    qvalueCutoff = q_cutoff
+    qvalueCutoff = q_cutoff,
+    minGSSize = min_gs_size,
+    maxGSSize = max_gs_size
   )
 }
 
@@ -157,7 +165,9 @@ enrich_gc_ora_reactome <- function(
   universe = NULL,
   p_adj_method = "BH",
   p_cutoff = 0.05,
-  q_cutoff = 0.2
+  q_cutoff = 0.2,
+  min_gs_size = 10,
+  max_gs_size = 500
 ) {
   rlang::check_installed("ReactomePA")
   orgdb <- .reactome_orgdb(organism)
@@ -173,6 +183,8 @@ enrich_gc_ora_reactome <- function(
     pAdjustMethod = p_adj_method,
     pvalueCutoff = p_cutoff,
     qvalueCutoff = q_cutoff,
+    minGSSize = min_gs_size,
+    maxGSSize = max_gs_size,
     uniprot_to_entrez = TRUE
   )
 }
@@ -203,7 +215,9 @@ enrich_gc_ora_wp <- function(
   universe = NULL,
   p_adj_method = "BH",
   p_cutoff = 0.05,
-  q_cutoff = 0.2
+  q_cutoff = 0.2,
+  min_gs_size = 10,
+  max_gs_size = 500
 ) {
   orgdb <- .wp_orgdb(organism)
   .gc_ora(
@@ -218,6 +232,8 @@ enrich_gc_ora_wp <- function(
     pAdjustMethod = p_adj_method,
     pvalueCutoff = p_cutoff,
     qvalueCutoff = q_cutoff,
+    minGSSize = min_gs_size,
+    maxGSSize = max_gs_size,
     uniprot_to_entrez = TRUE
   )
 }
@@ -249,7 +265,9 @@ enrich_gc_ora_do <- function(
   universe = NULL,
   p_adj_method = "BH",
   p_cutoff = 0.05,
-  q_cutoff = 0.2
+  q_cutoff = 0.2,
+  min_gs_size = 10,
+  max_gs_size = 500
 ) {
   rlang::check_installed("DOSE")
   orgdb <- .do_orgdb(organism)
@@ -266,6 +284,8 @@ enrich_gc_ora_do <- function(
     pAdjustMethod = p_adj_method,
     pvalueCutoff = p_cutoff,
     qvalueCutoff = q_cutoff,
+    minGSSize = min_gs_size,
+    maxGSSize = max_gs_size,
     uniprot_to_entrez = TRUE
   )
 }
@@ -295,7 +315,9 @@ enrich_gc_ora_ncg <- function(
   universe = NULL,
   p_adj_method = "BH",
   p_cutoff = 0.05,
-  q_cutoff = 0.2
+  q_cutoff = 0.2,
+  min_gs_size = 10,
+  max_gs_size = 500
 ) {
   rlang::check_installed("DOSE")
   orgdb <- .prepare_orgdb("org.Hs.eg.db")
@@ -310,6 +332,8 @@ enrich_gc_ora_ncg <- function(
     pAdjustMethod = p_adj_method,
     pvalueCutoff = p_cutoff,
     qvalueCutoff = q_cutoff,
+    minGSSize = min_gs_size,
+    maxGSSize = max_gs_size,
     uniprot_to_entrez = TRUE
   )
 }

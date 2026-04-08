@@ -12,7 +12,9 @@ enrich_ora_kegg(
   universe = NULL,
   p_adj_method = "BH",
   p_cutoff = 0.05,
-  q_cutoff = 0.2
+  q_cutoff = 0.2,
+  min_gs_size = 10,
+  max_gs_size = 500
 )
 }
 \arguments{
@@ -56,6 +58,14 @@ Passed to \code{pvalueCutoff} of downstream enrichment function. Defaults to 0.0
 
 \item{q_cutoff}{Q-value (FDR) cutoff to filter significant terms.
 Passed to \code{qvalueCutoff} of downstream enrichment function. Defaults to 0.2.}
+
+\item{min_gs_size}{Minimal size of each gene set for analyzing.
+Gene sets with fewer genes than this threshold will be excluded.
+Passed to \code{minGSSize} of downstream enrichment function. Defaults to 10.}
+
+\item{max_gs_size}{Maximum size of each gene set for analyzing.
+Gene sets with more genes than this threshold will be excluded.
+Passed to \code{maxGSSize} of downstream enrichment function. Defaults to 500.}
 }
 \value{
 A list with two elements:

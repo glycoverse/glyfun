@@ -47,6 +47,12 @@
 #'   Passed to `pvalueCutoff` of downstream enrichment function. Defaults to 0.05.
 #' @param q_cutoff Q-value (FDR) cutoff to filter significant terms.
 #'   Passed to `qvalueCutoff` of downstream enrichment function. Defaults to 0.2.
+#' @param min_gs_size Minimal size of each gene set for analyzing.
+#'   Gene sets with fewer genes than this threshold will be excluded.
+#'   Passed to `minGSSize` of downstream enrichment function. Defaults to 10.
+#' @param max_gs_size Maximum size of each gene set for analyzing.
+#'   Gene sets with more genes than this threshold will be excluded.
+#'   Passed to `maxGSSize` of downstream enrichment function. Defaults to 500.
 #'
 #' @return A list with two elements:
 #'  - `tidy_result`: A tibble with enrichment results containing the following columns:
@@ -75,7 +81,9 @@ enrich_ora_go <- function(
   universe = NULL,
   p_adj_method = "BH",
   p_cutoff = 0.05,
-  q_cutoff = 0.2
+  q_cutoff = 0.2,
+  min_gs_size = 10,
+  max_gs_size = 500
 ) {
   orgdb <- .prepare_orgdb(orgdb)
   .ora(
@@ -90,7 +98,9 @@ enrich_ora_go <- function(
     universe = universe,
     pAdjustMethod = p_adj_method,
     pvalueCutoff = p_cutoff,
-    qvalueCutoff = q_cutoff
+    qvalueCutoff = q_cutoff,
+    minGSSize = min_gs_size,
+    maxGSSize = max_gs_size
   )
 }
 
@@ -118,7 +128,9 @@ enrich_ora_kegg <- function(
   universe = NULL,
   p_adj_method = "BH",
   p_cutoff = 0.05,
-  q_cutoff = 0.2
+  q_cutoff = 0.2,
+  min_gs_size = 10,
+  max_gs_size = 500
 ) {
   .ora(
     dea_res,
@@ -131,7 +143,9 @@ enrich_ora_kegg <- function(
     universe = universe,
     pAdjustMethod = p_adj_method,
     pvalueCutoff = p_cutoff,
-    qvalueCutoff = q_cutoff
+    qvalueCutoff = q_cutoff,
+    minGSSize = min_gs_size,
+    maxGSSize = max_gs_size
   )
 }
 
@@ -159,7 +173,9 @@ enrich_ora_reactome <- function(
   universe = NULL,
   p_adj_method = "BH",
   p_cutoff = 0.05,
-  q_cutoff = 0.2
+  q_cutoff = 0.2,
+  min_gs_size = 10,
+  max_gs_size = 500
 ) {
   rlang::check_installed("ReactomePA")
   orgdb <- .reactome_orgdb(organism)
@@ -175,6 +191,8 @@ enrich_ora_reactome <- function(
     pAdjustMethod = p_adj_method,
     pvalueCutoff = p_cutoff,
     qvalueCutoff = q_cutoff,
+    minGSSize = min_gs_size,
+    maxGSSize = max_gs_size,
     uniprot_to_entrez = TRUE
   )
 }
@@ -203,7 +221,9 @@ enrich_ora_wp <- function(
   universe = NULL,
   p_adj_method = "BH",
   p_cutoff = 0.05,
-  q_cutoff = 0.2
+  q_cutoff = 0.2,
+  min_gs_size = 10,
+  max_gs_size = 500
 ) {
   orgdb <- .wp_orgdb(organism)
   .ora(
@@ -218,6 +238,8 @@ enrich_ora_wp <- function(
     pAdjustMethod = p_adj_method,
     pvalueCutoff = p_cutoff,
     qvalueCutoff = q_cutoff,
+    minGSSize = min_gs_size,
+    maxGSSize = max_gs_size,
     uniprot_to_entrez = TRUE
   )
 }
@@ -250,7 +272,9 @@ enrich_ora_do <- function(
   universe = NULL,
   p_adj_method = "BH",
   p_cutoff = 0.05,
-  q_cutoff = 0.2
+  q_cutoff = 0.2,
+  min_gs_size = 10,
+  max_gs_size = 500
 ) {
   rlang::check_installed("DOSE")
   orgdb <- .do_orgdb(organism)
@@ -267,6 +291,8 @@ enrich_ora_do <- function(
     pAdjustMethod = p_adj_method,
     pvalueCutoff = p_cutoff,
     qvalueCutoff = q_cutoff,
+    minGSSize = min_gs_size,
+    maxGSSize = max_gs_size,
     uniprot_to_entrez = TRUE
   )
 }
@@ -292,7 +318,9 @@ enrich_ora_ncg <- function(
   universe = NULL,
   p_adj_method = "BH",
   p_cutoff = 0.05,
-  q_cutoff = 0.2
+  q_cutoff = 0.2,
+  min_gs_size = 10,
+  max_gs_size = 500
 ) {
   rlang::check_installed("DOSE")
   orgdb <- .prepare_orgdb("org.Hs.eg.db")
@@ -307,6 +335,8 @@ enrich_ora_ncg <- function(
     pAdjustMethod = p_adj_method,
     pvalueCutoff = p_cutoff,
     qvalueCutoff = q_cutoff,
+    minGSSize = min_gs_size,
+    maxGSSize = max_gs_size,
     uniprot_to_entrez = TRUE
   )
 }
