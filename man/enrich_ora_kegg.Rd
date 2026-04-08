@@ -46,11 +46,16 @@ If \code{NULL} (default), all genes in the data will be used.
 Another common pattern is to use all detected proteins as backgroud genes.
 You can use \code{\link[=detected_universe]{detected_universe()}} to help you.}
 
-\item{p_adj_method}{Passed to \code{pAdjustMethod} of downstream enrichment function.}
+\item{p_adj_method}{P-value adjustment method.
+One of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none".
+Passed to \code{pAdjustMethod} of downstream enrichment function.
+Defaults to "BH".}
 
-\item{p_cutoff}{Passed to \code{pvalueCutoff} of downstream enrichment function.}
+\item{p_cutoff}{P-value cutoff to filter significant terms.
+Passed to \code{pvalueCutoff} of downstream enrichment function. Defaults to 0.05.}
 
-\item{q_cutoff}{Passed to \code{qvalueCutoff} of downstream enrichment function.}
+\item{q_cutoff}{Q-value (FDR) cutoff to filter significant terms.
+Passed to \code{qvalueCutoff} of downstream enrichment function. Defaults to 0.2.}
 }
 \value{
 A list with two elements:
