@@ -46,16 +46,16 @@ Defaults to "HDO".}
 \item{organism}{"hsa" (Homo sapiens) or "mmu" (Mus musculus).
 Passed to \code{organism} of \code{\link[DOSE:enrichDO]{DOSE::enrichDO()}}. Defaults to "hsa".}
 
-\item{universe}{Background genes Uniprot IDs, directly passed to \code{universe} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.
+\item{universe}{Background genes Uniprot IDs, directly passed to \code{universe} of downstream enrichment function.
 If \code{NULL} (default), all genes in the data will be used.
 Another common pattern is to use all detected proteins as backgroud genes.
 You can use \code{\link[=detected_universe]{detected_universe()}} to help you.}
 
-\item{p_adj_method}{Passed to \code{pAdjustMethod} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
+\item{p_adj_method}{Passed to \code{pAdjustMethod} of downstream enrichment function.}
 
-\item{p_cutoff}{Passed to \code{pvalueCutoff} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
+\item{p_cutoff}{Passed to \code{pvalueCutoff} of downstream enrichment function.}
 
-\item{q_cutoff}{Passed to \code{qvalueCutoff} of \code{\link[clusterProfiler:enrichGO]{clusterProfiler::enrichGO()}}.}
+\item{q_cutoff}{Passed to \code{qvalueCutoff} of downstream enrichment function.}
 }
 \value{
 A list with two elements:

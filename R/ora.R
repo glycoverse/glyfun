@@ -32,15 +32,15 @@
 #'   A length-2 numeric vector, being negative and positive boundaries, respectively.
 #'   For example, `c(-1, 1)` means "log2FC < -1 or log2FC > 1", and `c(-Inf, 1)` means "log2FC > 1".
 #'   Defaults to `c(-1, 1)`.
-#' @param orgdb Passed to `OrgDb` of [clusterProfiler::enrichGO()].
+#' @param orgdb Passed to `OrgDb` of downstream enrichment function.
 #' @param ont Passed to `ont` of [clusterProfiler::enrichGO()]. "BP", "MF", "CC", or "ALL". Defaults to "MF".
-#' @param universe Background genes Uniprot IDs, directly passed to `universe` of [clusterProfiler::enrichGO()].
+#' @param universe Background genes Uniprot IDs, directly passed to `universe` of downstream enrichment function.
 #'   If `NULL` (default), all genes in the data will be used.
 #'   Another common pattern is to use all detected proteins as backgroud genes.
 #'   You can use [detected_universe()] to help you.
-#' @param p_adj_method Passed to `pAdjustMethod` of [clusterProfiler::enrichGO()].
-#' @param p_cutoff Passed to `pvalueCutoff` of [clusterProfiler::enrichGO()].
-#' @param q_cutoff Passed to `qvalueCutoff` of [clusterProfiler::enrichGO()].
+#' @param p_adj_method Passed to `pAdjustMethod` of downstream enrichment function.
+#' @param p_cutoff Passed to `pvalueCutoff` of downstream enrichment function.
+#' @param q_cutoff Passed to `qvalueCutoff` of downstream enrichment function.
 #'
 #' @return A list with two elements:
 #'  - `tidy_result`: A tibble with enrichment results containing the following columns:
