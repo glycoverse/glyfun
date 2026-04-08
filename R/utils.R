@@ -266,3 +266,15 @@
   orgdb_name <- switch(organism, hsa = "org.Hs.eg.db", mmu = "org.Mm.eg.db")
   .prepare_orgdb(orgdb_name)
 }
+
+#' Check gene set size arguments
+#' @noRd
+.check_gs_size_args <- function(min_gs_size, max_gs_size) {
+  checkmate::assert_int(min_gs_size, lower = 1)
+  checkmate::assert_int(max_gs_size, lower = 1)
+  if (min_gs_size > max_gs_size) {
+    cli::cli_abort(
+      "{.arg min_gs_size} must be less than or equal to {.arg max_gs_size}."
+    )
+  }
+}
