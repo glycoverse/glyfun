@@ -36,7 +36,6 @@ Imports:
     clusterProfiler,
     dplyr,
     glystats (>= 0.8.0),
-    janitor,
     purrr,
     rlang,
     tibble,
