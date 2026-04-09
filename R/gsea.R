@@ -84,20 +84,13 @@ enrich_gsea_go <- function(
   bitr_orgdb = NULL,
   ...
 ) {
-  pro_fun <- function(dea_res) {
-    dea_res |>
-      dplyr::summarise(score = median(abs(.data$log2fc)), .by = .data$protein) |>
-      dplyr::arrange(dplyr::desc(.data$score)) |>
-      dplyr::select(.data$protein, .data$score) |>
-      tibble::deframe()
-  }
   .gsea_impl(
     dea_res,
     enrich_fun = enrich_fun,
     result_class = result_class,
     bitr_orgdb = bitr_orgdb,
     ...,
-    pro_fun = pro_fun
+    pro_fun = .prepare_pro_list
   )
 }
 
@@ -111,10 +104,7 @@ enrich_gsea_go <- function(
   pro_fun <- function(dea_res) {
     dea_res |>
       glystats::get_tidy_result() |>
-      dplyr::summarise(score = median(abs(.data$log2fc)), .by = .data$protein) |>
-      dplyr::arrange(dplyr::desc(.data$score)) |>
-      dplyr::select(.data$protein, .data$score) |>
-      tibble::deframe()
+      .prepare_pro_list()
   }
   .gsea_impl(
     dea_res,
@@ -124,6 +114,14 @@ enrich_gsea_go <- function(
     ...,
     pro_fun = pro_fun
   )
+}
+
+.prepare_pro_list <- function(df) {
+  df |>
+    dplyr::summarise(score = median(abs(.data$log2fc)), .by = .data$protein) |>
+    dplyr::arrange(dplyr::desc(.data$score)) |>
+    dplyr::select(.data$protein, .data$score) |>
+    tibble::deframe()
 }
 
 .gsea_impl <- function(
