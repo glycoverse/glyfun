@@ -28,7 +28,7 @@ called on an \code{\link[glyexp:experiment]{glyexp::experiment()}} of "traitprot
 \item \code{trait}: A glycosylation trait (e.g. "TFc" for proportion of core-fucosylated glycans)
 \item \code{site}: The glycosylation site.
 \item \code{p_val}: p-values, preferably adjusted p-values
-\item \code{log2FC}: log2 of fold change
+\item \code{log2fc}: log2 of fold change
 }
 }}
 
@@ -37,7 +37,7 @@ For \code{glystats} result input, adjusted p-values are used.}
 
 \item{dea_log2fc_cutoff}{Log2 fold change cutoff statistical significance.
 A length-2 numeric vector, being negative and positive boundaries, respectively.
-For example, \code{c(-1, 1)} means "log2FC < -1 or log2FC > 1", and \code{c(-Inf, 1)} means "log2FC > 1".
+For example, \code{c(-1, 1)} means "log2fc < -1 or log2fc > 1", and \code{c(-Inf, 1)} means "log2fc > 1".
 Defaults to \code{c(-1, 1)}.}
 
 \item{organism}{KEGG organism code. Passed to \code{organism} of \code{\link[clusterProfiler:enrichKEGG]{clusterProfiler::enrichKEGG()}}.

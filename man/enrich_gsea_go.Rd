@@ -28,7 +28,7 @@ called on an \code{\link[glyexp:experiment]{glyexp::experiment()}} of "traitprot
 \item \code{trait}: A glycosylation trait (e.g. "TFc" for proportion of core-fucosylated glycans)
 \item \code{site}: The glycosylation site.
 \item \code{p_val}: p-values, preferably adjusted p-values
-\item \code{log2FC}: log2 of fold change
+\item \code{log2fc}: log2 of fold change
 }
 }}
 

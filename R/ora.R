@@ -25,12 +25,12 @@
 #'     - `trait`: A glycosylation trait (e.g. "TFc" for proportion of core-fucosylated glycans)
 #'     - `site`: The glycosylation site.
 #'     - `p_val`: p-values, preferably adjusted p-values
-#'     - `log2FC`: log2 of fold change
+#'     - `log2fc`: log2 of fold change
 #' @param dea_p_cutoff P-value cutoff for statistical significance. Defaults to 0.05.
 #'   For `glystats` result input, adjusted p-values are used.
 #' @param dea_log2fc_cutoff Log2 fold change cutoff statistical significance.
 #'   A length-2 numeric vector, being negative and positive boundaries, respectively.
-#'   For example, `c(-1, 1)` means "log2FC < -1 or log2FC > 1", and `c(-Inf, 1)` means "log2FC > 1".
+#'   For example, `c(-1, 1)` means "log2fc < -1 or log2fc > 1", and `c(-Inf, 1)` means "log2fc > 1".
 #'   Defaults to `c(-1, 1)`.
 #' @param orgdb An OrgDb object. Passed to `OrgDb` of downstream enrichment function.
 #' @param ont Ontology type. Passed to `ont` of [clusterProfiler::enrichGO()]. "BP", "MF", "CC", or "ALL".
@@ -366,8 +366,8 @@ enrich_ora_ncg <- function(
     dea_res |>
       dplyr::filter(
         .data$p_val < dea_p_cutoff,
-        .data$log2FC < dea_log2fc_cutoff[[1]] |
-          .data$log2FC > dea_log2fc_cutoff[[2]]
+        .data$log2fc < dea_log2fc_cutoff[[1]] |
+          .data$log2fc > dea_log2fc_cutoff[[2]]
       ) |>
       dplyr::pull(.data$protein) |>
       unique()

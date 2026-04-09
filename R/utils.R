@@ -54,7 +54,7 @@
 }
 
 .check_dea_res.data.frame <- function(dea_res) {
-  expected_cols <- c("protein", "site", "trait", "p_val", "log2FC")
+  expected_cols <- c("protein", "site", "trait", "p_val", "log2fc")
   missing_cols <- setdiff(expected_cols, colnames(dea_res))
   if (length(missing_cols) > 0) {
     cli::cli_abort(c(

@@ -35,7 +35,7 @@ skip_if_not_installed("clusterProfiler")
     site = rep("site1", 6),
     trait = c("trait_A", "trait_A", "trait_B", "trait_B", "trait_B", "trait_B"),
     p_val = c(0.001, 0.2, 0.001, 0.001, 0.5, 0.001),
-    log2FC = c(2.5, 3.0, 0.3, -2.0, 1.8, -0.2)
+    log2fc = c(2.5, 3.0, 0.3, -2.0, 1.8, -0.2)
   )
 }
 
@@ -135,7 +135,7 @@ test_that(".gc_ora.data.frame groups proteins by trait after filtering", {
     site = rep("site1", 5),
     trait = c("trait_A", "trait_A", "trait_B", "trait_B", "trait_B"),
     p_val = c(0.001, 0.2, 0.001, 0.001, 0.5),
-    log2FC = c(2.5, 3.0, 0.3, -2.0, 1.8)
+    log2fc = c(2.5, 3.0, 0.3, -2.0, 1.8)
   )
 
   result <- glyfun:::.gc_ora(
@@ -579,7 +579,7 @@ test_that("enrich_gc_ora_go errors on data.frame with missing columns", {
     protein = c("P01308", "P04637", "P42345", "P00533", "P42336"),
     site = rep("site1", 5),
     p_val = rep(0.001, 5),
-    log2FC = c(2.5, 3.0, 1.5, 2.0, 2.2)
+    log2fc = c(2.5, 3.0, 1.5, 2.0, 2.2)
   )
   expect_error(
     enrich_gc_ora_go(dea_res_missing_trait),
@@ -591,7 +591,7 @@ test_that("enrich_gc_ora_go errors on data.frame with missing columns", {
     site = rep("site1", 5),
     trait = rep("trait1", 5),
     p_val = rep(0.001, 5),
-    log2FC = c(2.5, 3.0, 1.5, 2.0, 2.2)
+    log2fc = c(2.5, 3.0, 1.5, 2.0, 2.2)
   )
   expect_error(
     enrich_gc_ora_go(dea_res_missing_protein),
@@ -605,7 +605,7 @@ test_that("enrich_gc_ora_go errors on invalid dea_p_cutoff", {
     site = rep("site1", 5),
     trait = rep(c("trait_A", "trait_B"), c(3, 2)),
     p_val = rep(0.001, 5),
-    log2FC = c(2.5, 3.0, 1.5, 2.0, 2.2)
+    log2fc = c(2.5, 3.0, 1.5, 2.0, 2.2)
   )
 
   # Negative p_cutoff
@@ -645,7 +645,7 @@ test_that("enrich_gc_ora_go errors on invalid dea_log2fc_cutoff", {
     site = rep("site1", 5),
     trait = rep(c("trait_A", "trait_B"), c(3, 2)),
     p_val = rep(0.001, 5),
-    log2FC = c(2.5, 3.0, 1.5, 2.0, 2.2)
+    log2fc = c(2.5, 3.0, 1.5, 2.0, 2.2)
   )
 
   # Wrong length (1 element)
@@ -753,7 +753,7 @@ test_that(".gc_ora_impl converts protein list and universe when uniprot_to_entre
     site = c("s1", "s2"),
     trait = c("t1", "t2"),
     p_val = c(0.001, 0.001),
-    log2FC = c(2, -2)
+    log2fc = c(2, -2)
   )
 
   result <- suppressMessages(
@@ -788,7 +788,7 @@ test_that(".gc_ora_impl errors when uniprot_to_entrez is TRUE but bitr_orgdb is 
     site = c("s1", "s2"),
     trait = c("t1", "t2"),
     p_val = c(0.001, 0.001),
-    log2FC = c(2, -2)
+    log2fc = c(2, -2)
   )
 
   expect_error(

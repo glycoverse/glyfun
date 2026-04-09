@@ -34,7 +34,7 @@ skip_if_not_installed("clusterProfiler")
     site = rep("site1", 6),
     trait = rep("trait1", 6),
     p_val = c(0.001, 0.001, 0.2, 0.001, 0.001, 0.9),
-    log2FC = c(2.5, -3.0, 1.5, 0.8, -0.5, -2.2)
+    log2fc = c(2.5, -3.0, 1.5, 0.8, -0.5, -2.2)
   )
 }
 
@@ -107,7 +107,7 @@ test_that("enrich_ora_go forwards args to enrichGO through all layers", {
   expect_identical(captured$maxGSSize, 99)
 })
 
-test_that(".ora.data.frame filters proteins by p_val and log2FC", {
+test_that(".ora.data.frame filters proteins by p_val and log2fc", {
   sentinel <- list(source = "ora_impl")
   captured <- NULL
   mock_ora_impl <- function(
@@ -136,7 +136,7 @@ test_that(".ora.data.frame filters proteins by p_val and log2FC", {
     site = rep("site1", 5),
     trait = rep("trait1", 5),
     p_val = c(0.001, 0.001, 0.2, 0.001, 0.001),
-    log2FC = c(2.5, -3.0, 1.5, 0.8, -0.5)
+    log2fc = c(2.5, -3.0, 1.5, 0.8, -0.5)
   )
 
   result <- glyfun:::.ora(
@@ -536,7 +536,7 @@ test_that("enrich_ora_go errors on data.frame with missing columns", {
     site = rep("site1", 5),
     trait = rep("trait1", 5),
     p_val = rep(0.001, 5),
-    log2FC = c(2.5, 3.0, 1.5, 2.0, 2.2)
+    log2fc = c(2.5, 3.0, 1.5, 2.0, 2.2)
   )
   expect_error(
     enrich_ora_go(dea_res_missing_protein),
@@ -548,7 +548,7 @@ test_that("enrich_ora_go errors on data.frame with missing columns", {
     protein = c("P01308", "P04637", "P42345", "P00533", "P42336"),
     trait = rep("trait1", 5),
     p_val = rep(0.001, 5),
-    log2FC = c(2.5, 3.0, 1.5, 2.0, 2.2)
+    log2fc = c(2.5, 3.0, 1.5, 2.0, 2.2)
   )
   expect_error(
     enrich_ora_go(dea_res_missing_site),
@@ -560,7 +560,7 @@ test_that("enrich_ora_go errors on data.frame with missing columns", {
     protein = c("P01308", "P04637", "P42345", "P00533", "P42336"),
     site = rep("site1", 5),
     p_val = rep(0.001, 5),
-    log2FC = c(2.5, 3.0, 1.5, 2.0, 2.2)
+    log2fc = c(2.5, 3.0, 1.5, 2.0, 2.2)
   )
   expect_error(
     enrich_ora_go(dea_res_missing_trait),
@@ -572,14 +572,14 @@ test_that("enrich_ora_go errors on data.frame with missing columns", {
     protein = c("P01308", "P04637", "P42345", "P00533", "P42336"),
     site = rep("site1", 5),
     trait = rep("trait1", 5),
-    log2FC = c(2.5, 3.0, 1.5, 2.0, 2.2)
+    log2fc = c(2.5, 3.0, 1.5, 2.0, 2.2)
   )
   expect_error(
     enrich_ora_go(dea_res_missing_pval),
     "must have all expected columns"
   )
 
-  # Missing 'log2FC' column
+  # Missing 'log2fc' column
   dea_res_missing_log2fc <- tibble::tibble(
     protein = c("P01308", "P04637", "P42345", "P00533", "P42336"),
     site = rep("site1", 5),
@@ -608,7 +608,7 @@ test_that("enrich_ora_go errors on invalid dea_p_cutoff", {
     site = rep("site1", 5),
     trait = rep("trait1", 5),
     p_val = rep(0.001, 5),
-    log2FC = c(2.5, 3.0, 1.5, 2.0, 2.2)
+    log2fc = c(2.5, 3.0, 1.5, 2.0, 2.2)
   )
 
   # Negative p_cutoff
@@ -642,7 +642,7 @@ test_that("enrich_ora_go errors on invalid dea_log2fc_cutoff", {
     site = rep("site1", 5),
     trait = rep("trait1", 5),
     p_val = rep(0.001, 5),
-    log2FC = c(2.5, 3.0, 1.5, 2.0, 2.2)
+    log2fc = c(2.5, 3.0, 1.5, 2.0, 2.2)
   )
 
   # Wrong length
@@ -801,7 +801,7 @@ test_that(".ora_impl converts proteins and universe when uniprot_to_entrez is TR
     site = c("s1", "s2"),
     trait = c("t1", "t2"),
     p_val = c(0.001, 0.001),
-    log2FC = c(2, -2)
+    log2fc = c(2, -2)
   )
 
   result <- glyfun:::.ora_impl(
@@ -828,7 +828,7 @@ test_that(".ora_impl errors when uniprot_to_entrez is TRUE but bitr_orgdb is mis
     site = c("s1", "s2"),
     trait = c("t1", "t2"),
     p_val = c(0.001, 0.001),
-    log2FC = c(2, -2)
+    log2fc = c(2, -2)
   )
 
   expect_error(

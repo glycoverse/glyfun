@@ -359,8 +359,8 @@ enrich_gc_ora_ncg <- function(
     dea_res |>
       dplyr::filter(
         .data$p_val < dea_p_cutoff,
-        .data$log2FC < dea_log2fc_cutoff[[1]] |
-          .data$log2FC > dea_log2fc_cutoff[[2]]
+        .data$log2fc < dea_log2fc_cutoff[[1]] |
+          .data$log2fc > dea_log2fc_cutoff[[2]]
       ) |>
       dplyr::summarise(
         proteins = list(unique(.data$protein)),

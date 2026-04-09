@@ -15,7 +15,7 @@ skip_if_not_installed("clusterProfiler")
     site = rep("site1", 8),
     trait = rep(c("trait_A", "trait_B"), each = 4),
     p_val = rep(0.001, 8),
-    log2FC = c(2.5, 3.0, 1.5, 2.0, -2.5, -3.0, -1.5, -2.0)
+    log2fc = c(2.5, 3.0, 1.5, 2.0, -2.5, -3.0, -1.5, -2.0)
   )
 }
 

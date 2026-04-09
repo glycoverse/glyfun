@@ -86,7 +86,7 @@ enrich_gsea_go <- function(
 ) {
   pro_fun <- function(dea_res) {
     dea_res |>
-      dplyr::summarise(score = median(abs(.data$log2FC)), .by = .data$protein) |>
+      dplyr::summarise(score = median(abs(.data$log2fc)), .by = .data$protein) |>
       dplyr::arrange(dplyr::desc(.data$score)) |>
       dplyr::select(.data$protein, .data$score) |>
       tibble::deframe()
