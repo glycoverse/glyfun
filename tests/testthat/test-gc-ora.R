@@ -49,29 +49,7 @@ test_that("enrich_gc_ora_go works with tibble input on happy path (integration)"
     )
   )
 
-  expect_s3_class(
-    result,
-    c("glyfun_gc_ora_go_res", "glyfun_gc_ora_res", "glyfun_res")
-  )
-  expect_named(result, c("tidy_result", "raw_result"))
-  expect_true(tibble::is_tibble(result$tidy_result))
-
-  expected_cols <- c(
-    "trait",
-    "id",
-    "description",
-    "gene_ratio",
-    "bg_ratio",
-    "rich_factor",
-    "fold_enrichment",
-    "z_score",
-    "p_val",
-    "p_adj",
-    "q_val",
-    "gene_id",
-    "count"
-  )
-  expect_true(all(expected_cols %in% colnames(result$tidy_result)))
+  expect_s4_class(result, "compareClusterResult")
 })
 
 test_that("enrich_gc_ora_go returns correct structure on happy path (integration)", {
@@ -94,29 +72,7 @@ test_that("enrich_gc_ora_go returns correct structure on happy path (integration
     )
   }
 
-  expect_s3_class(
-    result,
-    c("glyfun_gc_ora_go_res", "glyfun_gc_ora_res", "glyfun_res")
-  )
-  expect_named(result, c("tidy_result", "raw_result"))
-  expect_true(tibble::is_tibble(result$tidy_result))
-
-  expected_cols <- c(
-    "trait",
-    "id",
-    "description",
-    "gene_ratio",
-    "bg_ratio",
-    "rich_factor",
-    "fold_enrichment",
-    "z_score",
-    "p_val",
-    "p_adj",
-    "q_val",
-    "gene_id",
-    "count"
-  )
-  expect_true(all(expected_cols %in% colnames(result$tidy_result)))
+  expect_s4_class(result, "compareClusterResult")
 })
 
 test_that("enrich_gc_ora_kegg returns correct structure on happy path (integration)", {
@@ -128,29 +84,7 @@ test_that("enrich_gc_ora_kegg returns correct structure on happy path (integrati
     result <- enrich_gc_ora_kegg(dea_res, organism = "hsa", p_cutoff = 0.05)
   )
 
-  expect_s3_class(
-    result,
-    c("glyfun_ora_kegg_res", "glyfun_ora_res", "glyfun_res")
-  )
-  expect_named(result, c("tidy_result", "raw_result"))
-  expect_true(tibble::is_tibble(result$tidy_result))
-
-  expected_cols <- c(
-    "trait",
-    "id",
-    "description",
-    "gene_ratio",
-    "bg_ratio",
-    "rich_factor",
-    "fold_enrichment",
-    "z_score",
-    "p_val",
-    "p_adj",
-    "q_val",
-    "gene_id",
-    "count"
-  )
-  expect_true(all(expected_cols %in% colnames(result$tidy_result)))
+  expect_s4_class(result, "compareClusterResult")
 })
 
 test_that("enrich_gc_ora_reactome returns correct structure on happy path (integration)", {
@@ -168,29 +102,7 @@ test_that("enrich_gc_ora_reactome returns correct structure on happy path (integ
     )
   )
 
-  expect_s3_class(
-    result,
-    c("glyfun_gc_ora_reactome_res", "glyfun_gc_ora_res", "glyfun_res")
-  )
-  expect_named(result, c("tidy_result", "raw_result"))
-  expect_true(tibble::is_tibble(result$tidy_result))
-
-  expected_cols <- c(
-    "trait",
-    "id",
-    "description",
-    "gene_ratio",
-    "bg_ratio",
-    "rich_factor",
-    "fold_enrichment",
-    "z_score",
-    "p_val",
-    "p_adj",
-    "q_val",
-    "gene_id",
-    "count"
-  )
-  expect_true(all(expected_cols %in% colnames(result$tidy_result)))
+  expect_s4_class(result, "compareClusterResult")
 })
 
 test_that("enrich_gc_ora_wp returns correct structure on happy path (integration)", {
@@ -208,29 +120,7 @@ test_that("enrich_gc_ora_wp returns correct structure on happy path (integration
     )
   )
 
-  expect_s3_class(
-    result,
-    c("glyfun_gc_ora_wp_res", "glyfun_gc_ora_res", "glyfun_res")
-  )
-  expect_named(result, c("tidy_result", "raw_result"))
-  expect_true(tibble::is_tibble(result$tidy_result))
-
-  expected_cols <- c(
-    "trait",
-    "id",
-    "description",
-    "gene_ratio",
-    "bg_ratio",
-    "rich_factor",
-    "fold_enrichment",
-    "z_score",
-    "p_val",
-    "p_adj",
-    "q_val",
-    "gene_id",
-    "count"
-  )
-  expect_true(all(expected_cols %in% colnames(result$tidy_result)))
+  expect_s4_class(result, "compareClusterResult")
 })
 
 test_that("enrich_gc_ora_do returns correct structure on happy path (integration)", {
@@ -250,29 +140,7 @@ test_that("enrich_gc_ora_do returns correct structure on happy path (integration
     )
   )
 
-  expect_s3_class(
-    result,
-    c("glyfun_gc_ora_do_res", "glyfun_gc_ora_res", "glyfun_res")
-  )
-  expect_named(result, c("tidy_result", "raw_result"))
-  expect_true(tibble::is_tibble(result$tidy_result))
-
-  expected_cols <- c(
-    "trait",
-    "id",
-    "description",
-    "gene_ratio",
-    "bg_ratio",
-    "rich_factor",
-    "fold_enrichment",
-    "z_score",
-    "p_val",
-    "p_adj",
-    "q_val",
-    "gene_id",
-    "count"
-  )
-  expect_true(all(expected_cols %in% colnames(result$tidy_result)))
+  expect_s4_class(result, "compareClusterResult")
 })
 
 test_that("enrich_gc_ora_ncg returns correct structure on happy path (integration)", {
@@ -285,29 +153,7 @@ test_that("enrich_gc_ora_ncg returns correct structure on happy path (integratio
     result <- enrich_gc_ora_ncg(dea_res, p_cutoff = 0.05)
   )
 
-  expect_s3_class(
-    result,
-    c("glyfun_gc_ora_ncg_res", "glyfun_gc_ora_res", "glyfun_res")
-  )
-  expect_named(result, c("tidy_result", "raw_result"))
-  expect_true(tibble::is_tibble(result$tidy_result))
-
-  expected_cols <- c(
-    "trait",
-    "id",
-    "description",
-    "gene_ratio",
-    "bg_ratio",
-    "rich_factor",
-    "fold_enrichment",
-    "z_score",
-    "p_val",
-    "p_adj",
-    "q_val",
-    "gene_id",
-    "count"
-  )
-  expect_true(all(expected_cols %in% colnames(result$tidy_result)))
+  expect_s4_class(result, "compareClusterResult")
 })
 
 # Error handling tests ----

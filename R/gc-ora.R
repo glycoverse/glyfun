@@ -41,22 +41,9 @@
 #' ```
 #'
 #' @inheritParams enrich_ora_go
-#' @return A list with two elements:
-#'  - `tidy_result`: A tibble with enrichment results containing the following columns:
-#'    - `trait`: Glycan trait
-#'    - `id`: Term ID
-#'    - `description`: Term description
-#'    - `gene_ratio`: Ratio of genes in the term to total genes in the input
-#'    - `bg_ratio`: Ratio of genes in the term to total genes in the background
-#'    - `rich_factor`: Proportion of the term's total background genes found in the input
-#'    - `fold_enrichment`: Ratio of `gene_ratio` to `bg_ratio` (magnitude of enrichment)
-#'    - `z_score`: Directional trend of regulation (positive for up, negative for down)
-#'    - `p_val`: Raw p-value from hypergeometric test
-#'    - `p_adj`: Adjusted p-value
-#'    - `q_val`: Q-value (FDR)
-#'    - `gene_id`: Gene IDs in the term (separated by "/")
-#'    - `count`: Number of genes in the term
-#'  - `raw_result`: The raw clusterProfiler clusterProfResult object
+#' @return A clusterProfiler `compareClusterResult` object with additional `glyfun` classes.
+#'   It can be readily converted to a tibble with [tibble::as_tibble()],
+#'   or visualized with `clusterProfiler` functions like [clusterProfiler::dotplot()].
 #'
 #' @seealso [clusterProfiler::compareCluster()], [clusterProfiler::enrichGO()]
 #' @export
@@ -499,7 +486,7 @@ enrich_gc_ora_ncg <- function(
   )
 
   suppressWarnings(
-    ck <- suppressPackageStartupMessages(
+    res <- suppressPackageStartupMessages(
       rlang::exec(
         clusterProfiler::compareCluster,
         protein_list,
@@ -510,18 +497,8 @@ enrich_gc_ora_ncg <- function(
     )
   )
 
-  if (is.null(ck)) {
+  if (is.null(res)) {
     cli::cli_alert_warning("No terms were enriched. `NULL` will be returned.")
-    return(NULL)
   }
-  tidy_res <- tibble::as_tibble(ck) |>
-    janitor::clean_names() |>
-    dplyr::rename(tidyselect::all_of(c(
-      "trait" = "cluster",
-      "p_val" = "pvalue",
-      "p_adj" = "p_adjust",
-      "q_val" = "qvalue"
-    )))
-  res <- list(tidy_result = tidy_res, raw_result = ck)
-  structure(res, class = c(result_class, "glyfun_gc_ora_res", "glyfun_res"))
+  res
 }
