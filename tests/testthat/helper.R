@@ -26,3 +26,16 @@ skip_if_no_hdo <- function() {
 is_r_devel <- function() {
   grepl("Under development", R.version.string, fixed = TRUE)
 }
+
+run_online_tests <- function() {
+  flag <- tolower(Sys.getenv("GLYFUN_RUN_ONLINE_TESTS", unset = "false"))
+  flag %in% c("1", "true", "yes", "on")
+}
+
+skip_if_online_tests_disabled <- function() {
+  if (!run_online_tests()) {
+    testthat::skip(
+      "Online integration tests are disabled. Set GLYFUN_RUN_ONLINE_TESTS=true to run."
+    )
+  }
+}
