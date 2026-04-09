@@ -29,7 +29,17 @@ skip_if_not_installed("clusterProfiler")
   )
 }
 
-test_that("enrich_gc_ora_go groups filtered proteins by trait and forwards args", {
+.mock_gc_dea_df <- function() {
+  tibble::tibble(
+    protein = c("P01308", "P04637", "P42345", "P00533", "P42336", "P01116"),
+    site = rep("site1", 6),
+    trait = c("trait_A", "trait_A", "trait_B", "trait_B", "trait_B", "trait_B"),
+    p_val = c(0.001, 0.2, 0.001, 0.001, 0.5, 0.001),
+    log2FC = c(2.5, 3.0, 0.3, -2.0, 1.8, -0.2)
+  )
+}
+
+test_that("enrich_gc_ora_go forwards args to compareCluster through all layers", {
   sentinel <- list(source = "compareCluster")
   captured <- NULL
   mock_compare_cluster <- function(
@@ -62,25 +72,15 @@ test_that("enrich_gc_ora_go groups filtered proteins by trait and forwards args"
     )
     sentinel
   }
-  mock_prepare_orgdb <- function(orgdb) paste0("MOCK_", orgdb)
-
-  local_mocked_bindings(.prepare_orgdb = mock_prepare_orgdb, .package = "glyfun")
   local_mocked_bindings(
-    compareCluster = mock_compare_cluster,
-    .package = "clusterProfiler"
+    .prepare_orgdb = function(orgdb) paste0("MOCK_", orgdb),
+    .package = "glyfun"
   )
-
-  dea_res <- tibble::tibble(
-    protein = c("P01308", "P04637", "P42345", "P00533", "P42336"),
-    site = rep("site1", 5),
-    trait = c("trait_A", "trait_A", "trait_B", "trait_B", "trait_B"),
-    p_val = c(0.001, 0.2, 0.001, 0.001, 0.5),
-    log2FC = c(2.5, 3.0, 0.3, -2.0, 1.8)
-  )
+  local_mocked_bindings(compareCluster = mock_compare_cluster, .package = "clusterProfiler")
 
   result <- suppressMessages(
     enrich_gc_ora_go(
-      dea_res,
+      .mock_gc_dea_df(),
       orgdb = "org.Hs.eg.db",
       ont = "BP",
       universe = c("P01308", "P04637", "P42345"),
@@ -106,20 +106,76 @@ test_that("enrich_gc_ora_go groups filtered proteins by trait and forwards args"
   expect_identical(captured$maxGSSize, 99)
 })
 
-test_that("enrich_gc_ora_go uses p_adj/log2fc for glystats input grouping", {
-  sentinel <- list(source = "compareCluster")
-  captured_cluster <- NULL
-  mock_compare_cluster <- function(geneCluster, ...) {
-    captured_cluster <<- geneCluster
+test_that(".gc_ora.data.frame groups proteins by trait after filtering", {
+  sentinel <- list(source = "gc_ora_impl")
+  captured <- NULL
+  mock_gc_ora_impl <- function(
+    dea_res,
+    enrich_fun,
+    result_class,
+    dea_p_cutoff,
+    dea_log2fc_cutoff,
+    ...,
+    pro_list_fun = NULL,
+    uniprot_to_entrez = FALSE
+  ) {
+    captured <<- list(
+      protein_list = pro_list_fun(dea_res),
+      dea_p_cutoff = dea_p_cutoff,
+      dea_log2fc_cutoff = dea_log2fc_cutoff,
+      uniprot_to_entrez = uniprot_to_entrez,
+      dots = list(...)
+    )
     sentinel
   }
-  mock_prepare_orgdb <- function(orgdb) paste0("MOCK_", orgdb)
+  local_mocked_bindings(.gc_ora_impl = mock_gc_ora_impl, .package = "glyfun")
 
-  local_mocked_bindings(.prepare_orgdb = mock_prepare_orgdb, .package = "glyfun")
-  local_mocked_bindings(
-    compareCluster = mock_compare_cluster,
-    .package = "clusterProfiler"
+  dea_res <- tibble::tibble(
+    protein = c("P01308", "P04637", "P42345", "P00533", "P42336"),
+    site = rep("site1", 5),
+    trait = c("trait_A", "trait_A", "trait_B", "trait_B", "trait_B"),
+    p_val = c(0.001, 0.2, 0.001, 0.001, 0.5),
+    log2FC = c(2.5, 3.0, 0.3, -2.0, 1.8)
   )
+
+  result <- glyfun:::.gc_ora(
+    dea_res = dea_res,
+    enrich_fun = function(...) list(source = "mock_enrich"),
+    result_class = "unused",
+    dea_p_cutoff = 0.05,
+    dea_log2fc_cutoff = c(-1, 1)
+  )
+
+  expect_identical(result, sentinel)
+  expect_equal(captured$protein_list, list(trait_A = "P01308", trait_B = "P00533"))
+  expect_identical(captured$dea_p_cutoff, 0.05)
+  expect_equal(captured$dea_log2fc_cutoff, c(-1, 1))
+  expect_false(captured$uniprot_to_entrez)
+})
+
+test_that(".gc_ora.glystats_res groups proteins by trait after filtering", {
+  sentinel <- list(source = "gc_ora_impl")
+  captured <- NULL
+  mock_gc_ora_impl <- function(
+    dea_res,
+    enrich_fun,
+    result_class,
+    dea_p_cutoff,
+    dea_log2fc_cutoff,
+    ...,
+    pro_list_fun = NULL,
+    uniprot_to_entrez = FALSE
+  ) {
+    captured <<- list(
+      protein_list = pro_list_fun(dea_res),
+      dea_p_cutoff = dea_p_cutoff,
+      dea_log2fc_cutoff = dea_log2fc_cutoff,
+      uniprot_to_entrez = uniprot_to_entrez,
+      dots = list(...)
+    )
+    sentinel
+  }
+  local_mocked_bindings(.gc_ora_impl = mock_gc_ora_impl, .package = "glyfun")
 
   tidy_result <- tibble::tibble(
     variable = paste0("var", 1:6),
@@ -135,227 +191,384 @@ test_that("enrich_gc_ora_go uses p_adj/log2fc for glystats input grouping", {
     class = c("glystats_ttest_res", "glystats_res")
   )
 
-  result <- suppressMessages(
-    enrich_gc_ora_go(dea_res, orgdb = "org.Hs.eg.db")
+  result <- glyfun:::.gc_ora(
+    dea_res = dea_res,
+    enrich_fun = function(...) list(source = "mock_enrich"),
+    result_class = "unused",
+    dea_p_cutoff = 0.05,
+    dea_log2fc_cutoff = c(-1, 1)
   )
 
   expect_identical(result, sentinel)
-  expect_equal(captured_cluster, list(trait_A = "P01308", trait_B = "P00533"))
+  expect_equal(captured$protein_list, list(trait_A = "P01308", trait_B = "P00533"))
+  expect_identical(captured$dea_p_cutoff, 0.05)
+  expect_equal(captured$dea_log2fc_cutoff, c(-1, 1))
+  expect_false(captured$uniprot_to_entrez)
 })
 
-test_that("enrich_gc_ora_kegg forwards wrapper args to .gc_ora", {
-  sentinel <- list(source = "gc_ora")
+test_that("enrich_gc_ora_kegg forwards args to compareCluster through all layers", {
+  sentinel <- list(source = "compareCluster")
   captured <- NULL
-  mock_gc_ora <- function(
-    dea_res,
-    enrich_fun,
-    result_class,
-    dea_p_cutoff,
-    dea_log2fc_cutoff,
+  mock_compare_cluster <- function(
+    geneCluster,
+    fun,
+    universe = NULL,
+    keyType = NULL,
+    organism = NULL,
+    pAdjustMethod = NULL,
+    pvalueCutoff = NULL,
+    qvalueCutoff = NULL,
+    minGSSize = NULL,
+    maxGSSize = NULL,
     ...
   ) {
     captured <<- list(
-      dea_res = dea_res,
-      enrich_fun = enrich_fun,
-      result_class = result_class,
-      dea_p_cutoff = dea_p_cutoff,
-      dea_log2fc_cutoff = dea_log2fc_cutoff,
+      geneCluster = geneCluster,
+      fun = fun,
+      universe = universe,
+      keyType = keyType,
+      organism = organism,
+      pAdjustMethod = pAdjustMethod,
+      pvalueCutoff = pvalueCutoff,
+      qvalueCutoff = qvalueCutoff,
+      minGSSize = minGSSize,
+      maxGSSize = maxGSSize,
       dots = list(...)
     )
     sentinel
   }
+  local_mocked_bindings(compareCluster = mock_compare_cluster, .package = "clusterProfiler")
 
-  local_mocked_bindings(.gc_ora = mock_gc_ora, .package = "glyfun")
-
-  dea_res <- .mock_dea_res()
-  result <- enrich_gc_ora_kegg(
-    dea_res,
-    dea_p_cutoff = 0.01,
-    dea_log2fc_cutoff = c(-2, 2),
-    organism = "mmu",
-    universe = c("P01308", "P04637"),
-    p_adj_method = "BY",
-    p_cutoff = 0.01,
-    q_cutoff = 0.1,
-    min_gs_size = 5,
-    max_gs_size = 50
+  result <- suppressMessages(
+    enrich_gc_ora_kegg(
+      .mock_gc_dea_df(),
+      organism = "mmu",
+      universe = c("P01308", "P04637", "P42345"),
+      p_adj_method = "BY",
+      p_cutoff = 0.01,
+      q_cutoff = 0.1,
+      min_gs_size = 5,
+      max_gs_size = 50
+    )
   )
 
   expect_identical(result, sentinel)
-  expect_identical(captured$dea_res, dea_res)
-  expect_identical(captured$enrich_fun, clusterProfiler::enrichKEGG)
-  expect_identical(captured$result_class, "glyfun_gc_ora_kegg_res")
-  expect_identical(captured$dea_p_cutoff, 0.01)
-  expect_equal(captured$dea_log2fc_cutoff, c(-2, 2))
-  expect_identical(captured$dots$keyType, "uniprot")
-  expect_identical(captured$dots$organism, "mmu")
-  expect_equal(captured$dots$universe, c("P01308", "P04637"))
-  expect_identical(captured$dots$pAdjustMethod, "BY")
-  expect_identical(captured$dots$pvalueCutoff, 0.01)
-  expect_identical(captured$dots$qvalueCutoff, 0.1)
-  expect_identical(captured$dots$minGSSize, 5)
-  expect_identical(captured$dots$maxGSSize, 50)
+  expect_equal(captured$geneCluster, list(trait_A = "P01308", trait_B = "P00533"))
+  expect_identical(captured$fun, clusterProfiler::enrichKEGG)
+  expect_equal(captured$universe, c("P01308", "P04637", "P42345"))
+  expect_identical(captured$keyType, "uniprot")
+  expect_identical(captured$organism, "mmu")
+  expect_identical(captured$pAdjustMethod, "BY")
+  expect_identical(captured$pvalueCutoff, 0.01)
+  expect_identical(captured$qvalueCutoff, 0.1)
+  expect_identical(captured$minGSSize, 5)
+  expect_identical(captured$maxGSSize, 50)
 })
 
-test_that("enrich_gc_ora_reactome forwards wrapper args to .gc_ora", {
+test_that("enrich_gc_ora_reactome forwards args to compareCluster through all layers", {
   skip_if_not_installed("ReactomePA")
 
-  sentinel <- list(source = "gc_ora")
+  sentinel <- list(source = "compareCluster")
   captured <- NULL
-  mock_gc_ora <- function(
-    dea_res,
-    enrich_fun,
-    result_class,
-    dea_p_cutoff,
-    dea_log2fc_cutoff,
+  mock_compare_cluster <- function(
+    geneCluster,
+    fun,
+    universe = NULL,
+    organism = NULL,
+    pAdjustMethod = NULL,
+    pvalueCutoff = NULL,
+    qvalueCutoff = NULL,
+    minGSSize = NULL,
+    maxGSSize = NULL,
     ...
   ) {
     captured <<- list(
-      dea_res = dea_res,
-      enrich_fun = enrich_fun,
-      result_class = result_class,
-      dea_p_cutoff = dea_p_cutoff,
-      dea_log2fc_cutoff = dea_log2fc_cutoff,
+      geneCluster = geneCluster,
+      fun = fun,
+      universe = universe,
+      organism = organism,
+      pAdjustMethod = pAdjustMethod,
+      pvalueCutoff = pvalueCutoff,
+      qvalueCutoff = qvalueCutoff,
+      minGSSize = minGSSize,
+      maxGSSize = maxGSSize,
       dots = list(...)
     )
     sentinel
   }
 
-  local_mocked_bindings(.gc_ora = mock_gc_ora, .package = "glyfun")
+  local_mocked_bindings(compareCluster = mock_compare_cluster, .package = "clusterProfiler")
   local_mocked_bindings(
     .reactome_orgdb = function(organism) paste0("MOCK_REACTOME_", organism),
+    .uniprot_to_entrez_prolist = function(pro_list, orgdb) {
+      expect_identical(orgdb, "MOCK_REACTOME_human")
+      purrr::map(pro_list, ~ paste0("ENTREZ_", .x))
+    },
+    .uniprot_to_entrez = function(uniprot, orgdb) {
+      expect_identical(orgdb, "MOCK_REACTOME_human")
+      paste0("ENTREZ_", uniprot)
+    },
     .package = "glyfun"
   )
 
-  dea_res <- .mock_dea_res()
-  result <- enrich_gc_ora_reactome(dea_res, organism = "human")
+  result <- suppressMessages(
+    enrich_gc_ora_reactome(
+      .mock_gc_dea_df(),
+      organism = "human",
+      universe = c("P01308", "P04637", "P42345"),
+      p_adj_method = "BY",
+      p_cutoff = 0.01,
+      q_cutoff = 0.1,
+      min_gs_size = 5,
+      max_gs_size = 50
+    )
+  )
 
   expect_identical(result, sentinel)
-  expect_identical(captured$enrich_fun, ReactomePA::enrichPathway)
-  expect_identical(captured$result_class, "glyfun_gc_ora_reactome_res")
-  expect_identical(captured$dots$bitr_orgdb, "MOCK_REACTOME_human")
-  expect_identical(captured$dots$organism, "human")
-  expect_true(captured$dots$uniprot_to_entrez)
+  expect_equal(
+    captured$geneCluster,
+    list(trait_A = "ENTREZ_P01308", trait_B = "ENTREZ_P00533")
+  )
+  expect_identical(captured$fun, ReactomePA::enrichPathway)
+  expect_equal(
+    captured$universe,
+    c("ENTREZ_P01308", "ENTREZ_P04637", "ENTREZ_P42345")
+  )
+  expect_identical(captured$organism, "human")
+  expect_identical(captured$pAdjustMethod, "BY")
+  expect_identical(captured$pvalueCutoff, 0.01)
+  expect_identical(captured$qvalueCutoff, 0.1)
+  expect_identical(captured$minGSSize, 5)
+  expect_identical(captured$maxGSSize, 50)
 })
 
-test_that("enrich_gc_ora_wp forwards wrapper args to .gc_ora", {
-  sentinel <- list(source = "gc_ora")
+test_that("enrich_gc_ora_wp forwards args to compareCluster through all layers", {
+  sentinel <- list(source = "compareCluster")
   captured <- NULL
-  mock_gc_ora <- function(
-    dea_res,
-    enrich_fun,
-    result_class,
-    dea_p_cutoff,
-    dea_log2fc_cutoff,
+  mock_compare_cluster <- function(
+    geneCluster,
+    fun,
+    universe = NULL,
+    organism = NULL,
+    pAdjustMethod = NULL,
+    pvalueCutoff = NULL,
+    qvalueCutoff = NULL,
+    minGSSize = NULL,
+    maxGSSize = NULL,
     ...
   ) {
     captured <<- list(
-      dea_res = dea_res,
-      enrich_fun = enrich_fun,
-      result_class = result_class,
-      dea_p_cutoff = dea_p_cutoff,
-      dea_log2fc_cutoff = dea_log2fc_cutoff,
+      geneCluster = geneCluster,
+      fun = fun,
+      universe = universe,
+      organism = organism,
+      pAdjustMethod = pAdjustMethod,
+      pvalueCutoff = pvalueCutoff,
+      qvalueCutoff = qvalueCutoff,
+      minGSSize = minGSSize,
+      maxGSSize = maxGSSize,
       dots = list(...)
     )
     sentinel
   }
 
-  local_mocked_bindings(.gc_ora = mock_gc_ora, .package = "glyfun")
+  local_mocked_bindings(compareCluster = mock_compare_cluster, .package = "clusterProfiler")
   local_mocked_bindings(
     .wp_orgdb = function(organism) paste0("MOCK_WP_", organism),
+    .uniprot_to_entrez_prolist = function(pro_list, orgdb) {
+      expect_identical(orgdb, "MOCK_WP_Homo sapiens")
+      purrr::map(pro_list, ~ paste0("ENTREZ_", .x))
+    },
+    .uniprot_to_entrez = function(uniprot, orgdb) {
+      expect_identical(orgdb, "MOCK_WP_Homo sapiens")
+      paste0("ENTREZ_", uniprot)
+    },
     .package = "glyfun"
   )
 
-  dea_res <- .mock_dea_res()
-  result <- enrich_gc_ora_wp(dea_res, organism = "Homo sapiens")
+  result <- suppressMessages(
+    enrich_gc_ora_wp(
+      .mock_gc_dea_df(),
+      organism = "Homo sapiens",
+      universe = c("P01308", "P04637", "P42345"),
+      p_adj_method = "BY",
+      p_cutoff = 0.01,
+      q_cutoff = 0.1,
+      min_gs_size = 5,
+      max_gs_size = 50
+    )
+  )
 
   expect_identical(result, sentinel)
-  expect_identical(captured$enrich_fun, clusterProfiler::enrichWP)
-  expect_identical(captured$result_class, "glyfun_gc_ora_wp_res")
-  expect_identical(captured$dots$bitr_orgdb, "MOCK_WP_Homo sapiens")
-  expect_identical(captured$dots$organism, "Homo sapiens")
-  expect_true(captured$dots$uniprot_to_entrez)
+  expect_equal(
+    captured$geneCluster,
+    list(trait_A = "ENTREZ_P01308", trait_B = "ENTREZ_P00533")
+  )
+  expect_identical(captured$fun, clusterProfiler::enrichWP)
+  expect_equal(
+    captured$universe,
+    c("ENTREZ_P01308", "ENTREZ_P04637", "ENTREZ_P42345")
+  )
+  expect_identical(captured$organism, "Homo sapiens")
+  expect_identical(captured$pAdjustMethod, "BY")
+  expect_identical(captured$pvalueCutoff, 0.01)
+  expect_identical(captured$qvalueCutoff, 0.1)
+  expect_identical(captured$minGSSize, 5)
+  expect_identical(captured$maxGSSize, 50)
 })
 
-test_that("enrich_gc_ora_do forwards wrapper args to .gc_ora", {
+test_that("enrich_gc_ora_do forwards args to compareCluster through all layers", {
   skip_if_not_installed("DOSE")
 
-  sentinel <- list(source = "gc_ora")
+  sentinel <- list(source = "compareCluster")
   captured <- NULL
-  mock_gc_ora <- function(
-    dea_res,
-    enrich_fun,
-    result_class,
-    dea_p_cutoff,
-    dea_log2fc_cutoff,
+  mock_compare_cluster <- function(
+    geneCluster,
+    fun,
+    universe = NULL,
+    ont = NULL,
+    organism = NULL,
+    pAdjustMethod = NULL,
+    pvalueCutoff = NULL,
+    qvalueCutoff = NULL,
+    minGSSize = NULL,
+    maxGSSize = NULL,
     ...
   ) {
     captured <<- list(
-      dea_res = dea_res,
-      enrich_fun = enrich_fun,
-      result_class = result_class,
-      dea_p_cutoff = dea_p_cutoff,
-      dea_log2fc_cutoff = dea_log2fc_cutoff,
+      geneCluster = geneCluster,
+      fun = fun,
+      universe = universe,
+      ont = ont,
+      organism = organism,
+      pAdjustMethod = pAdjustMethod,
+      pvalueCutoff = pvalueCutoff,
+      qvalueCutoff = qvalueCutoff,
+      minGSSize = minGSSize,
+      maxGSSize = maxGSSize,
       dots = list(...)
     )
     sentinel
   }
 
-  local_mocked_bindings(.gc_ora = mock_gc_ora, .package = "glyfun")
+  local_mocked_bindings(compareCluster = mock_compare_cluster, .package = "clusterProfiler")
   local_mocked_bindings(
     .do_orgdb = function(organism) paste0("MOCK_DO_", organism),
+    .uniprot_to_entrez_prolist = function(pro_list, orgdb) {
+      expect_identical(orgdb, "MOCK_DO_hsa")
+      purrr::map(pro_list, ~ paste0("ENTREZ_", .x))
+    },
+    .uniprot_to_entrez = function(uniprot, orgdb) {
+      expect_identical(orgdb, "MOCK_DO_hsa")
+      paste0("ENTREZ_", uniprot)
+    },
     .package = "glyfun"
   )
 
-  dea_res <- .mock_dea_res()
-  result <- enrich_gc_ora_do(dea_res, ont = "HDO", organism = "hsa")
+  result <- suppressMessages(
+    enrich_gc_ora_do(
+      .mock_gc_dea_df(),
+      ont = "HDO",
+      organism = "hsa",
+      universe = c("P01308", "P04637", "P42345"),
+      p_adj_method = "BY",
+      p_cutoff = 0.01,
+      q_cutoff = 0.1,
+      min_gs_size = 5,
+      max_gs_size = 50
+    )
+  )
 
   expect_identical(result, sentinel)
-  expect_identical(captured$enrich_fun, DOSE::enrichDO)
-  expect_identical(captured$result_class, "glyfun_gc_ora_do_res")
-  expect_identical(captured$dots$ont, "HDO")
-  expect_identical(captured$dots$bitr_orgdb, "MOCK_DO_hsa")
-  expect_true(captured$dots$uniprot_to_entrez)
+  expect_equal(
+    captured$geneCluster,
+    list(trait_A = "ENTREZ_P01308", trait_B = "ENTREZ_P00533")
+  )
+  expect_identical(captured$fun, DOSE::enrichDO)
+  expect_equal(
+    captured$universe,
+    c("ENTREZ_P01308", "ENTREZ_P04637", "ENTREZ_P42345")
+  )
+  expect_identical(captured$ont, "HDO")
+  expect_identical(captured$organism, "hsa")
+  expect_identical(captured$pAdjustMethod, "BY")
+  expect_identical(captured$pvalueCutoff, 0.01)
+  expect_identical(captured$qvalueCutoff, 0.1)
+  expect_identical(captured$minGSSize, 5)
+  expect_identical(captured$maxGSSize, 50)
 })
 
-test_that("enrich_gc_ora_ncg forwards wrapper args to .gc_ora", {
+test_that("enrich_gc_ora_ncg forwards args to compareCluster through all layers", {
   skip_if_not_installed("DOSE")
 
-  sentinel <- list(source = "gc_ora")
+  sentinel <- list(source = "compareCluster")
   captured <- NULL
-  mock_gc_ora <- function(
-    dea_res,
-    enrich_fun,
-    result_class,
-    dea_p_cutoff,
-    dea_log2fc_cutoff,
+  mock_compare_cluster <- function(
+    geneCluster,
+    fun,
+    universe = NULL,
+    pAdjustMethod = NULL,
+    pvalueCutoff = NULL,
+    qvalueCutoff = NULL,
+    minGSSize = NULL,
+    maxGSSize = NULL,
     ...
   ) {
     captured <<- list(
-      dea_res = dea_res,
-      enrich_fun = enrich_fun,
-      result_class = result_class,
-      dea_p_cutoff = dea_p_cutoff,
-      dea_log2fc_cutoff = dea_log2fc_cutoff,
+      geneCluster = geneCluster,
+      fun = fun,
+      universe = universe,
+      pAdjustMethod = pAdjustMethod,
+      pvalueCutoff = pvalueCutoff,
+      qvalueCutoff = qvalueCutoff,
+      minGSSize = minGSSize,
+      maxGSSize = maxGSSize,
       dots = list(...)
     )
     sentinel
   }
 
-  local_mocked_bindings(.gc_ora = mock_gc_ora, .package = "glyfun")
+  local_mocked_bindings(compareCluster = mock_compare_cluster, .package = "clusterProfiler")
   local_mocked_bindings(
     .prepare_orgdb = function(orgdb) paste0("MOCK_", orgdb),
+    .uniprot_to_entrez_prolist = function(pro_list, orgdb) {
+      expect_identical(orgdb, "MOCK_org.Hs.eg.db")
+      purrr::map(pro_list, ~ paste0("ENTREZ_", .x))
+    },
+    .uniprot_to_entrez = function(uniprot, orgdb) {
+      expect_identical(orgdb, "MOCK_org.Hs.eg.db")
+      paste0("ENTREZ_", uniprot)
+    },
     .package = "glyfun"
   )
 
-  dea_res <- .mock_dea_res()
-  result <- enrich_gc_ora_ncg(dea_res)
+  result <- suppressMessages(
+    enrich_gc_ora_ncg(
+      .mock_gc_dea_df(),
+      universe = c("P01308", "P04637", "P42345"),
+      p_adj_method = "BY",
+      p_cutoff = 0.01,
+      q_cutoff = 0.1,
+      min_gs_size = 5,
+      max_gs_size = 50
+    )
+  )
 
   expect_identical(result, sentinel)
-  expect_identical(captured$enrich_fun, DOSE::enrichNCG)
-  expect_identical(captured$result_class, "glyfun_gc_ora_ncg_res")
-  expect_identical(captured$dots$bitr_orgdb, "MOCK_org.Hs.eg.db")
-  expect_true(captured$dots$uniprot_to_entrez)
+  expect_equal(
+    captured$geneCluster,
+    list(trait_A = "ENTREZ_P01308", trait_B = "ENTREZ_P00533")
+  )
+  expect_identical(captured$fun, DOSE::enrichNCG)
+  expect_equal(
+    captured$universe,
+    c("ENTREZ_P01308", "ENTREZ_P04637", "ENTREZ_P42345")
+  )
+  expect_identical(captured$pAdjustMethod, "BY")
+  expect_identical(captured$pvalueCutoff, 0.01)
+  expect_identical(captured$qvalueCutoff, 0.1)
+  expect_identical(captured$minGSSize, 5)
+  expect_identical(captured$maxGSSize, 50)
 })
 
 # Error handling tests ----
