@@ -59,7 +59,9 @@ pathway enrichment for each trait.</p>
 <span>  universe <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  p_adj_method <span class="op">=</span> <span class="st">"BH"</span>,</span>
 <span>  p_cutoff <span class="op">=</span> <span class="fl">0.05</span>,</span>
-<span>  q_cutoff <span class="op">=</span> <span class="fl">0.2</span></span>
+<span>  q_cutoff <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<span>  min_gs_size <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  max_gs_size <span class="op">=</span> <span class="fl">500</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -97,42 +99,47 @@ Defaults to "hsa" (Homo sapiens). Common codes: "hsa" (human), "mmu" (mouse), "r
 
 
 <dt id="arg-universe">universe<a class="anchor" aria-label="anchor" href="#arg-universe"></a></dt>
-<dd><p>Background genes Uniprot IDs, directly passed to <code>universe</code> of <code><a href="https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html" class="external-link">clusterProfiler::enrichGO()</a></code>.
+<dd><p>Background genes Uniprot IDs, directly passed to <code>universe</code> of downstream enrichment function.
 If <code>NULL</code> (default), all genes in the data will be used.
 Another common pattern is to use all detected proteins as backgroud genes.
 You can use <code><a href="detected_universe.html">detected_universe()</a></code> to help you.</p></dd>
 
 
 <dt id="arg-p-adj-method">p_adj_method<a class="anchor" aria-label="anchor" href="#arg-p-adj-method"></a></dt>
-<dd><p>Passed to <code>pAdjustMethod</code> of <code><a href="https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html" class="external-link">clusterProfiler::enrichGO()</a></code>.</p></dd>
+<dd><p>P-value adjustment method.
+One of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none".
+Passed to <code>pAdjustMethod</code> of downstream enrichment function.
+Defaults to "BH".</p></dd>
 
 
 <dt id="arg-p-cutoff">p_cutoff<a class="anchor" aria-label="anchor" href="#arg-p-cutoff"></a></dt>
-<dd><p>Passed to <code>pvalueCutoff</code> of <code><a href="https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html" class="external-link">clusterProfiler::enrichGO()</a></code>.</p></dd>
+<dd><p>P-value cutoff to filter significant terms.
+Passed to <code>pvalueCutoff</code> of downstream enrichment function. Defaults to 0.05.</p></dd>
 
 
 <dt id="arg-q-cutoff">q_cutoff<a class="anchor" aria-label="anchor" href="#arg-q-cutoff"></a></dt>
-<dd><p>Passed to <code>qvalueCutoff</code> of <code><a href="https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html" class="external-link">clusterProfiler::enrichGO()</a></code>.</p></dd>
+<dd><p>Q-value (FDR) cutoff to filter significant terms.
+Passed to <code>qvalueCutoff</code> of downstream enrichment function. Defaults to 0.2.</p></dd>
+
+
+<dt id="arg-min-gs-size">min_gs_size<a class="anchor" aria-label="anchor" href="#arg-min-gs-size"></a></dt>
+<dd><p>Minimal size of each gene set for analyzing.
+Gene sets with fewer genes than this threshold will be excluded.
+Passed to <code>minGSSize</code> of downstream enrichment function. Defaults to 10.</p></dd>
+
+
+<dt id="arg-max-gs-size">max_gs_size<a class="anchor" aria-label="anchor" href="#arg-max-gs-size"></a></dt>
+<dd><p>Maximum size of each gene set for analyzing.
+Gene sets with more genes than this threshold will be excluded.
+Passed to <code>maxGSSize</code> of downstream enrichment function. Defaults to 500.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A list with two elements:</p><ul><li><p><code>tidy_result</code>: A tibble with enrichment results containing the following columns:</p><ul><li><p><code>trait</code>: Glycan trait</p></li>
-<li><p><code>id</code>: Term ID</p></li>
-<li><p><code>description</code>: Term description</p></li>
-<li><p><code>gene_ratio</code>: Ratio of genes in the term to total genes in the input</p></li>
-<li><p><code>bg_ratio</code>: Ratio of genes in the term to total genes in the background</p></li>
-<li><p><code>rich_factor</code>: Proportion of the term's total background genes found in the input</p></li>
-<li><p><code>fold_enrichment</code>: Ratio of <code>gene_ratio</code> to <code>bg_ratio</code> (magnitude of enrichment)</p></li>
-<li><p><code>z_score</code>: Directional trend of regulation (positive for up, negative for down)</p></li>
-<li><p><code>p_val</code>: Raw p-value from hypergeometric test</p></li>
-<li><p><code>p_adj</code>: Adjusted p-value</p></li>
-<li><p><code>q_val</code>: Q-value (FDR)</p></li>
-<li><p><code>gene_id</code>: Gene IDs in the term (separated by "/")</p></li>
-<li><p><code>count</code>: Number of genes in the term</p></li>
-</ul></li>
-<li><p><code>raw_result</code>: The raw clusterProfiler clusterProfResult object</p></li>
-</ul></div>
+    <p>A clusterProfiler <code>compareClusterResult</code> object with additional <code>glyfun</code> classes.
+It can be readily converted to a tibble with <code><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">tibble::as_tibble()</a></code>,
+or visualized with <code>clusterProfiler</code> functions like <code><a href="https://rdrr.io/pkg/clusterProfiler/man/reexports.html" class="external-link">clusterProfiler::dotplot()</a></code>.</p>
+    </div>
     <div class="section level2">
     <h2 id="what-is-glycan-centric-enrichment-">What is glycan-centric enrichment?<a class="anchor" aria-label="anchor" href="#what-is-glycan-centric-enrichment-"></a></h2>
     <p>In traditional glycoproteomics data analysis,
