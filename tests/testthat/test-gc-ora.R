@@ -76,7 +76,10 @@ test_that("enrich_gc_ora_go forwards args to compareCluster through all layers",
     .prepare_orgdb = function(orgdb) paste0("MOCK_", orgdb),
     .package = "glyfun"
   )
-  local_mocked_bindings(compareCluster = mock_compare_cluster, .package = "clusterProfiler")
+  local_mocked_bindings(
+    compareCluster = mock_compare_cluster,
+    .package = "clusterProfiler"
+  )
 
   result <- suppressMessages(
     enrich_gc_ora_go(
@@ -93,7 +96,10 @@ test_that("enrich_gc_ora_go forwards args to compareCluster through all layers",
   )
 
   expect_identical(result, sentinel)
-  expect_equal(captured$geneCluster, list(trait_A = "P01308", trait_B = "P00533"))
+  expect_equal(
+    captured$geneCluster,
+    list(trait_A = "P01308", trait_B = "P00533")
+  )
   expect_identical(captured$fun, clusterProfiler::enrichGO)
   expect_equal(captured$universe, c("P01308", "P04637", "P42345"))
   expect_identical(captured$keyType, "UNIPROT")
@@ -147,7 +153,10 @@ test_that(".gc_ora.data.frame groups proteins by trait after filtering", {
   )
 
   expect_identical(result, sentinel)
-  expect_equal(captured$protein_list, list(trait_A = "P01308", trait_B = "P00533"))
+  expect_equal(
+    captured$protein_list,
+    list(trait_A = "P01308", trait_B = "P00533")
+  )
   expect_identical(captured$dea_p_cutoff, 0.05)
   expect_equal(captured$dea_log2fc_cutoff, c(-1, 1))
   expect_false(captured$uniprot_to_entrez)
@@ -200,7 +209,10 @@ test_that(".gc_ora.glystats_res groups proteins by trait after filtering", {
   )
 
   expect_identical(result, sentinel)
-  expect_equal(captured$protein_list, list(trait_A = "P01308", trait_B = "P00533"))
+  expect_equal(
+    captured$protein_list,
+    list(trait_A = "P01308", trait_B = "P00533")
+  )
   expect_identical(captured$dea_p_cutoff, 0.05)
   expect_equal(captured$dea_log2fc_cutoff, c(-1, 1))
   expect_false(captured$uniprot_to_entrez)
@@ -237,7 +249,10 @@ test_that("enrich_gc_ora_kegg forwards args to compareCluster through all layers
     )
     sentinel
   }
-  local_mocked_bindings(compareCluster = mock_compare_cluster, .package = "clusterProfiler")
+  local_mocked_bindings(
+    compareCluster = mock_compare_cluster,
+    .package = "clusterProfiler"
+  )
 
   result <- suppressMessages(
     enrich_gc_ora_kegg(
@@ -253,7 +268,10 @@ test_that("enrich_gc_ora_kegg forwards args to compareCluster through all layers
   )
 
   expect_identical(result, sentinel)
-  expect_equal(captured$geneCluster, list(trait_A = "P01308", trait_B = "P00533"))
+  expect_equal(
+    captured$geneCluster,
+    list(trait_A = "P01308", trait_B = "P00533")
+  )
   expect_identical(captured$fun, clusterProfiler::enrichKEGG)
   expect_equal(captured$universe, c("P01308", "P04637", "P42345"))
   expect_identical(captured$keyType, "uniprot")
@@ -297,7 +315,10 @@ test_that("enrich_gc_ora_reactome forwards args to compareCluster through all la
     sentinel
   }
 
-  local_mocked_bindings(compareCluster = mock_compare_cluster, .package = "clusterProfiler")
+  local_mocked_bindings(
+    compareCluster = mock_compare_cluster,
+    .package = "clusterProfiler"
+  )
   local_mocked_bindings(
     .reactome_orgdb = function(organism) paste0("MOCK_REACTOME_", organism),
     .uniprot_to_entrez_prolist = function(pro_list, orgdb) {
@@ -372,7 +393,10 @@ test_that("enrich_gc_ora_wp forwards args to compareCluster through all layers",
     sentinel
   }
 
-  local_mocked_bindings(compareCluster = mock_compare_cluster, .package = "clusterProfiler")
+  local_mocked_bindings(
+    compareCluster = mock_compare_cluster,
+    .package = "clusterProfiler"
+  )
   local_mocked_bindings(
     .wp_orgdb = function(organism) paste0("MOCK_WP_", organism),
     .uniprot_to_entrez_prolist = function(pro_list, orgdb) {
@@ -451,7 +475,10 @@ test_that("enrich_gc_ora_do forwards args to compareCluster through all layers",
     sentinel
   }
 
-  local_mocked_bindings(compareCluster = mock_compare_cluster, .package = "clusterProfiler")
+  local_mocked_bindings(
+    compareCluster = mock_compare_cluster,
+    .package = "clusterProfiler"
+  )
   local_mocked_bindings(
     .do_orgdb = function(organism) paste0("MOCK_DO_", organism),
     .uniprot_to_entrez_prolist = function(pro_list, orgdb) {
@@ -528,7 +555,10 @@ test_that("enrich_gc_ora_ncg forwards args to compareCluster through all layers"
     sentinel
   }
 
-  local_mocked_bindings(compareCluster = mock_compare_cluster, .package = "clusterProfiler")
+  local_mocked_bindings(
+    compareCluster = mock_compare_cluster,
+    .package = "clusterProfiler"
+  )
   local_mocked_bindings(
     .prepare_orgdb = function(orgdb) paste0("MOCK_", orgdb),
     .uniprot_to_entrez_prolist = function(pro_list, orgdb) {
@@ -726,7 +756,11 @@ test_that(".gc_ora_impl converts protein list and universe when uniprot_to_entre
   sentinel <- list(source = "compareCluster")
   captured <- NULL
   mock_compare_cluster <- function(geneCluster, universe = NULL, ...) {
-    captured <<- list(geneCluster = geneCluster, universe = universe, dots = list(...))
+    captured <<- list(
+      geneCluster = geneCluster,
+      universe = universe,
+      dots = list(...)
+    )
     sentinel
   }
   mock_uniprot_to_entrez_prolist <- function(pro_list, orgdb) {

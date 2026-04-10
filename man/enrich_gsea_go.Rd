@@ -6,7 +6,7 @@
 \usage{
 enrich_gsea_go(
   dea_res,
-  rank = "signed_log10p",
+  rank_by = "signed_log10p",
   orgdb = "org.Hs.eg.db",
   ont = "MF",
   p_adj_method = "BH",
@@ -33,7 +33,7 @@ called on an \code{\link[glyexp:experiment]{glyexp::experiment()}} of "traitprot
 }
 }}
 
-\item{rank}{Criteria for ranking proteins.
+\item{rank_by}{Criteria for ranking proteins.
 One of the following:
 \itemize{
 \item "log2fc": log2 fold change with signs

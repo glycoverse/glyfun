@@ -24,7 +24,7 @@
 #' ```
 #'
 #' @inheritParams enrich_ora_go
-#' @param rank Criteria for ranking proteins.
+#' @param rank_by Criteria for ranking proteins.
 #'   One of the following:
 #'   - "log2fc": log2 fold change with signs
 #'   - "abs_log2fc": absolute log2 fold change
@@ -46,7 +46,7 @@
 #' @export
 enrich_gsea_go <- function(
   dea_res,
-  rank = "signed_log10p",
+  rank_by = "signed_log10p",
   orgdb = "org.Hs.eg.db",
   ont = "MF",
   p_adj_method = "BH",
@@ -62,7 +62,7 @@ enrich_gsea_go <- function(
     dea_res,
     enrich_fun = clusterProfiler::gseGO,
     result_class = "glyfun_gsea_go",
-    rank = rank,
+    rank_by = rank_by,
     OrgDb = orgdb,
     keyType = "UNIPROT",
     ont = ont,
@@ -80,7 +80,7 @@ enrich_gsea_go <- function(
   dea_res,
   enrich_fun,
   result_class,
-  rank,
+  rank_by,
   bitr_orgdb = NULL,
   ...
 ) {
@@ -91,12 +91,12 @@ enrich_gsea_go <- function(
   dea_res,
   enrich_fun,
   result_class,
-  rank,
+  rank_by,
   bitr_orgdb = NULL,
   ...
 ) {
   pro_fun <- function(dea_res) {
-    .prepare_pro_list(dea_res, rank)
+    .prepare_pro_list(dea_res, rank_by)
   }
   .gsea_impl(
     dea_res,
@@ -112,14 +112,14 @@ enrich_gsea_go <- function(
   dea_res,
   enrich_fun,
   result_class,
-  rank,
+  rank_by,
   bitr_orgdb = NULL,
   ...
 ) {
   pro_fun <- function(dea_res) {
     dea_res |>
       glystats::get_tidy_result() |>
-      .prepare_pro_list(rank)
+      .prepare_pro_list(rank_by)
   }
   .gsea_impl(
     dea_res,
@@ -137,16 +137,16 @@ enrich_gsea_go <- function(
 #' It calculates the median score for each protein, sorts them in descending order,
 #' and returns a named vector with protein names as names and median scores as values.
 #' @noRd
-.prepare_pro_list <- function(df, rank) {
+.prepare_pro_list <- function(df, rank_by) {
   p_col <- if ("p_adj" %in% colnames(df)) "p_adj" else "p"
   scores <- switch(
-    rank,
+    rank_by,
     log2fc = df$log2fc,
     abs_log2fc = abs(df$log2fc),
     log10p = -log10(df[[p_col]]),
     signed_log10p = sign(df$log2fc) * (-log10(df[[p_col]])),
     log2fc_log10p = df$log2fc * (-log10(df[[p_col]])),
-    cli::cli_abort("Invalid rank method: {.val {rank}}")
+    cli::cli_abort("Invalid rank_by method: {.val {rank_by}}")
   )
   df |>
     dplyr::mutate(score = scores) |>
@@ -176,7 +176,11 @@ enrich_gsea_go <- function(
   # Performing enrichment
   proteins <- pro_fun(dea_res)
   if (uniprot_to_entrez) {
-    names(proteins) <- .uniprot_to_entrez(names(proteins), bitr_orgdb, drop_na = FALSE)
+    names(proteins) <- .uniprot_to_entrez(
+      names(proteins),
+      bitr_orgdb,
+      drop_na = FALSE
+    )
     proteins <- proteins[!is.na(names(proteins))]
   }
   suppressWarnings(

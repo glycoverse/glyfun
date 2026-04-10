@@ -235,7 +235,10 @@ test_that("enrich_ora_kegg forwards args to enrichKEGG through all layers", {
     )
     sentinel
   }
-  local_mocked_bindings(enrichKEGG = mock_enrich_kegg, .package = "clusterProfiler")
+  local_mocked_bindings(
+    enrichKEGG = mock_enrich_kegg,
+    .package = "clusterProfiler"
+  )
 
   result <- suppressMessages(
     enrich_ora_kegg(
@@ -292,7 +295,10 @@ test_that("enrich_ora_reactome forwards args to enrichPathway through all layers
     sentinel
   }
 
-  local_mocked_bindings(enrichPathway = mock_enrich_pathway, .package = "ReactomePA")
+  local_mocked_bindings(
+    enrichPathway = mock_enrich_pathway,
+    .package = "ReactomePA"
+  )
   local_mocked_bindings(
     .reactome_orgdb = function(organism) paste0("MOCK_REACTOME_", organism),
     .uniprot_to_entrez = function(uniprot, orgdb) {

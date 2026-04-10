@@ -48,7 +48,15 @@ skip_if_not_installed("clusterProfiler")
       "bad gateway",
       "network"
     )
-    if (any(vapply(external_error_patterns, grepl, logical(1), x = msg, fixed = TRUE))) {
+    if (
+      any(vapply(
+        external_error_patterns,
+        grepl,
+        logical(1),
+        x = msg,
+        fixed = TRUE
+      ))
+    ) {
       skip(paste("External service/network issue:", conditionMessage(result)))
     }
     stop(result)
@@ -125,7 +133,12 @@ test_that("online integration smoke: enrich_gc_ora_go returns compareClusterResu
   skip_if_not_installed("org.Hs.eg.db")
   dea_res <- .mock_online_ora_dea_res()
   .expect_s4_or_null_with_external_skip(
-    enrich_gc_ora_go(dea_res, orgdb = "org.Hs.eg.db", ont = "MF", p_cutoff = 0.05),
+    enrich_gc_ora_go(
+      dea_res,
+      orgdb = "org.Hs.eg.db",
+      ont = "MF",
+      p_cutoff = 0.05
+    ),
     "compareClusterResult"
   )
 })
