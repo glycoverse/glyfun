@@ -75,6 +75,19 @@ test_that("online integration smoke: enrich_ora_go returns enrichResult or NULL"
   )
 })
 
+test_that("online integration smoke: enrich_gsea_go returns gseaResult or NULL", {
+  .skip_online_integration()
+  skip_if_not_installed("org.Hs.eg.db")
+  dea_res <- .mock_online_ora_dea_res()
+  .expect_s4_or_null_with_external_skip(
+    {
+      set.seed(1)
+      enrich_gsea_go(dea_res, orgdb = "org.Hs.eg.db", ont = "MF", p_cutoff = 0.05)
+    },
+    "gseaResult"
+  )
+})
+
 test_that("online integration smoke: enrich_ora_kegg returns enrichResult or NULL", {
   .skip_online_integration()
   dea_res <- .mock_online_ora_dea_res()
