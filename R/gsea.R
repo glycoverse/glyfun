@@ -181,7 +181,7 @@ enrich_gsea_kegg <- function(
   }
   .gsea_impl(
     dea_res,
-    enrich_fun = clusterProfiler::gseGO,
+    enrich_fun = enrich_fun,
     result_class = result_class,
     bitr_orgdb = bitr_orgdb,
     ...,
