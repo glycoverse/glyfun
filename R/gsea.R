@@ -10,6 +10,8 @@
 #' GSEA requires a ranked list of proteins as input.
 #' This function ranks proteins based on the median absolute log2 fold change across all traits and sites.
 #' This reflects the overall glycosylation dysregulation degree of each glycoprotein.
+#' You can use `rank_by` to specify other ranking criteria, such as p-values or signed log2 fold changes.
+#' You can also use `aggr` to specify how to aggregate multiple scores for the same protein across different traits and sites.
 #'
 #' # Common usage pattern
 #'
@@ -20,7 +22,7 @@
 #' dea_res <- gly_ttest(exp)
 #'
 #' # 2. Use this function.
-#' go_res <- enrich_gsea_go(dea_res)
+#' go_res <- enrich_gsea_go(dea_res)  # or `enrich_gsea_xxx()` functions
 #' ```
 #'
 #' @inheritParams enrich_ora_go
@@ -70,6 +72,55 @@ enrich_gsea_go <- function(
     OrgDb = orgdb,
     keyType = "UNIPROT",
     ont = ont,
+    pAdjustMethod = p_adj_method,
+    pvalueCutoff = p_cutoff,
+    minGSSize = min_gs_size,
+    maxGSSize = max_gs_size,
+    exponent = exponent,
+    eps = eps,
+    seed = seed
+  )
+}
+
+#' KEGG Gene Set Enrichment Analysis
+#'
+#' @description
+#' Performs KEGG pathway Gene Set Enrichment Analysis (GSEA)
+#' on glycoproteins with dysregulated glycosylation.
+#'
+#' @inheritSection enrich_gsea_go How it ranks proteins
+#' @inheritSection enrich_gsea_go Common usage pattern
+#'
+#' @inheritParams enrich_gsea_go
+#' @param organism KEGG organism code. Defaults to "hsa" (Homo sapiens).
+#'   See [clusterProfiler::gseKEGG()] for details.
+#'
+#' @return A clusterProfiler `gseaResult` object.
+#'   It can be readily converted to a tibble with [tibble::as_tibble()],
+#'   or visualized with `clusterProfiler` functions like [clusterProfiler::ridgeplot()].
+#'
+#' @seealso [clusterProfiler::gseKEGG()]
+#' @export
+enrich_gsea_kegg <- function(
+  dea_res,
+  rank_by = "signed_log10p",
+  aggr = "median",
+  organism = "hsa",
+  p_adj_method = "BH",
+  p_cutoff = 0.05,
+  min_gs_size = 10,
+  max_gs_size = 500,
+  exponent = 1,
+  eps = 1e-10,
+  seed = TRUE
+) {
+  .gsea(
+    dea_res,
+    enrich_fun = clusterProfiler::gseKEGG,
+    result_class = "glyfun_gsea_kegg",
+    rank_by = rank_by,
+    aggr = aggr,
+    keyType = "uniprot",
     pAdjustMethod = p_adj_method,
     pvalueCutoff = p_cutoff,
     minGSSize = min_gs_size,
@@ -150,7 +201,10 @@ enrich_gsea_go <- function(
   aggr_fun <- .gsea_aggr_fun(aggr)
   df |>
     dplyr::mutate(score = scores) |>
-    dplyr::summarise(score = aggr_fun(.data$score), .by = tidyselect::all_of("protein")) |>
+    dplyr::summarise(
+      score = aggr_fun(.data$score),
+      .by = tidyselect::all_of("protein")
+    ) |>
     dplyr::arrange(dplyr::desc(.data$score)) |>
     dplyr::select(tidyselect::all_of(c("protein", "score"))) |>
     tibble::deframe()
