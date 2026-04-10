@@ -24,6 +24,13 @@
 #' ```
 #'
 #' @inheritParams enrich_ora_go
+#' @param rank Criteria for ranking proteins.
+#'   One of the following:
+#'   - "log2fc": log2 fold change with signs
+#'   - "abs_log2fc": absolute log2 fold change
+#'   - "log10p": negative log10 p-value
+#'   - "signed_log10p" (default): log10 p-value with signs of log2 fold change
+#'   - "log2fc_log10p": log2 fold change multiplied by negative log10 p-value
 #' @param exponent Weight of each step. Passed to `exponent` of [clusterProfiler::gseGO()].
 #'   Defaults to 1.
 #' @param eps Epsilon for calculating p-values. Passed to `eps` of [clusterProfiler::gseGO()].
@@ -39,6 +46,7 @@
 #' @export
 enrich_gsea_go <- function(
   dea_res,
+  rank = "signed_log10p",
   orgdb = "org.Hs.eg.db",
   ont = "MF",
   p_adj_method = "BH",
@@ -54,6 +62,7 @@ enrich_gsea_go <- function(
     dea_res,
     enrich_fun = clusterProfiler::gseGO,
     result_class = "glyfun_gsea_go",
+    rank = rank,
     OrgDb = orgdb,
     keyType = "UNIPROT",
     ont = ont,
@@ -71,6 +80,7 @@ enrich_gsea_go <- function(
   dea_res,
   enrich_fun,
   result_class,
+  rank,
   bitr_orgdb = NULL,
   ...
 ) {
@@ -81,16 +91,20 @@ enrich_gsea_go <- function(
   dea_res,
   enrich_fun,
   result_class,
+  rank,
   bitr_orgdb = NULL,
   ...
 ) {
+  pro_fun <- function(dea_res) {
+    .prepare_pro_list(dea_res, rank)
+  }
   .gsea_impl(
     dea_res,
     enrich_fun = enrich_fun,
     result_class = result_class,
     bitr_orgdb = bitr_orgdb,
     ...,
-    pro_fun = .prepare_pro_list
+    pro_fun = pro_fun
   )
 }
 
@@ -98,13 +112,14 @@ enrich_gsea_go <- function(
   dea_res,
   enrich_fun,
   result_class,
+  rank,
   bitr_orgdb = NULL,
   ...
 ) {
   pro_fun <- function(dea_res) {
     dea_res |>
       glystats::get_tidy_result() |>
-      .prepare_pro_list()
+      .prepare_pro_list(rank)
   }
   .gsea_impl(
     dea_res,
@@ -116,9 +131,26 @@ enrich_gsea_go <- function(
   )
 }
 
-.prepare_pro_list <- function(df) {
+#' Prepare a named vector of protein scores for GSEA.
+#'
+#' This function requires `df` to have a `protein` column and a `score` column.
+#' It calculates the median score for each protein, sorts them in descending order,
+#' and returns a named vector with protein names as names and median scores as values.
+#' @noRd
+.prepare_pro_list <- function(df, rank) {
+  p_col <- if ("p_adj" %in% colnames(df)) "p_adj" else "p"
+  scores <- switch(
+    rank,
+    log2fc = df$log2fc,
+    abs_log2fc = abs(df$log2fc),
+    log10p = -log10(df[[p_col]]),
+    signed_log10p = sign(df$log2fc) * (-log10(df[[p_col]])),
+    log2fc_log10p = df$log2fc * (-log10(df[[p_col]])),
+    cli::cli_abort("Invalid rank method: {.val {rank}}")
+  )
   df |>
-    dplyr::summarise(score = median(abs(.data$log2fc)), .by = .data$protein) |>
+    dplyr::mutate(score = scores) |>
+    dplyr::summarise(score = median(.data$score), .by = .data$protein) |>
     dplyr::arrange(dplyr::desc(.data$score)) |>
     dplyr::select(.data$protein, .data$score) |>
     tibble::deframe()

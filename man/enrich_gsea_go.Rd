@@ -6,6 +6,7 @@
 \usage{
 enrich_gsea_go(
   dea_res,
+  rank = "signed_log10p",
   orgdb = "org.Hs.eg.db",
   ont = "MF",
   p_adj_method = "BH",
@@ -30,6 +31,16 @@ called on an \code{\link[glyexp:experiment]{glyexp::experiment()}} of "traitprot
 \item \code{p_val}: p-values, preferably adjusted p-values
 \item \code{log2fc}: log2 of fold change
 }
+}}
+
+\item{rank}{Criteria for ranking proteins.
+One of the following:
+\itemize{
+\item "log2fc": log2 fold change with signs
+\item "abs_log2fc": absolute log2 fold change
+\item "log10p": negative log10 p-value
+\item "signed_log10p" (default): log10 p-value with signs of log2 fold change
+\item "log2fc_log10p": log2 fold change multiplied by negative log10 p-value
 }}
 
 \item{orgdb}{An OrgDb object. Passed to \code{OrgDb} of downstream enrichment function.}
