@@ -260,9 +260,11 @@ enrich_gsea_kegg <- function(
     )
     proteins <- proteins[!is.na(names(proteins))]
   }
-  suppressWarnings(
-    res <- suppressPackageStartupMessages(
-      rlang::exec(enrich_fun, proteins, ...)
+  res <- suppressWarnings(
+    suppressPackageStartupMessages(
+      suppressMessages(
+        rlang::exec(enrich_fun, proteins, ...)
+      )
     )
   )
   if (nrow(res) == 0) {
