@@ -146,7 +146,19 @@ enrich_gsea_go <- function(
 #' @noRd
 .prepare_pro_list <- function(df, rank_by, aggr) {
   p_col <- if ("p_adj" %in% colnames(df)) "p_adj" else "p_val"
-  scores <- switch(
+  scores <- .calcu_rank_scores(df, rank_by)
+  aggr_fun <- .gsea_aggr_fun(aggr)
+  df |>
+    dplyr::mutate(score = scores) |>
+    dplyr::summarise(score = aggr_fun(.data$score), .by = tidyselect::all_of("protein")) |>
+    dplyr::arrange(dplyr::desc(.data$score)) |>
+    dplyr::select(tidyselect::all_of(c("protein", "score"))) |>
+    tibble::deframe()
+}
+
+.calcu_rank_scores <- function(df, rank_by) {
+  p_col <- if ("p_adj" %in% colnames(df)) "p_adj" else "p_val"
+  switch(
     rank_by,
     log2fc = df$log2fc,
     abs_log2fc = abs(df$log2fc),
@@ -155,19 +167,16 @@ enrich_gsea_go <- function(
     log2fc_log10p = df$log2fc * (-log10(df[[p_col]])),
     cli::cli_abort("Invalid rank_by method: {.val {rank_by}}")
   )
-  aggr_fun <- switch(
+}
+
+.gsea_aggr_fun <- function(aggr) {
+  switch(
     aggr,
     median = stats::median,
     mean = mean,
     max = max,
     cli::cli_abort("Invalid aggr method: {.val {aggr}}")
   )
-  df |>
-    dplyr::mutate(score = scores) |>
-    dplyr::summarise(score = aggr_fun(.data$score), .by = tidyselect::all_of("protein")) |>
-    dplyr::arrange(dplyr::desc(.data$score)) |>
-    dplyr::select(tidyselect::all_of(c("protein", "score"))) |>
-    tibble::deframe()
 }
 
 .gsea_impl <- function(
