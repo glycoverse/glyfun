@@ -164,9 +164,9 @@ enrich_gsea_go <- function(
   )
   df |>
     dplyr::mutate(score = scores) |>
-    dplyr::summarise(score = aggr_fun(.data$score), .by = .data$protein) |>
+    dplyr::summarise(score = aggr_fun(.data$score), .by = tidyselect::all_of("protein")) |>
     dplyr::arrange(dplyr::desc(.data$score)) |>
-    dplyr::select(.data$protein, .data$score) |>
+    dplyr::select(tidyselect::all_of(c("protein", "score"))) |>
     tibble::deframe()
 }
 
