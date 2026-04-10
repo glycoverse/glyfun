@@ -150,7 +150,7 @@ enrich_gsea_go <- function(
   )
   df |>
     dplyr::mutate(score = scores) |>
-    dplyr::summarise(score = median(.data$score), .by = .data$protein) |>
+    dplyr::summarise(score = stats::median(.data$score), .by = .data$protein) |>
     dplyr::arrange(dplyr::desc(.data$score)) |>
     dplyr::select(.data$protein, .data$score) |>
     tibble::deframe()
