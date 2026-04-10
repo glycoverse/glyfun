@@ -7,6 +7,7 @@
 enrich_gsea_go(
   dea_res,
   rank_by = "signed_log10p",
+  aggr = "median",
   orgdb = "org.Hs.eg.db",
   ont = "MF",
   p_adj_method = "BH",
@@ -42,6 +43,9 @@ One of the following:
 \item "signed_log10p" (default): log10 p-value with signs of log2 fold change
 \item "log2fc_log10p": log2 fold change multiplied by negative log10 p-value
 }}
+
+\item{aggr}{Aggregation method for combining multiple scores across different traits and sites for the same protein.
+One of "median", "mean", or "max". Defaults to "median".}
 
 \item{orgdb}{An OrgDb object. Passed to \code{OrgDb} of downstream enrichment function.}
 

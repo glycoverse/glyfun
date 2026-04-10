@@ -31,6 +31,8 @@
 #'   - "log10p": negative log10 p-value
 #'   - "signed_log10p" (default): log10 p-value with signs of log2 fold change
 #'   - "log2fc_log10p": log2 fold change multiplied by negative log10 p-value
+#' @param aggr Aggregation method for combining multiple scores across different traits and sites for the same protein.
+#'   One of "median", "mean", or "max". Defaults to "median".
 #' @param exponent Weight of each step. Passed to `exponent` of [clusterProfiler::gseGO()].
 #'   Defaults to 1.
 #' @param eps Epsilon for calculating p-values. Passed to `eps` of [clusterProfiler::gseGO()].
@@ -47,6 +49,7 @@
 enrich_gsea_go <- function(
   dea_res,
   rank_by = "signed_log10p",
+  aggr = "median",
   orgdb = "org.Hs.eg.db",
   ont = "MF",
   p_adj_method = "BH",
@@ -63,6 +66,7 @@ enrich_gsea_go <- function(
     enrich_fun = clusterProfiler::gseGO,
     result_class = "glyfun_gsea_go",
     rank_by = rank_by,
+    aggr = aggr,
     OrgDb = orgdb,
     keyType = "UNIPROT",
     ont = ont,
@@ -81,6 +85,7 @@ enrich_gsea_go <- function(
   enrich_fun,
   result_class,
   rank_by,
+  aggr,
   bitr_orgdb = NULL,
   ...
 ) {
@@ -92,11 +97,12 @@ enrich_gsea_go <- function(
   enrich_fun,
   result_class,
   rank_by,
+  aggr,
   bitr_orgdb = NULL,
   ...
 ) {
   pro_fun <- function(dea_res) {
-    .prepare_pro_list(dea_res, rank_by)
+    .prepare_pro_list(dea_res, rank_by, aggr)
   }
   .gsea_impl(
     dea_res,
@@ -113,13 +119,14 @@ enrich_gsea_go <- function(
   enrich_fun,
   result_class,
   rank_by,
+  aggr,
   bitr_orgdb = NULL,
   ...
 ) {
   pro_fun <- function(dea_res) {
     dea_res |>
       glystats::get_tidy_result() |>
-      .prepare_pro_list(rank_by)
+      .prepare_pro_list(rank_by, aggr)
   }
   .gsea_impl(
     dea_res,
@@ -137,7 +144,7 @@ enrich_gsea_go <- function(
 #' It calculates the median score for each protein, sorts them in descending order,
 #' and returns a named vector with protein names as names and median scores as values.
 #' @noRd
-.prepare_pro_list <- function(df, rank_by) {
+.prepare_pro_list <- function(df, rank_by, aggr) {
   p_col <- if ("p_adj" %in% colnames(df)) "p_adj" else "p"
   scores <- switch(
     rank_by,
@@ -148,9 +155,16 @@ enrich_gsea_go <- function(
     log2fc_log10p = df$log2fc * (-log10(df[[p_col]])),
     cli::cli_abort("Invalid rank_by method: {.val {rank_by}}")
   )
+  aggr_fun <- switch(
+    aggr,
+    median = stats::median,
+    mean = mean,
+    max = max,
+    cli::cli_abort("Invalid aggr method: {.val {aggr}}")
+  )
   df |>
     dplyr::mutate(score = scores) |>
-    dplyr::summarise(score = stats::median(.data$score), .by = .data$protein) |>
+    dplyr::summarise(score = aggr_fun(.data$score), .by = .data$protein) |>
     dplyr::arrange(dplyr::desc(.data$score)) |>
     dplyr::select(.data$protein, .data$score) |>
     tibble::deframe()
