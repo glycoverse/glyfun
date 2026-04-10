@@ -145,7 +145,7 @@ enrich_gsea_go <- function(
 #' and returns a named vector with protein names as names and median scores as values.
 #' @noRd
 .prepare_pro_list <- function(df, rank_by, aggr) {
-  p_col <- if ("p_adj" %in% colnames(df)) "p_adj" else "p"
+  p_col <- if ("p_adj" %in% colnames(df)) "p_adj" else "p_val"
   scores <- switch(
     rank_by,
     log2fc = df$log2fc,
