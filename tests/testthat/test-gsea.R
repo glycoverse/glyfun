@@ -83,6 +83,311 @@ test_that("enrich_gsea_go forwards args to gseGO through all layers", {
   expect_equal(names(captured$geneList), c("P01308", "P42345", "P04637"))
 })
 
+test_that("enrich_gsea_reactome forwards args to gsePathway through all layers", {
+  skip_if_not_installed("ReactomePA")
+
+  captured <- NULL
+  mock_gse_pathway <- function(
+    geneList,
+    organism = NULL,
+    pAdjustMethod = NULL,
+    pvalueCutoff = NULL,
+    minGSSize = NULL,
+    maxGSSize = NULL,
+    exponent = NULL,
+    eps = NULL,
+    seed = NULL,
+    ...
+  ) {
+    captured <<- list(
+      geneList = geneList,
+      organism = organism,
+      pAdjustMethod = pAdjustMethod,
+      pvalueCutoff = pvalueCutoff,
+      minGSSize = minGSSize,
+      maxGSSize = maxGSSize,
+      exponent = exponent,
+      eps = eps,
+      seed = seed,
+      dots = list(...)
+    )
+    tibble::tibble(ID = "R-HSA-123456")
+  }
+
+  local_mocked_bindings(
+    gsePathway = mock_gse_pathway,
+    .package = "ReactomePA"
+  )
+  local_mocked_bindings(
+    .reactome_orgdb = function(organism) paste0("MOCK_REACTOME_", organism),
+    .uniprot_to_entrez = function(uniprot, orgdb, drop_na = TRUE) {
+      expect_identical(drop_na, FALSE)
+      expect_identical(orgdb, "MOCK_REACTOME_human")
+      paste0("ENTREZ_", uniprot)
+    },
+    .package = "glyfun"
+  )
+
+  result <- suppressMessages(
+    suppressWarnings(
+      enrich_gsea_reactome(
+        .mock_gsea_dea_df(),
+        rank_by = "log2fc",
+        aggr = "max",
+        organism = "human",
+        p_adj_method = "BY",
+        p_cutoff = 0.01,
+        min_gs_size = 3,
+        max_gs_size = 99,
+        exponent = 2,
+        eps = 1e-8,
+        seed = FALSE
+      )
+    )
+  )
+
+  expect_s3_class(result, "tbl_df")
+  expect_identical(captured$organism, "human")
+  expect_identical(captured$pAdjustMethod, "BY")
+  expect_identical(captured$pvalueCutoff, 0.01)
+  expect_identical(captured$minGSSize, 3)
+  expect_identical(captured$maxGSSize, 99)
+  expect_identical(captured$exponent, 2)
+  expect_identical(captured$eps, 1e-8)
+  expect_identical(captured$seed, FALSE)
+  expect_equal(unname(captured$geneList), c(2, 0.5, -3))
+  expect_equal(
+    names(captured$geneList),
+    c("ENTREZ_P01308", "ENTREZ_P42345", "ENTREZ_P04637")
+  )
+})
+
+test_that("enrich_gsea_wp forwards args to gseWP through all layers", {
+  captured <- NULL
+  mock_gse_wp <- function(
+    geneList,
+    organism = NULL,
+    pAdjustMethod = NULL,
+    pvalueCutoff = NULL,
+    minGSSize = NULL,
+    maxGSSize = NULL,
+    exponent = NULL,
+    eps = NULL,
+    seed = NULL,
+    ...
+  ) {
+    captured <<- list(
+      geneList = geneList,
+      organism = organism,
+      pAdjustMethod = pAdjustMethod,
+      pvalueCutoff = pvalueCutoff,
+      minGSSize = minGSSize,
+      maxGSSize = maxGSSize,
+      exponent = exponent,
+      eps = eps,
+      seed = seed,
+      dots = list(...)
+    )
+    tibble::tibble(ID = "WP123")
+  }
+
+  local_mocked_bindings(gseWP = mock_gse_wp, .package = "clusterProfiler")
+  local_mocked_bindings(
+    .wp_orgdb = function(organism) paste0("MOCK_WP_", organism),
+    .uniprot_to_entrez = function(uniprot, orgdb, drop_na = TRUE) {
+      expect_identical(drop_na, FALSE)
+      expect_identical(orgdb, "MOCK_WP_Homo sapiens")
+      paste0("ENTREZ_", uniprot)
+    },
+    .package = "glyfun"
+  )
+
+  result <- suppressMessages(
+    suppressWarnings(
+      enrich_gsea_wp(
+        .mock_gsea_dea_df(),
+        rank_by = "log2fc",
+        aggr = "max",
+        organism = "Homo sapiens",
+        p_adj_method = "BY",
+        p_cutoff = 0.01,
+        min_gs_size = 3,
+        max_gs_size = 99,
+        exponent = 2,
+        eps = 1e-8,
+        seed = FALSE
+      )
+    )
+  )
+
+  expect_s3_class(result, "tbl_df")
+  expect_identical(captured$organism, "Homo sapiens")
+  expect_identical(captured$pAdjustMethod, "BY")
+  expect_identical(captured$pvalueCutoff, 0.01)
+  expect_identical(captured$minGSSize, 3)
+  expect_identical(captured$maxGSSize, 99)
+  expect_identical(captured$exponent, 2)
+  expect_identical(captured$eps, 1e-8)
+  expect_identical(captured$seed, FALSE)
+  expect_equal(unname(captured$geneList), c(2, 0.5, -3))
+  expect_equal(
+    names(captured$geneList),
+    c("ENTREZ_P01308", "ENTREZ_P42345", "ENTREZ_P04637")
+  )
+})
+
+test_that("enrich_gsea_do forwards args to gseDO through all layers", {
+  skip_if_not_installed("DOSE")
+
+  captured <- NULL
+  mock_gse_do <- function(
+    geneList,
+    ont = NULL,
+    organism = NULL,
+    pAdjustMethod = NULL,
+    pvalueCutoff = NULL,
+    minGSSize = NULL,
+    maxGSSize = NULL,
+    exponent = NULL,
+    eps = NULL,
+    seed = NULL,
+    ...
+  ) {
+    captured <<- list(
+      geneList = geneList,
+      ont = ont,
+      organism = organism,
+      pAdjustMethod = pAdjustMethod,
+      pvalueCutoff = pvalueCutoff,
+      minGSSize = minGSSize,
+      maxGSSize = maxGSSize,
+      exponent = exponent,
+      eps = eps,
+      seed = seed,
+      dots = list(...)
+    )
+    tibble::tibble(ID = "DOID:1234")
+  }
+
+  local_mocked_bindings(gseDO = mock_gse_do, .package = "DOSE")
+  local_mocked_bindings(
+    .do_orgdb = function(organism) paste0("MOCK_DO_", organism),
+    .uniprot_to_entrez = function(uniprot, orgdb, drop_na = TRUE) {
+      expect_identical(drop_na, FALSE)
+      expect_identical(orgdb, "MOCK_DO_hsa")
+      paste0("ENTREZ_", uniprot)
+    },
+    .package = "glyfun"
+  )
+
+  result <- suppressMessages(
+    suppressWarnings(
+      enrich_gsea_do(
+        .mock_gsea_dea_df(),
+        rank_by = "log2fc",
+        aggr = "max",
+        ont = "HDO",
+        organism = "hsa",
+        p_adj_method = "BY",
+        p_cutoff = 0.01,
+        min_gs_size = 3,
+        max_gs_size = 99,
+        exponent = 2,
+        eps = 1e-8,
+        seed = FALSE
+      )
+    )
+  )
+
+  expect_s3_class(result, "tbl_df")
+  expect_identical(captured$ont, "HDO")
+  expect_identical(captured$organism, "hsa")
+  expect_identical(captured$pAdjustMethod, "BY")
+  expect_identical(captured$pvalueCutoff, 0.01)
+  expect_identical(captured$minGSSize, 3)
+  expect_identical(captured$maxGSSize, 99)
+  expect_identical(captured$exponent, 2)
+  expect_identical(captured$eps, 1e-8)
+  expect_identical(captured$seed, FALSE)
+  expect_equal(unname(captured$geneList), c(2, 0.5, -3))
+  expect_equal(
+    names(captured$geneList),
+    c("ENTREZ_P01308", "ENTREZ_P42345", "ENTREZ_P04637")
+  )
+})
+
+test_that("enrich_gsea_ncg forwards args to gseNCG through all layers", {
+  skip_if_not_installed("DOSE")
+
+  captured <- NULL
+  mock_gse_ncg <- function(
+    geneList,
+    pAdjustMethod = NULL,
+    pvalueCutoff = NULL,
+    minGSSize = NULL,
+    maxGSSize = NULL,
+    exponent = NULL,
+    eps = NULL,
+    seed = NULL,
+    ...
+  ) {
+    captured <<- list(
+      geneList = geneList,
+      pAdjustMethod = pAdjustMethod,
+      pvalueCutoff = pvalueCutoff,
+      minGSSize = minGSSize,
+      maxGSSize = maxGSSize,
+      exponent = exponent,
+      eps = eps,
+      seed = seed,
+      dots = list(...)
+    )
+    tibble::tibble(ID = "NCG1")
+  }
+
+  local_mocked_bindings(gseNCG = mock_gse_ncg, .package = "DOSE")
+  local_mocked_bindings(
+    .prepare_orgdb = function(orgdb) paste0("MOCK_", orgdb),
+    .uniprot_to_entrez = function(uniprot, orgdb, drop_na = TRUE) {
+      expect_identical(drop_na, FALSE)
+      expect_identical(orgdb, "MOCK_org.Hs.eg.db")
+      paste0("ENTREZ_", uniprot)
+    },
+    .package = "glyfun"
+  )
+
+  result <- suppressMessages(
+    suppressWarnings(
+      enrich_gsea_ncg(
+        .mock_gsea_dea_df(),
+        rank_by = "log2fc",
+        aggr = "max",
+        p_adj_method = "BY",
+        p_cutoff = 0.01,
+        min_gs_size = 3,
+        max_gs_size = 99,
+        exponent = 2,
+        eps = 1e-8,
+        seed = FALSE
+      )
+    )
+  )
+
+  expect_s3_class(result, "tbl_df")
+  expect_identical(captured$pAdjustMethod, "BY")
+  expect_identical(captured$pvalueCutoff, 0.01)
+  expect_identical(captured$minGSSize, 3)
+  expect_identical(captured$maxGSSize, 99)
+  expect_identical(captured$exponent, 2)
+  expect_identical(captured$eps, 1e-8)
+  expect_identical(captured$seed, FALSE)
+  expect_equal(unname(captured$geneList), c(2, 0.5, -3))
+  expect_equal(
+    names(captured$geneList),
+    c("ENTREZ_P01308", "ENTREZ_P42345", "ENTREZ_P04637")
+  )
+})
+
 test_that(".gsea.data.frame prepares a ranked protein list and calls .gsea_impl", {
   captured <- NULL
   sentinel <- tibble::tibble(ID = "GO:0003674")

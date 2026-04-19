@@ -131,6 +131,210 @@ enrich_gsea_kegg <- function(
   )
 }
 
+#' Reactome Gene Set Enrichment Analysis
+#'
+#' @description
+#' Performs Reactome pathway Gene Set Enrichment Analysis (GSEA)
+#' on glycoproteins with dysregulated glycosylation.
+#'
+#' @inheritSection enrich_gsea_go How it ranks proteins
+#' @inheritSection enrich_gsea_go Common usage pattern
+#'
+#' @inheritParams enrich_gsea_go
+#' @param organism Reactome organism name. Passed to `organism` of [ReactomePA::gsePathway()].
+#'   One of "human", "rat", "mouse", "celegans", "yeast", "zebrafish", "fly". Defaults to "human".
+#'
+#' @inherit enrich_gsea_go return
+#'
+#' @seealso [ReactomePA::gsePathway()]
+#' @export
+enrich_gsea_reactome <- function(
+  dea_res,
+  rank_by = "signed_log10p",
+  aggr = "median",
+  organism = "human",
+  p_adj_method = "BH",
+  p_cutoff = 0.05,
+  min_gs_size = 10,
+  max_gs_size = 500,
+  exponent = 1,
+  eps = 1e-10,
+  seed = TRUE
+) {
+  rlang::check_installed("ReactomePA")
+  orgdb <- .reactome_orgdb(organism)
+  .gsea(
+    dea_res,
+    enrich_fun = ReactomePA::gsePathway,
+    result_class = "glyfun_gsea_reactome",
+    rank_by = rank_by,
+    aggr = aggr,
+    bitr_orgdb = orgdb,
+    organism = organism,
+    pAdjustMethod = p_adj_method,
+    pvalueCutoff = p_cutoff,
+    minGSSize = min_gs_size,
+    maxGSSize = max_gs_size,
+    exponent = exponent,
+    eps = eps,
+    seed = seed,
+    uniprot_to_entrez = TRUE
+  )
+}
+
+#' WikiPathways Gene Set Enrichment Analysis
+#'
+#' @description
+#' Performs WikiPathways Gene Set Enrichment Analysis (GSEA)
+#' on glycoproteins with dysregulated glycosylation.
+#'
+#' @inheritSection enrich_gsea_go How it ranks proteins
+#' @inheritSection enrich_gsea_go Common usage pattern
+#'
+#' @inheritParams enrich_gsea_go
+#' @param organism WikiPathways organism name. Passed to `organism` of [clusterProfiler::gseWP()].
+#'   Defaults to "Homo sapiens". Use [clusterProfiler::get_wp_organisms()] to see available organisms.
+#'
+#' @inherit enrich_gsea_go return
+#'
+#' @seealso [clusterProfiler::gseWP()]
+#' @export
+enrich_gsea_wp <- function(
+  dea_res,
+  rank_by = "signed_log10p",
+  aggr = "median",
+  organism = "Homo sapiens",
+  p_adj_method = "BH",
+  p_cutoff = 0.05,
+  min_gs_size = 10,
+  max_gs_size = 500,
+  exponent = 1,
+  eps = 1e-10,
+  seed = TRUE
+) {
+  orgdb <- .wp_orgdb(organism)
+  .gsea(
+    dea_res,
+    enrich_fun = clusterProfiler::gseWP,
+    result_class = "glyfun_gsea_wp",
+    rank_by = rank_by,
+    aggr = aggr,
+    bitr_orgdb = orgdb,
+    organism = organism,
+    pAdjustMethod = p_adj_method,
+    pvalueCutoff = p_cutoff,
+    minGSSize = min_gs_size,
+    maxGSSize = max_gs_size,
+    exponent = exponent,
+    eps = eps,
+    seed = seed,
+    uniprot_to_entrez = TRUE
+  )
+}
+
+#' Disease Ontology (DO) Gene Set Enrichment Analysis
+#'
+#' @description
+#' Performs Disease Ontology (DO) Gene Set Enrichment Analysis (GSEA)
+#' on glycoproteins with dysregulated glycosylation.
+#'
+#' @inheritSection enrich_gsea_go How it ranks proteins
+#' @inheritSection enrich_gsea_go Common usage pattern
+#'
+#' @inheritParams enrich_gsea_go
+#' @param ont One of "HDO" (Human Disease Ontology), "MPO" (Mammalian Phenotype Ontology),
+#'   or "VDO" (Vector Disease Ontology). Passed to `ont` of [DOSE::gseDO()].
+#'   Defaults to "HDO".
+#' @param organism "hsa" (Homo sapiens) or "mmu" (Mus musculus).
+#'   Passed to `organism` of [DOSE::gseDO()]. Defaults to "hsa".
+#'
+#' @inherit enrich_gsea_go return
+#'
+#' @seealso [DOSE::gseDO()]
+#' @export
+enrich_gsea_do <- function(
+  dea_res,
+  rank_by = "signed_log10p",
+  aggr = "median",
+  ont = "HDO",
+  organism = "hsa",
+  p_adj_method = "BH",
+  p_cutoff = 0.05,
+  min_gs_size = 10,
+  max_gs_size = 500,
+  exponent = 1,
+  eps = 1e-10,
+  seed = TRUE
+) {
+  rlang::check_installed("DOSE")
+  orgdb <- .do_orgdb(organism)
+  .gsea(
+    dea_res,
+    enrich_fun = DOSE::gseDO,
+    result_class = "glyfun_gsea_do",
+    rank_by = rank_by,
+    aggr = aggr,
+    bitr_orgdb = orgdb,
+    ont = ont,
+    organism = organism,
+    pAdjustMethod = p_adj_method,
+    pvalueCutoff = p_cutoff,
+    minGSSize = min_gs_size,
+    maxGSSize = max_gs_size,
+    exponent = exponent,
+    eps = eps,
+    seed = seed,
+    uniprot_to_entrez = TRUE
+  )
+}
+
+#' Network of Cancer Genes (NCG) Gene Set Enrichment Analysis
+#'
+#' @description
+#' Performs Network of Cancer Genes (NCG) Gene Set Enrichment Analysis (GSEA)
+#' on glycoproteins with dysregulated glycosylation.
+#'
+#' @inheritSection enrich_gsea_go How it ranks proteins
+#' @inheritSection enrich_gsea_go Common usage pattern
+#'
+#' @inheritParams enrich_gsea_go
+#'
+#' @inherit enrich_gsea_go return
+#'
+#' @seealso [DOSE::gseNCG()]
+#' @export
+enrich_gsea_ncg <- function(
+  dea_res,
+  rank_by = "signed_log10p",
+  aggr = "median",
+  p_adj_method = "BH",
+  p_cutoff = 0.05,
+  min_gs_size = 10,
+  max_gs_size = 500,
+  exponent = 1,
+  eps = 1e-10,
+  seed = TRUE
+) {
+  rlang::check_installed("DOSE")
+  orgdb <- .prepare_orgdb("org.Hs.eg.db")
+  .gsea(
+    dea_res,
+    enrich_fun = DOSE::gseNCG,
+    result_class = "glyfun_gsea_ncg",
+    rank_by = rank_by,
+    aggr = aggr,
+    bitr_orgdb = orgdb,
+    pAdjustMethod = p_adj_method,
+    pvalueCutoff = p_cutoff,
+    minGSSize = min_gs_size,
+    maxGSSize = max_gs_size,
+    exponent = exponent,
+    eps = eps,
+    seed = seed,
+    uniprot_to_entrez = TRUE
+  )
+}
+
 .gsea <- function(
   dea_res,
   enrich_fun,
