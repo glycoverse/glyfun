@@ -40,7 +40,7 @@
 #' @param eps Epsilon for calculating p-values. Passed to `eps` of [clusterProfiler::gseGO()].
 #'   Defaults to 1e-10.
 #' @param seed Logical indicating whether to set a random seed for reproducibility.
-#'   Passed to `seed` of [clusterProfiler::gseGO()]. Defaults to `TRUE`.
+#'   Passed to `seed` of [clusterProfiler::gseGO()]. Defaults to `FALSE`.
 #'
 #' @return A clusterProfiler `gseaResult` object.
 #'   It can be readily converted to a tibble with [tibble::as_tibble()],
@@ -60,7 +60,7 @@ enrich_gsea_go <- function(
   max_gs_size = 500,
   exponent = 1,
   eps = 1e-10,
-  seed = TRUE
+  seed = FALSE
 ) {
   orgdb <- .prepare_orgdb(orgdb)
   .gsea(
@@ -112,7 +112,7 @@ enrich_gsea_kegg <- function(
   max_gs_size = 500,
   exponent = 1,
   eps = 1e-10,
-  seed = TRUE
+  seed = FALSE
 ) {
   .gsea(
     dea_res,
@@ -159,7 +159,7 @@ enrich_gsea_reactome <- function(
   max_gs_size = 500,
   exponent = 1,
   eps = 1e-10,
-  seed = TRUE
+  seed = FALSE
 ) {
   rlang::check_installed("ReactomePA")
   orgdb <- .reactome_orgdb(organism)
@@ -210,7 +210,7 @@ enrich_gsea_wp <- function(
   max_gs_size = 500,
   exponent = 1,
   eps = 1e-10,
-  seed = TRUE
+  seed = FALSE
 ) {
   orgdb <- .wp_orgdb(organism)
   .gsea(
@@ -264,7 +264,7 @@ enrich_gsea_do <- function(
   max_gs_size = 500,
   exponent = 1,
   eps = 1e-10,
-  seed = TRUE
+  seed = FALSE
 ) {
   rlang::check_installed("DOSE")
   orgdb <- .do_orgdb(organism)
@@ -313,7 +313,7 @@ enrich_gsea_ncg <- function(
   max_gs_size = 500,
   exponent = 1,
   eps = 1e-10,
-  seed = TRUE
+  seed = FALSE
 ) {
   rlang::check_installed("DOSE")
   orgdb <- .prepare_orgdb("org.Hs.eg.db")
