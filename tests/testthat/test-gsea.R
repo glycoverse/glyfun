@@ -439,7 +439,11 @@ test_that(".prepare_pro_list uses p_adj for p-based rank metrics when available"
     log2fc = c(2, -1, -3)
   )
 
-  res <- glyfun:::.prepare_pro_list(df, rank_by = "signed_log10p", aggr = "median")
+  res <- glyfun:::.prepare_pro_list(
+    df,
+    rank_by = "signed_log10p",
+    aggr = "median"
+  )
 
   expected <- c(P1 = median(c(2, -0.30103)), P2 = -3)
   expect_equal(res[["P1"]], expected[["P1"]], tolerance = 1e-6)
