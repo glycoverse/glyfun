@@ -83,6 +83,24 @@ Comming soon.
 - [`enrich_gc_ora_wp()`](https://glycoverse.github.io/glyfun/reference/enrich_gc_ora_wp.md)
   : Glycan-Centric WikiPathways Over Representation Analysis
 
+- [`enrich_gsea_do()`](https://glycoverse.github.io/glyfun/reference/enrich_gsea_do.md)
+  : Disease Ontology (DO) Gene Set Enrichment Analysis
+
+- [`enrich_gsea_go()`](https://glycoverse.github.io/glyfun/reference/enrich_gsea_go.md)
+  : GO Gene Set Enrichment Analysis
+
+- [`enrich_gsea_kegg()`](https://glycoverse.github.io/glyfun/reference/enrich_gsea_kegg.md)
+  : KEGG Gene Set Enrichment Analysis
+
+- [`enrich_gsea_ncg()`](https://glycoverse.github.io/glyfun/reference/enrich_gsea_ncg.md)
+  : Network of Cancer Genes (NCG) Gene Set Enrichment Analysis
+
+- [`enrich_gsea_reactome()`](https://glycoverse.github.io/glyfun/reference/enrich_gsea_reactome.md)
+  : Reactome Gene Set Enrichment Analysis
+
+- [`enrich_gsea_wp()`](https://glycoverse.github.io/glyfun/reference/enrich_gsea_wp.md)
+  : WikiPathways Gene Set Enrichment Analysis
+
 - [`enrich_ora_do()`](https://glycoverse.github.io/glyfun/reference/enrich_ora_do.md)
   : Disease Ontology (DO) Over Representation Analysis
 

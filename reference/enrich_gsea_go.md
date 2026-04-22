@@ -1,23 +1,24 @@
-# GO Over Representation Analysis
+# GO Gene Set Enrichment Analysis
 
-Performs Gene Ontology (GO) Over-Representation Analysis (ORA) on
+Performs Gene Ontology (GO) Gene Set Enrichment Analysis (GSEA) on
 glycoproteins with dysregulated glycosylation.
 
 ## Usage
 
 ``` r
-enrich_ora_go(
+enrich_gsea_go(
   dea_res,
-  dea_p_cutoff = 0.05,
-  dea_log2fc_cutoff = c(-1, 1),
+  rank_by = "signed_log10p",
+  aggr = "median",
   orgdb = "org.Hs.eg.db",
   ont = "MF",
-  universe = NULL,
   p_adj_method = "BH",
   p_cutoff = 0.05,
-  q_cutoff = 0.2,
   min_gs_size = 10,
-  max_gs_size = 500
+  max_gs_size = 500,
+  exponent = 1,
+  eps = 1e-10,
+  seed = TRUE
 )
 ```
 
@@ -50,17 +51,27 @@ enrich_ora_go(
 
     - `log2fc`: log2 of fold change
 
-- dea_p_cutoff:
+- rank_by:
 
-  P-value cutoff for statistical significance. Defaults to 0.05. For
-  `glystats` result input, adjusted p-values are used.
+  Criteria for ranking proteins. One of the following:
 
-- dea_log2fc_cutoff:
+  - "log2fc": log2 fold change with signs
 
-  Log2 fold change cutoff statistical significance. A length-2 numeric
-  vector, being negative and positive boundaries, respectively. For
-  example, `c(-1, 1)` means "log2fc \< -1 or log2fc \> 1", and
-  `c(-Inf, 1)` means "log2fc \> 1". Defaults to `c(-1, 1)`.
+  - "abs_log2fc": absolute log2 fold change
+
+  - "log10p": negative log10 p-value
+
+  - "signed_log10p" (default): log10 p-value with signs of log2 fold
+    change
+
+  - "log2fc_log10p": log2 fold change multiplied by negative log10
+    p-value
+
+- aggr:
+
+  Aggregation method for combining multiple scores across different
+  traits and sites for the same protein. One of "median", "mean", or
+  "max". Defaults to "median".
 
 - orgdb:
 
@@ -72,15 +83,6 @@ enrich_ora_go(
   [`clusterProfiler::enrichGO()`](https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html).
   "BP", "MF", "CC", or "ALL". Defaults to "MF".
 
-- universe:
-
-  Background genes Uniprot IDs, directly passed to `universe` of
-  downstream enrichment function. If `NULL` (default), all genes in the
-  data will be used. Another common pattern is to use all detected
-  proteins as backgroud genes. You can use
-  [`detected_universe()`](https://glycoverse.github.io/glyfun/reference/detected_universe.md)
-  to help you.
-
 - p_adj_method:
 
   P-value adjustment method. One of "holm", "hochberg", "hommel",
@@ -91,11 +93,6 @@ enrich_ora_go(
 
   P-value cutoff to filter significant terms. Passed to `pvalueCutoff`
   of downstream enrichment function. Defaults to 0.05.
-
-- q_cutoff:
-
-  Q-value (FDR) cutoff to filter significant terms. Passed to
-  `qvalueCutoff` of downstream enrichment function. Defaults to 0.2.
 
 - min_gs_size:
 
@@ -109,13 +106,42 @@ enrich_ora_go(
   than this threshold will be excluded. Passed to `maxGSSize` of
   downstream enrichment function. Defaults to 500.
 
+- exponent:
+
+  Weight of each step. Passed to `exponent` of
+  [`clusterProfiler::gseGO()`](https://rdrr.io/pkg/clusterProfiler/man/gseGO.html).
+  Defaults to 1.
+
+- eps:
+
+  Epsilon for calculating p-values. Passed to `eps` of
+  [`clusterProfiler::gseGO()`](https://rdrr.io/pkg/clusterProfiler/man/gseGO.html).
+  Defaults to 1e-10.
+
+- seed:
+
+  Logical indicating whether to set a random seed for reproducibility.
+  Passed to `seed` of
+  [`clusterProfiler::gseGO()`](https://rdrr.io/pkg/clusterProfiler/man/gseGO.html).
+  Defaults to `TRUE`.
+
 ## Value
 
-A clusterProfiler `enrichResult` object. It can be readily converted to
-a tibble with
+A clusterProfiler `gseaResult` object. It can be readily converted to a
+tibble with
 [`tibble::as_tibble()`](https://tibble.tidyverse.org/reference/as_tibble.html),
 or visualized with `clusterProfiler` functions like
-[`clusterProfiler::dotplot()`](https://rdrr.io/pkg/clusterProfiler/man/reexports.html).
+[`clusterProfiler::ridgeplot()`](https://rdrr.io/pkg/clusterProfiler/man/reexports.html).
+
+## How it ranks proteins
+
+GSEA requires a ranked list of proteins as input. This function ranks
+proteins based on the median absolute log2 fold change across all traits
+and sites. This reflects the overall glycosylation dysregulation degree
+of each glycoprotein. You can use `rank_by` to specify other ranking
+criteria, such as p-values or signed log2 fold changes. You can also use
+`aggr` to specify how to aggregate multiple scores for the same protein
+across different traits and sites.
 
 ## Common usage pattern
 
@@ -125,8 +151,8 @@ A common pattern of using this function is:
     dea_res <- gly_ttest(exp)
 
     # 2. Use this function.
-    go_res <- enrich_gc_ora_go(dea_res)  # or other glyfun functions
+    go_res <- enrich_gsea_go(dea_res)  # or `enrich_gsea_xxx()` functions
 
 ## See also
 
-[`clusterProfiler::enrichGO()`](https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html)
+[`clusterProfiler::gseGO()`](https://rdrr.io/pkg/clusterProfiler/man/gseGO.html)

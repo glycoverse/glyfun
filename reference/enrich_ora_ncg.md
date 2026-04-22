@@ -46,7 +46,7 @@ enrich_ora_ncg(
 
     - `p_val`: p-values, preferably adjusted p-values
 
-    - `log2FC`: log2 of fold change
+    - `log2fc`: log2 of fold change
 
 - dea_p_cutoff:
 
@@ -57,8 +57,8 @@ enrich_ora_ncg(
 
   Log2 fold change cutoff statistical significance. A length-2 numeric
   vector, being negative and positive boundaries, respectively. For
-  example, `c(-1, 1)` means "log2FC \< -1 or log2FC \> 1", and
-  `c(-Inf, 1)` means "log2FC \> 1". Defaults to `c(-1, 1)`.
+  example, `c(-1, 1)` means "log2fc \< -1 or log2fc \> 1", and
+  `c(-Inf, 1)` means "log2fc \> 1". Defaults to `c(-1, 1)`.
 
 - universe:
 
