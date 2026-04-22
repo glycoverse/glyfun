@@ -89,6 +89,33 @@
   }
 }
 
+#' Infer the glycan trait column from a tidy DEA result
+#' @param tidy_dea_res A tidy DEA result.
+#' @returns The column name representing glycan traits.
+#' @noRd
+.infer_gc_trait_col <- function(tidy_dea_res) {
+  by <- dplyr::case_when(
+    "glycan_structure" %in% colnames(tidy_dea_res) ~ "glycan_structure",
+    "glycan_composition" %in% colnames(tidy_dea_res) ~ "glycan_composition",
+    "trait" %in% colnames(tidy_dea_res) ~ "trait",
+    "motif" %in% colnames(tidy_dea_res) ~ "motif"
+  )
+  if (is.na(by)) {
+    required_cols <- c(
+      "glycan_structure",
+      "glycan_composition",
+      "trait",
+      "motif"
+    )
+    cli::cli_abort(c(
+      "Cannot determine glycan traits.",
+      "i" = "At least one of these columns is needed: {.field {required_cols}}",
+      "i" = "Did you accidentally set {.arg add_info} to `FALSE` when performing DEA with {.pkg glystats}?"
+    ))
+  }
+  by
+}
+
 #' Prepare the `orgdb` parameter
 #'
 #' If `orgdb` is an `OrgDb` object, return it directly.

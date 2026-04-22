@@ -281,3 +281,89 @@ test_that("online integration smoke: enrich_gc_ora_ncg returns compareClusterRes
     "compareClusterResult"
   )
 })
+
+test_that("online integration smoke: enrich_gc_gsea_go returns compareClusterResult or NULL", {
+  .skip_online_integration()
+  skip_if_not_installed("org.Hs.eg.db")
+  dea_res <- .mock_online_ora_dea_res()
+  .expect_s4_or_null_with_external_skip(
+    {
+      set.seed(1)
+      enrich_gc_gsea_go(
+        dea_res,
+        orgdb = "org.Hs.eg.db",
+        ont = "MF",
+        p_cutoff = 0.05
+      )
+    },
+    "compareClusterResult"
+  )
+})
+
+test_that("online integration smoke: enrich_gc_gsea_kegg returns compareClusterResult or NULL", {
+  .skip_online_integration()
+  dea_res <- .mock_online_ora_dea_res()
+  .expect_s4_or_null_with_external_skip(
+    {
+      set.seed(1)
+      enrich_gc_gsea_kegg(dea_res, organism = "hsa", p_cutoff = 0.05)
+    },
+    "compareClusterResult"
+  )
+})
+
+test_that("online integration smoke: enrich_gc_gsea_reactome returns compareClusterResult or NULL", {
+  .skip_online_integration()
+  skip_if_not_installed("ReactomePA")
+  skip_if_not_installed("org.Hs.eg.db")
+  dea_res <- .mock_online_ora_dea_res()
+  .expect_s4_or_null_with_external_skip(
+    {
+      set.seed(1)
+      enrich_gc_gsea_reactome(dea_res, organism = "human", p_cutoff = 0.05)
+    },
+    "compareClusterResult"
+  )
+})
+
+test_that("online integration smoke: enrich_gc_gsea_wp returns compareClusterResult or NULL", {
+  .skip_online_integration()
+  skip_if_not_installed("org.Hs.eg.db")
+  dea_res <- .mock_online_ora_dea_res()
+  .expect_s4_or_null_with_external_skip(
+    {
+      set.seed(1)
+      enrich_gc_gsea_wp(dea_res, organism = "Homo sapiens", p_cutoff = 0.05)
+    },
+    "compareClusterResult"
+  )
+})
+
+test_that("online integration smoke: enrich_gc_gsea_do returns compareClusterResult or NULL", {
+  .skip_online_integration()
+  skip_if_not_installed("DOSE")
+  skip_if_not_installed("org.Hs.eg.db")
+  skip_if_no_hdo()
+  dea_res <- .mock_online_ora_dea_res()
+  .expect_s4_or_null_with_external_skip(
+    {
+      set.seed(1)
+      enrich_gc_gsea_do(dea_res, ont = "HDO", organism = "hsa", p_cutoff = 0.05)
+    },
+    "compareClusterResult"
+  )
+})
+
+test_that("online integration smoke: enrich_gc_gsea_ncg returns compareClusterResult or NULL", {
+  .skip_online_integration()
+  skip_if_not_installed("DOSE")
+  skip_if_not_installed("org.Hs.eg.db")
+  dea_res <- .mock_online_ora_dea_res()
+  .expect_s4_or_null_with_external_skip(
+    {
+      set.seed(1)
+      enrich_gc_gsea_ncg(dea_res, p_cutoff = 0.05)
+    },
+    "compareClusterResult"
+  )
+})

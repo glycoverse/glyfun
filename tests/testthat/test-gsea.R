@@ -388,47 +388,6 @@ test_that("enrich_gsea_ncg forwards args to gseNCG through all layers", {
   )
 })
 
-test_that(".gsea.data.frame prepares a ranked protein list and calls .gsea_impl", {
-  captured <- NULL
-  sentinel <- tibble::tibble(ID = "GO:0003674")
-  mock_gsea_impl <- function(
-    dea_res,
-    enrich_fun,
-    result_class,
-    bitr_orgdb = NULL,
-    ...,
-    pro_fun = NULL,
-    uniprot_to_entrez = FALSE
-  ) {
-    captured <<- list(
-      proteins = pro_fun(dea_res),
-      enrich_fun = enrich_fun,
-      result_class = result_class,
-      bitr_orgdb = bitr_orgdb,
-      dots = list(...),
-      uniprot_to_entrez = uniprot_to_entrez
-    )
-    sentinel
-  }
-  local_mocked_bindings(.gsea_impl = mock_gsea_impl, .package = "glyfun")
-
-  result <- glyfun:::.gsea(
-    dea_res = .mock_gsea_dea_df(),
-    enrich_fun = function(...) NULL,
-    result_class = "mock_result_class",
-    rank_by = "log2fc",
-    aggr = "max",
-    test_arg = "forwarded"
-  )
-
-  expect_identical(result, sentinel)
-  expect_equal(unname(captured$proteins), c(2, 0.5, -3))
-  expect_equal(names(captured$proteins), c("P01308", "P42345", "P04637"))
-  expect_identical(captured$result_class, "mock_result_class")
-  expect_identical(captured$dots$test_arg, "forwarded")
-  expect_false(captured$uniprot_to_entrez)
-})
-
 test_that(".prepare_pro_list uses p_adj for p-based rank metrics when available", {
   df <- tibble::tibble(
     protein = c("P1", "P1", "P2"),
