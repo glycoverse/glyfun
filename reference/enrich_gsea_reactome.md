@@ -17,7 +17,7 @@ enrich_gsea_reactome(
   max_gs_size = 500,
   exponent = 1,
   eps = 1e-10,
-  seed = TRUE
+  seed = FALSE
 )
 ```
 
@@ -119,7 +119,7 @@ enrich_gsea_reactome(
   Logical indicating whether to set a random seed for reproducibility.
   Passed to `seed` of
   [`clusterProfiler::gseGO()`](https://rdrr.io/pkg/clusterProfiler/man/gseGO.html).
-  Defaults to `TRUE`.
+  Defaults to `FALSE`.
 
 ## Value
 
