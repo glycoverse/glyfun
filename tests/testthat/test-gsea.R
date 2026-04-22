@@ -515,3 +515,31 @@ test_that(".gsea_impl returns NULL when no terms are enriched", {
   )
   expect_null(result)
 })
+
+test_that(".uniprot_to_entrez preserves input length and order for duplicated UniProt IDs", {
+  local_mocked_bindings(
+    bitr = function(geneID, fromType, toType, OrgDb) {
+      expect_equal(geneID, c("P1", "P2"))
+      expect_identical(fromType, "UNIPROT")
+      expect_identical(toType, "ENTREZID")
+      expect_identical(OrgDb, "MOCK_ORGDB")
+      tibble::tibble(
+        UNIPROT = c("P1", "P2"),
+        ENTREZID = c("E1", "E2")
+      )
+    },
+    .package = "clusterProfiler"
+  )
+
+  res <- suppressMessages(
+    suppressWarnings(
+      glyfun:::.uniprot_to_entrez(
+        c("P1", "P1", "P2"),
+        orgdb = "MOCK_ORGDB",
+        drop_na = FALSE
+      )
+    )
+  )
+
+  expect_equal(res, c("E1", "E1", "E2"))
+})

@@ -169,16 +169,19 @@
 #' @returns The transformed Entrez IDs.
 #' @noRd
 .uniprot_to_entrez <- function(uniprot, orgdb, drop_na = TRUE) {
+  unique_uniprot <- unique(uniprot)
   suppressWarnings(
     suppressMessages(
-      entrez_ids <- clusterProfiler::bitr(
-        uniprot,
+      mapping <- clusterProfiler::bitr(
+        unique_uniprot,
         fromType = "UNIPROT",
         toType = "ENTREZID",
         OrgDb = orgdb
-      )$ENTREZID
+      )
     )
   )
+  lookup <- rlang::set_names(mapping$ENTREZID, mapping$UNIPROT)
+  entrez_ids <- unname(lookup[uniprot])
   n_failed <- sum(is.na(entrez_ids))
   if (n_failed > 0) {
     pct_failed <- round(n_failed / length(uniprot) * 100, 1)
