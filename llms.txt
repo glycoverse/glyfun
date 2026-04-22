@@ -64,6 +64,25 @@ Comming soon.
 
   Helper function to prepare the `universe` parameter
 
+- [`enrich_gc_gsea_do()`](https://glycoverse.github.io/glyfun/reference/enrich_gc_gsea_do.md)
+  : Glycan-Centric Disease Ontology (DO) Gene Set Enrichment Analysis
+
+- [`enrich_gc_gsea_go()`](https://glycoverse.github.io/glyfun/reference/enrich_gc_gsea_go.md)
+  : Glycan-Centric GO Gene Set Enrichment Analysis
+
+- [`enrich_gc_gsea_kegg()`](https://glycoverse.github.io/glyfun/reference/enrich_gc_gsea_kegg.md)
+  : Glycan-Centric KEGG Gene Set Enrichment Analysis
+
+- [`enrich_gc_gsea_ncg()`](https://glycoverse.github.io/glyfun/reference/enrich_gc_gsea_ncg.md)
+  : Glycan-Centric Network of Cancer Genes (NCG) Gene Set Enrichment
+  Analysis
+
+- [`enrich_gc_gsea_reactome()`](https://glycoverse.github.io/glyfun/reference/enrich_gc_gsea_reactome.md)
+  : Glycan-Centric Reactome Gene Set Enrichment Analysis
+
+- [`enrich_gc_gsea_wp()`](https://glycoverse.github.io/glyfun/reference/enrich_gc_gsea_wp.md)
+  : Glycan-Centric WikiPathways Gene Set Enrichment Analysis
+
 - [`enrich_gc_ora_do()`](https://glycoverse.github.io/glyfun/reference/enrich_gc_ora_do.md)
   : Glycan-Centric Disease Ontology (DO) Over Representation Analysis
 

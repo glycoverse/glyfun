@@ -8,6 +8,12 @@
 <url><loc>https://glycoverse.github.io/glyfun/authors.html</loc></url>
 <url><loc>https://glycoverse.github.io/glyfun/index.html</loc></url>
 <url><loc>https://glycoverse.github.io/glyfun/reference/detected_universe.html</loc></url>
+<url><loc>https://glycoverse.github.io/glyfun/reference/enrich_gc_gsea_do.html</loc></url>
+<url><loc>https://glycoverse.github.io/glyfun/reference/enrich_gc_gsea_go.html</loc></url>
+<url><loc>https://glycoverse.github.io/glyfun/reference/enrich_gc_gsea_kegg.html</loc></url>
+<url><loc>https://glycoverse.github.io/glyfun/reference/enrich_gc_gsea_ncg.html</loc></url>
+<url><loc>https://glycoverse.github.io/glyfun/reference/enrich_gc_gsea_reactome.html</loc></url>
+<url><loc>https://glycoverse.github.io/glyfun/reference/enrich_gc_gsea_wp.html</loc></url>
 <url><loc>https://glycoverse.github.io/glyfun/reference/enrich_gc_ora_do.html</loc></url>
 <url><loc>https://glycoverse.github.io/glyfun/reference/enrich_gc_ora_go.html</loc></url>
 <url><loc>https://glycoverse.github.io/glyfun/reference/enrich_gc_ora_kegg.html</loc></url>
