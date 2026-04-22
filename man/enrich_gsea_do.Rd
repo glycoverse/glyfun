@@ -16,7 +16,7 @@ enrich_gsea_do(
   max_gs_size = 500,
   exponent = 1,
   eps = 1e-10,
-  seed = TRUE
+  seed = FALSE
 )
 }
 \arguments{
@@ -77,7 +77,7 @@ Defaults to 1.}
 Defaults to 1e-10.}
 
 \item{seed}{Logical indicating whether to set a random seed for reproducibility.
-Passed to \code{seed} of \code{\link[clusterProfiler:gseGO]{clusterProfiler::gseGO()}}. Defaults to \code{TRUE}.}
+Passed to \code{seed} of \code{\link[clusterProfiler:gseGO]{clusterProfiler::gseGO()}}. Defaults to \code{FALSE}.}
 }
 \value{
 A clusterProfiler \code{gseaResult} object.
