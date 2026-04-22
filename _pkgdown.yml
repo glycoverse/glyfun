@@ -4,3 +4,20 @@ template:
 
 development:
   mode: auto
+
+reference:
+  - title: Protein-Centric Over Representation Analysis
+    contents:
+      - matches("enrich_ora_[a-z]+")
+  - title: Protein-Centric Gene Set Enrichment Analysis
+    contents:
+      - matches("enrich_gsea_[a-z]+")
+  - title: Glycan-Centric Over Representation Analysis
+    contents:
+      - matches("enrich_gc_ora_[a-z]+")
+  - title: Glycan-Centric Gene Set Enrichment Analysis
+    contents:
+      - matches("enrich_gc_gsea_[a-z]+")
+  - title: Helpers
+    contents:
+      - detected_universe
