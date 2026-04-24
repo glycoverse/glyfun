@@ -485,6 +485,48 @@ test_that(".gsea_impl converts UniProt names when uniprot_to_entrez is TRUE", {
   expect_s3_class(result, "tbl_df")
 })
 
+test_that(".gsea_impl collapses duplicate Entrez IDs after conversion", {
+  captured <- NULL
+  mock_enrich <- function(geneList, ...) {
+    captured <<- list(geneList = geneList, dots = list(...))
+    tibble::tibble(ID = "R-HSA-123456")
+  }
+  local_mocked_bindings(
+    .uniprot_to_entrez = function(uniprot, orgdb, drop_na = FALSE) {
+      expect_identical(orgdb, "MOCK_ORGDB")
+      expect_identical(drop_na, FALSE)
+      dplyr::recode(
+        uniprot,
+        P01308 = "ENTREZ_DUP",
+        P42345 = "ENTREZ_UNIQUE",
+        P04637 = "ENTREZ_DUP"
+      )
+    },
+    .package = "glyfun"
+  )
+
+  result <- suppressMessages(
+    suppressWarnings(
+      glyfun:::.gsea_impl(
+        dea_res = .mock_gsea_dea_df(),
+        enrich_fun = mock_enrich,
+        result_class = "unused",
+        bitr_orgdb = "MOCK_ORGDB",
+        aggr = "max",
+        uniprot_to_entrez = TRUE,
+        pro_fun = function(dea_res) {
+          expect_equal(nrow(dea_res), 4)
+          stats::setNames(c(2, 0.5, -3), c("P01308", "P42345", "P04637"))
+        }
+      )
+    )
+  )
+
+  expect_equal(unname(captured$geneList), c(2, 0.5))
+  expect_equal(names(captured$geneList), c("ENTREZ_DUP", "ENTREZ_UNIQUE"))
+  expect_s3_class(result, "tbl_df")
+})
+
 test_that(".gsea_impl errors when uniprot_to_entrez is TRUE but bitr_orgdb is missing", {
   expect_error(
     glyfun:::.gsea_impl(

@@ -364,6 +364,7 @@ enrich_gsea_ncg <- function(
     enrich_fun = enrich_fun,
     result_class = result_class,
     bitr_orgdb = bitr_orgdb,
+    aggr = aggr,
     ...,
     pro_fun = pro_fun
   )
@@ -388,6 +389,7 @@ enrich_gsea_ncg <- function(
     enrich_fun = enrich_fun,
     result_class = result_class,
     bitr_orgdb = bitr_orgdb,
+    aggr = aggr,
     ...,
     pro_fun = pro_fun
   )
@@ -442,6 +444,7 @@ enrich_gsea_ncg <- function(
   enrich_fun,
   result_class,
   bitr_orgdb = NULL,
+  aggr = "median",
   ...,
   pro_fun = NULL,
   uniprot_to_entrez = FALSE
@@ -457,12 +460,23 @@ enrich_gsea_ncg <- function(
   # Performing enrichment
   proteins <- pro_fun(dea_res)
   if (uniprot_to_entrez) {
+    aggr_fun <- .gsea_aggr_fun(aggr)
     names(proteins) <- .uniprot_to_entrez(
       names(proteins),
       bitr_orgdb,
       drop_na = FALSE
     )
     proteins <- proteins[!is.na(names(proteins))]
+    proteins <- tibble::tibble(
+      gene = names(proteins),
+      score = unname(proteins)
+    ) |>
+      dplyr::summarise(
+        score = aggr_fun(.data$score),
+        .by = tidyselect::all_of("gene")
+      ) |>
+      dplyr::arrange(dplyr::desc(.data$score)) |>
+      tibble::deframe()
   }
   res <- suppressWarnings(
     suppressPackageStartupMessages(

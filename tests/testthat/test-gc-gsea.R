@@ -607,6 +607,61 @@ test_that("enrich_gc_gsea_ncg forwards args to compareCluster through all layers
   )
 })
 
+test_that("enrich_gc_gsea collapses duplicate Entrez IDs after conversion", {
+  sentinel <- list(source = "compareCluster")
+  captured <- NULL
+  mock_compare_cluster <- function(formula, data, fun, ...) {
+    captured <<- list(
+      formula = formula,
+      data = data,
+      fun = fun,
+      dots = list(...)
+    )
+    sentinel
+  }
+
+  local_mocked_bindings(
+    compareCluster = mock_compare_cluster,
+    .package = "clusterProfiler"
+  )
+  local_mocked_bindings(
+    .reactome_orgdb = function(organism) paste0("MOCK_REACTOME_", organism),
+    .uniprot_to_entrez = function(uniprot, orgdb, drop_na = TRUE) {
+      expect_identical(drop_na, FALSE)
+      expect_identical(orgdb, "MOCK_REACTOME_human")
+      dplyr::recode(
+        uniprot,
+        P01308 = "ENTREZ_DUP",
+        P04637 = "ENTREZ_DUP",
+        P00533 = "ENTREZ_DUP",
+        P42345 = "ENTREZ_UNIQUE"
+      )
+    },
+    .package = "glyfun"
+  )
+
+  result <- suppressMessages(
+    suppressWarnings(
+      enrich_gc_gsea_reactome(
+        .mock_gc_gsea_dea_df(),
+        rank_by = "log2fc",
+        aggr = "max",
+        organism = "human"
+      )
+    )
+  )
+
+  expect_identical(result, sentinel)
+  expect_equal(
+    captured$data,
+    tibble::tibble(
+      gene = c("ENTREZ_DUP", "ENTREZ_DUP", "ENTREZ_UNIQUE"),
+      score = c(2, 2.5, 0.5),
+      trait = c("trait_A", "trait_B", "trait_B")
+    )
+  )
+})
+
 test_that("enrich_gc_gsea_go errors on data.frame with missing columns", {
   dea_res_missing_trait <- tibble::tibble(
     protein = c("P01308", "P04637"),

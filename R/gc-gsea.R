@@ -378,6 +378,7 @@ enrich_gc_gsea_ncg <- function(
     enrich_fun = enrich_fun,
     result_class = result_class,
     bitr_orgdb = bitr_orgdb,
+    aggr = aggr,
     ...,
     pro_df_fun = pro_df_fun
   )
@@ -407,6 +408,7 @@ enrich_gc_gsea_ncg <- function(
     enrich_fun = enrich_fun,
     result_class = result_class,
     bitr_orgdb = bitr_orgdb,
+    aggr = aggr,
     ...,
     pro_df_fun = pro_df_fun
   )
@@ -454,6 +456,7 @@ enrich_gc_gsea_ncg <- function(
   enrich_fun,
   result_class,
   bitr_orgdb = NULL,
+  aggr = "median",
   ...,
   pro_df_fun = NULL,
   uniprot_to_entrez = FALSE
@@ -467,11 +470,18 @@ enrich_gc_gsea_ncg <- function(
 
   pro_df <- pro_df_fun(dea_res)
   if (uniprot_to_entrez) {
+    aggr_fun <- .gsea_aggr_fun(aggr)
     pro_df <- pro_df |>
       dplyr::mutate(
         gene = .uniprot_to_entrez(.data$gene, bitr_orgdb, drop_na = FALSE)
       ) |>
-      dplyr::filter(!is.na(.data$gene))
+      dplyr::filter(!is.na(.data$gene)) |>
+      dplyr::summarise(
+        score = aggr_fun(.data$score),
+        .by = tidyselect::all_of(c("trait", "gene"))
+      ) |>
+      dplyr::arrange(.data$trait, dplyr::desc(.data$score)) |>
+      dplyr::select(tidyselect::all_of(c("gene", "score", "trait")))
   }
 
   n_traits <- dplyr::n_distinct(pro_df$trait)
