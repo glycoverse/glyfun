@@ -410,6 +410,25 @@ test_that(".prepare_pro_list uses p_adj for p-based rank metrics when available"
   expect_equal(names(res), c("P1", "P2"))
 })
 
+test_that(".prepare_pro_list drops non-finite ranking scores before aggregation", {
+  df <- tibble::tibble(
+    protein = c("P1", "P1", "P2", "P3"),
+    site = c("s1", "s2", "s1", "s1"),
+    trait = c("t1", "t1", "t1", "t1"),
+    p_val = c(0, 0.01, NA, 0.001),
+    log2fc = c(1, 2, -1, -3)
+  )
+
+  res <- glyfun:::.prepare_pro_list(
+    df,
+    rank_by = "signed_log10p",
+    aggr = "max"
+  )
+
+  expect_equal(unname(res), c(2, -3))
+  expect_equal(names(res), c("P1", "P3"))
+})
+
 test_that(".calcu_rank_scores supports all rank_by options", {
   df <- tibble::tibble(
     protein = c("P1", "P2"),

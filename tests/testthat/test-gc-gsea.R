@@ -662,6 +662,58 @@ test_that("enrich_gc_gsea collapses duplicate Entrez IDs after conversion", {
   )
 })
 
+test_that("enrich_gc_gsea drops non-finite ranking scores before compareCluster", {
+  sentinel <- list(source = "compareCluster")
+  captured <- NULL
+  mock_compare_cluster <- function(formula, data, fun, ...) {
+    captured <<- list(
+      formula = formula,
+      data = data,
+      fun = fun,
+      dots = list(...)
+    )
+    sentinel
+  }
+
+  dea_res <- tibble::tibble(
+    protein = c("P1", "P2", "P3", "P4"),
+    site = c("s1", "s1", "s1", "s1"),
+    trait = c("trait_A", "trait_A", "trait_B", "trait_B"),
+    p_val = c(0, 0.01, NA, 0.001),
+    log2fc = c(1, 2, -1, -3)
+  )
+
+  local_mocked_bindings(
+    .prepare_orgdb = function(orgdb) paste0("MOCK_", orgdb),
+    .package = "glyfun"
+  )
+  local_mocked_bindings(
+    compareCluster = mock_compare_cluster,
+    .package = "clusterProfiler"
+  )
+
+  result <- suppressMessages(
+    suppressWarnings(
+      enrich_gc_gsea_go(
+        dea_res,
+        rank_by = "signed_log10p",
+        aggr = "max",
+        orgdb = "org.Hs.eg.db"
+      )
+    )
+  )
+
+  expect_identical(result, sentinel)
+  expect_equal(
+    captured$data,
+    tibble::tibble(
+      gene = c("P2", "P4"),
+      score = c(2, -3),
+      trait = c("trait_A", "trait_B")
+    )
+  )
+})
+
 test_that("enrich_gc_gsea_go errors on data.frame with missing columns", {
   dea_res_missing_trait <- tibble::tibble(
     protein = c("P01308", "P04637"),

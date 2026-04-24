@@ -407,6 +407,7 @@ enrich_gsea_ncg <- function(
   aggr_fun <- .gsea_aggr_fun(aggr)
   df |>
     dplyr::mutate(score = scores) |>
+    dplyr::filter(is.finite(.data$score)) |>
     dplyr::summarise(
       score = aggr_fun(.data$score),
       .by = tidyselect::all_of("protein")
