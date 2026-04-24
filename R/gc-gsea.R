@@ -73,7 +73,6 @@ enrich_gc_gsea_go <- function(
   .gc_gsea(
     dea_res,
     enrich_fun = clusterProfiler::gseGO,
-    result_class = "glyfun_gc_gsea_go_res",
     rank_by = rank_by,
     aggr = aggr,
     OrgDb = orgdb,
@@ -121,7 +120,6 @@ enrich_gc_gsea_kegg <- function(
   .gc_gsea(
     dea_res,
     enrich_fun = clusterProfiler::gseKEGG,
-    result_class = "glyfun_gc_gsea_kegg_res",
     rank_by = rank_by,
     aggr = aggr,
     organism = organism,
@@ -170,7 +168,6 @@ enrich_gc_gsea_reactome <- function(
   .gc_gsea(
     dea_res,
     enrich_fun = ReactomePA::gsePathway,
-    result_class = "glyfun_gc_gsea_reactome_res",
     rank_by = rank_by,
     aggr = aggr,
     bitr_orgdb = orgdb,
@@ -219,7 +216,6 @@ enrich_gc_gsea_wp <- function(
   .gc_gsea(
     dea_res,
     enrich_fun = clusterProfiler::gseWP,
-    result_class = "glyfun_gc_gsea_wp_res",
     rank_by = rank_by,
     aggr = aggr,
     bitr_orgdb = orgdb,
@@ -270,7 +266,6 @@ enrich_gc_gsea_do <- function(
   .gc_gsea(
     dea_res,
     enrich_fun = DOSE::gseDO,
-    result_class = "glyfun_gc_gsea_do_res",
     rank_by = rank_by,
     aggr = aggr,
     bitr_orgdb = orgdb,
@@ -320,7 +315,6 @@ enrich_gc_gsea_ncg <- function(
   .gc_gsea(
     dea_res,
     enrich_fun = DOSE::gseNCG,
-    result_class = "glyfun_gc_gsea_ncg_res",
     rank_by = rank_by,
     aggr = aggr,
     bitr_orgdb = orgdb,
@@ -338,7 +332,6 @@ enrich_gc_gsea_ncg <- function(
 #' Perform Glycan-Centric GSEA
 #' @param dea_res DEA result from glystats or a tibble.
 #' @param enrich_fun An enrichment function.
-#' @param result_class A string of the concrete result class.
 #' @param rank_by Criteria for ranking proteins.
 #' @param aggr Aggregation method for combining multiple scores for the same protein.
 #' @param bitr_orgdb OrgDb object for bitr conversion.
@@ -347,7 +340,6 @@ enrich_gc_gsea_ncg <- function(
 .gc_gsea <- function(
   dea_res,
   enrich_fun,
-  result_class,
   rank_by,
   aggr,
   bitr_orgdb = NULL,
@@ -359,7 +351,6 @@ enrich_gc_gsea_ncg <- function(
 .gc_gsea.data.frame <- function(
   dea_res,
   enrich_fun,
-  result_class,
   rank_by,
   aggr,
   bitr_orgdb = NULL,
@@ -376,7 +367,6 @@ enrich_gc_gsea_ncg <- function(
   .gc_gsea_impl(
     dea_res,
     enrich_fun = enrich_fun,
-    result_class = result_class,
     bitr_orgdb = bitr_orgdb,
     aggr = aggr,
     ...,
@@ -387,7 +377,6 @@ enrich_gc_gsea_ncg <- function(
 .gc_gsea.glystats_res <- function(
   dea_res,
   enrich_fun,
-  result_class,
   rank_by,
   aggr,
   bitr_orgdb = NULL,
@@ -406,7 +395,6 @@ enrich_gc_gsea_ncg <- function(
   .gc_gsea_impl(
     dea_res,
     enrich_fun = enrich_fun,
-    result_class = result_class,
     bitr_orgdb = bitr_orgdb,
     aggr = aggr,
     ...,
@@ -454,7 +442,6 @@ enrich_gc_gsea_ncg <- function(
 .gc_gsea_impl <- function(
   dea_res,
   enrich_fun,
-  result_class,
   bitr_orgdb = NULL,
   aggr = "median",
   ...,

@@ -77,7 +77,6 @@ enrich_ora_go <- function(
   .ora(
     dea_res,
     enrich_fun = clusterProfiler::enrichGO,
-    result_class = "glyfun_ora_go_res",
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
     keyType = "UNIPROT",
@@ -123,7 +122,6 @@ enrich_ora_kegg <- function(
   .ora(
     dea_res,
     enrich_fun = clusterProfiler::enrichKEGG,
-    result_class = "glyfun_ora_kegg_res",
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
     keyType = "uniprot",
@@ -170,7 +168,6 @@ enrich_ora_reactome <- function(
   .ora(
     dea_res,
     enrich_fun = ReactomePA::enrichPathway,
-    result_class = "glyfun_ora_reactome_res",
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
     bitr_orgdb = orgdb, # passed to the `bitr_orgdb` parameter
@@ -217,7 +214,6 @@ enrich_ora_wp <- function(
   .ora(
     dea_res,
     enrich_fun = clusterProfiler::enrichWP,
-    result_class = "glyfun_ora_wp_res",
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
     bitr_orgdb = orgdb, # passed to the `bitr_orgdb` parameter
@@ -269,7 +265,6 @@ enrich_ora_do <- function(
   .ora(
     dea_res,
     enrich_fun = DOSE::enrichDO,
-    result_class = "glyfun_ora_do_res",
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
     bitr_orgdb = orgdb, # passed to the `bitr_orgdb` parameter
@@ -315,7 +310,6 @@ enrich_ora_ncg <- function(
   .ora(
     dea_res,
     enrich_fun = DOSE::enrichNCG,
-    result_class = "glyfun_ora_ncg_res",
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
     bitr_orgdb = orgdb,
@@ -332,7 +326,6 @@ enrich_ora_ncg <- function(
 #' Perform ORA
 #' @param dea_res DEA result from glystats.
 #' @param enrich_fun An enrichment function.
-#' @param result_class A string of the concrete result class.
 #' @param dea_p_cutoff P-value cutoff to define statistical significance.
 #' @param dea_log2fc_cutoff Log2FC cutoffs to define statistical significance.
 #' @param bitr_orgdb OrgDb object for bitr conversion.
@@ -344,7 +337,6 @@ enrich_ora_ncg <- function(
 .ora <- function(
   dea_res,
   enrich_fun,
-  result_class,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
   bitr_orgdb = NULL,
@@ -356,7 +348,6 @@ enrich_ora_ncg <- function(
 .ora.data.frame <- function(
   dea_res,
   enrich_fun,
-  result_class,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
   bitr_orgdb = NULL,
@@ -375,7 +366,6 @@ enrich_ora_ncg <- function(
   .ora_impl(
     dea_res,
     enrich_fun = enrich_fun,
-    result_class = result_class,
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
     bitr_orgdb = bitr_orgdb,
@@ -387,7 +377,6 @@ enrich_ora_ncg <- function(
 .ora.glystats_res <- function(
   dea_res,
   enrich_fun,
-  result_class,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
   bitr_orgdb = NULL,
@@ -407,7 +396,6 @@ enrich_ora_ncg <- function(
   .ora_impl(
     dea_res,
     enrich_fun = enrich_fun,
-    result_class = result_class,
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
     bitr_orgdb = bitr_orgdb,
@@ -431,7 +419,6 @@ enrich_ora_ncg <- function(
 .ora_impl <- function(
   dea_res,
   enrich_fun,
-  result_class,
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
   universe = NULL,

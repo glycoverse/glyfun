@@ -488,7 +488,6 @@ test_that(".gsea_impl converts UniProt names when uniprot_to_entrez is TRUE", {
       glyfun:::.gsea_impl(
         dea_res = dea_res,
         enrich_fun = mock_enrich,
-        result_class = "unused",
         bitr_orgdb = "MOCK_ORGDB",
         uniprot_to_entrez = TRUE,
         pro_fun = function(dea_res) {
@@ -529,7 +528,6 @@ test_that(".gsea_impl collapses duplicate Entrez IDs after conversion", {
       glyfun:::.gsea_impl(
         dea_res = .mock_gsea_dea_df(),
         enrich_fun = mock_enrich,
-        result_class = "unused",
         bitr_orgdb = "MOCK_ORGDB",
         aggr = "max",
         uniprot_to_entrez = TRUE,
@@ -551,7 +549,6 @@ test_that(".gsea_impl errors when uniprot_to_entrez is TRUE but bitr_orgdb is mi
     glyfun:::.gsea_impl(
       dea_res = .mock_gsea_dea_df(),
       enrich_fun = function(...) tibble::tibble(ID = "GO:1"),
-      result_class = "unused",
       uniprot_to_entrez = TRUE,
       pro_fun = function(dea_res) {
         stats::setNames(dea_res$log2fc, dea_res$protein)
@@ -567,7 +564,6 @@ test_that(".gsea_impl returns NULL when no terms are enriched", {
       glyfun:::.gsea_impl(
         dea_res = .mock_gsea_dea_df(),
         enrich_fun = function(...) tibble::tibble(),
-        result_class = "unused",
         pro_fun = function(dea_res) {
           stats::setNames(dea_res$log2fc, dea_res$protein)
         }

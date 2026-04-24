@@ -66,7 +66,6 @@ enrich_gsea_go <- function(
   .gsea(
     dea_res,
     enrich_fun = clusterProfiler::gseGO,
-    result_class = "glyfun_gsea_go",
     rank_by = rank_by,
     aggr = aggr,
     OrgDb = orgdb,
@@ -117,7 +116,6 @@ enrich_gsea_kegg <- function(
   .gsea(
     dea_res,
     enrich_fun = clusterProfiler::gseKEGG,
-    result_class = "glyfun_gsea_kegg",
     rank_by = rank_by,
     aggr = aggr,
     keyType = "uniprot",
@@ -166,7 +164,6 @@ enrich_gsea_reactome <- function(
   .gsea(
     dea_res,
     enrich_fun = ReactomePA::gsePathway,
-    result_class = "glyfun_gsea_reactome",
     rank_by = rank_by,
     aggr = aggr,
     bitr_orgdb = orgdb,
@@ -216,7 +213,6 @@ enrich_gsea_wp <- function(
   .gsea(
     dea_res,
     enrich_fun = clusterProfiler::gseWP,
-    result_class = "glyfun_gsea_wp",
     rank_by = rank_by,
     aggr = aggr,
     bitr_orgdb = orgdb,
@@ -271,7 +267,6 @@ enrich_gsea_do <- function(
   .gsea(
     dea_res,
     enrich_fun = DOSE::gseDO,
-    result_class = "glyfun_gsea_do",
     rank_by = rank_by,
     aggr = aggr,
     bitr_orgdb = orgdb,
@@ -320,7 +315,6 @@ enrich_gsea_ncg <- function(
   .gsea(
     dea_res,
     enrich_fun = DOSE::gseNCG,
-    result_class = "glyfun_gsea_ncg",
     rank_by = rank_by,
     aggr = aggr,
     bitr_orgdb = orgdb,
@@ -338,7 +332,6 @@ enrich_gsea_ncg <- function(
 .gsea <- function(
   dea_res,
   enrich_fun,
-  result_class,
   rank_by,
   aggr,
   bitr_orgdb = NULL,
@@ -350,7 +343,6 @@ enrich_gsea_ncg <- function(
 .gsea.data.frame <- function(
   dea_res,
   enrich_fun,
-  result_class,
   rank_by,
   aggr,
   bitr_orgdb = NULL,
@@ -362,7 +354,6 @@ enrich_gsea_ncg <- function(
   .gsea_impl(
     dea_res,
     enrich_fun = enrich_fun,
-    result_class = result_class,
     bitr_orgdb = bitr_orgdb,
     aggr = aggr,
     ...,
@@ -373,7 +364,6 @@ enrich_gsea_ncg <- function(
 .gsea.glystats_res <- function(
   dea_res,
   enrich_fun,
-  result_class,
   rank_by,
   aggr,
   bitr_orgdb = NULL,
@@ -387,7 +377,6 @@ enrich_gsea_ncg <- function(
   .gsea_impl(
     dea_res,
     enrich_fun = enrich_fun,
-    result_class = result_class,
     bitr_orgdb = bitr_orgdb,
     aggr = aggr,
     ...,
@@ -443,7 +432,6 @@ enrich_gsea_ncg <- function(
 .gsea_impl <- function(
   dea_res,
   enrich_fun,
-  result_class,
   bitr_orgdb = NULL,
   aggr = "median",
   ...,

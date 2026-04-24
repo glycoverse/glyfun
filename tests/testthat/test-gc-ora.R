@@ -118,7 +118,6 @@ test_that(".gc_ora.data.frame groups proteins by trait after filtering", {
   mock_gc_ora_impl <- function(
     dea_res,
     enrich_fun,
-    result_class,
     dea_p_cutoff,
     dea_log2fc_cutoff,
     ...,
@@ -147,7 +146,6 @@ test_that(".gc_ora.data.frame groups proteins by trait after filtering", {
   result <- glyfun:::.gc_ora(
     dea_res = dea_res,
     enrich_fun = function(...) list(source = "mock_enrich"),
-    result_class = "unused",
     dea_p_cutoff = 0.05,
     dea_log2fc_cutoff = c(-1, 1)
   )
@@ -168,7 +166,6 @@ test_that(".gc_ora.glystats_res groups proteins by trait after filtering", {
   mock_gc_ora_impl <- function(
     dea_res,
     enrich_fun,
-    result_class,
     dea_p_cutoff,
     dea_log2fc_cutoff,
     ...,
@@ -203,7 +200,6 @@ test_that(".gc_ora.glystats_res groups proteins by trait after filtering", {
   result <- glyfun:::.gc_ora(
     dea_res = dea_res,
     enrich_fun = function(...) list(source = "mock_enrich"),
-    result_class = "unused",
     dea_p_cutoff = 0.05,
     dea_log2fc_cutoff = c(-1, 1)
   )
@@ -794,7 +790,6 @@ test_that(".gc_ora_impl converts protein list and universe when uniprot_to_entre
     glyfun:::.gc_ora_impl(
       dea_res = dea_res,
       enrich_fun = function(...) list(source = "mock_enrich"),
-      result_class = "unused",
       universe = c("U1", "U2"),
       bitr_orgdb = "MOCK_ORGDB",
       uniprot_to_entrez = TRUE,
@@ -829,7 +824,6 @@ test_that(".gc_ora_impl errors when uniprot_to_entrez is TRUE but bitr_orgdb is 
     glyfun:::.gc_ora_impl(
       dea_res = dea_res,
       enrich_fun = function(...) list(source = "mock_enrich"),
-      result_class = "unused",
       uniprot_to_entrez = TRUE,
       pro_list_fun = function(dea_res) {
         list(trait_A = dea_res$protein)

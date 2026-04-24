@@ -113,7 +113,6 @@ test_that(".ora.data.frame filters proteins by p_val and log2fc", {
   mock_ora_impl <- function(
     dea_res,
     enrich_fun,
-    result_class,
     dea_p_cutoff,
     dea_log2fc_cutoff,
     ...,
@@ -142,7 +141,6 @@ test_that(".ora.data.frame filters proteins by p_val and log2fc", {
   result <- glyfun:::.ora(
     dea_res = dea_res,
     enrich_fun = function(...) list(source = "mock_enrich"),
-    result_class = "unused",
     dea_p_cutoff = 0.05,
     dea_log2fc_cutoff = c(-1, 1)
   )
@@ -160,7 +158,6 @@ test_that(".ora.glystats_res filters proteins by p_adj and log2fc", {
   mock_ora_impl <- function(
     dea_res,
     enrich_fun,
-    result_class,
     dea_p_cutoff,
     dea_log2fc_cutoff,
     ...,
@@ -194,7 +191,6 @@ test_that(".ora.glystats_res filters proteins by p_adj and log2fc", {
   result <- glyfun:::.ora(
     dea_res = dea_res,
     enrich_fun = function(...) list(source = "mock_enrich"),
-    result_class = "unused",
     dea_p_cutoff = 0.05,
     dea_log2fc_cutoff = c(-1, 1)
   )
@@ -813,7 +809,6 @@ test_that(".ora_impl converts proteins and universe when uniprot_to_entrez is TR
   result <- glyfun:::.ora_impl(
     dea_res = dea_res,
     enrich_fun = mock_enrich,
-    result_class = "unused",
     universe = c("U1", "U2"),
     bitr_orgdb = "MOCK_ORGDB",
     uniprot_to_entrez = TRUE,
@@ -841,7 +836,6 @@ test_that(".ora_impl errors when uniprot_to_entrez is TRUE but bitr_orgdb is mis
     glyfun:::.ora_impl(
       dea_res = dea_res,
       enrich_fun = function(...) list(source = "mock_enrich"),
-      result_class = "unused",
       uniprot_to_entrez = TRUE,
       pro_fun = function(dea_res) {
         dea_res$protein
