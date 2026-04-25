@@ -24,7 +24,9 @@ Suggests:
     GOSemSim,
     glyexp,
     glyrepr,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -40,3 +42,4 @@ Imports:
     rlang,
     tibble,
     tidyselect
+VignetteBuilder: knitr
