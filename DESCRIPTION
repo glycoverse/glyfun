@@ -24,6 +24,8 @@ Suggests:
     GOSemSim,
     glyexp,
     glyrepr,
+    glyclean,
+    glydet,
     testthat (>= 3.0.0),
     knitr,
     rmarkdown
