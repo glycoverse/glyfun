@@ -1,0 +1,328 @@
+# Get Started with glyfun
+
+`glyfun` is a package for functional enrichment analysis of
+glycoproteomics data. Why does glycoproteomics need a dedicated tool?
+For transcriptomics and proteomics, functional enrichment analysis is
+usually fairly straightforward. For glycoproteomics, however, we need to
+account for both macro- and micro-heterogeneity. Macro-heterogeneity
+means that one protein can carry multiple glycosylation sites, while
+micro-heterogeneity means that each site can carry multiple glycan
+structures. As a result, a single protein may have several dysregulated
+glycosylation events across different sites and glycans. That extra
+layer of complexity makes traditional enrichment workflows harder to
+apply directly.
+
+In general, `glyfun` answers two questions:
+
+1.  Which functions are enriched for proteins with dysregulated
+    glycosylation?
+2.  Which functions are enriched for proteins with a specific
+    dysregulated glycosylation event?
+
+The following sections walk through both perspectives and show when each
+one is useful.
+
+``` r
+library(glyfun)
+```
+
+**Prerequisites**: To follow this vignette, you should be familiar with
+the core [glycoverse](https://github.com/glycoverse/glycoverse)
+packages, especially [glyexp](https://github.com/glycoverse/glyexp) and
+[glystats](https://github.com/glycoverse/glystats). For the
+glycan-centric enrichment analysis in the second half, you will also
+need some familiarity with
+[glydet](https://github.com/glycoverse/glydet). Experience with
+`clusterProfiler` is helpful too, since `glyfun` returns standard
+enrichment result objects that you can inspect and visualize with that
+ecosystem.
+
+## Approach 1: Protein-Centric Enrichment Analysis
+
+Let’s start with the first question. We first run differential analysis
+on the glycoforms.
+
+``` r
+library(glyexp)
+library(glyclean)
+#> 
+#> Attaching package: 'glyclean'
+#> The following object is masked from 'package:stats':
+#> 
+#>     aggregate
+library(glystats)
+
+exp <- auto_clean(real_experiment) |> filter_obs(group %in% c("H", "C"))
+#> 
+#> ── Normalizing data ──
+#> 
+#> ℹ No QC samples found. Using default normalization method based on experiment type.
+#> ℹ Experiment type is "glycoproteomics". Using `normalize_median()`.
+#> ✔ Normalization completed.
+#> 
+#> ── Removing variables with too many missing values ──
+#> 
+#> ℹ No QC samples found. Using all samples.
+#> ℹ Applying preset "discovery"...
+#> ℹ Total removed: 24 (0.56%) variables.
+#> ✔ Variable removal completed.
+#> 
+#> ── Imputing missing values ──
+#> 
+#> ℹ No QC samples found. Using default imputation method based on sample size.
+#> ℹ Sample size <= 30, using `impute_sample_min()`.
+#> ✔ Imputation completed.
+#> 
+#> ── Aggregating data ──
+#> 
+#> ℹ Aggregating to "gfs" level
+#> ✔ Aggregation completed.
+#> 
+#> ── Normalizing data again ──
+#> 
+#> ℹ No QC samples found. Using default normalization method based on experiment type.
+#> ℹ Experiment type is "glycoproteomics". Using `normalize_median()`.
+#> ✔ Normalization completed.
+#> 
+#> ── Correcting batch effects ──
+#> 
+#> ℹ Batch column  not found in sample_info. Skipping batch correction.
+#> ✔ Batch correction completed.
+dea_res <- gly_limma(exp)
+#> ℹ Ref Group: "H"
+#> ℹ Test Group: "C"
+get_tidy_result(dea_res)
+#> # A tibble: 3,979 × 14
+#>    variable       protein glycan_composition glycan_structure protein_site gene 
+#>    <chr>          <chr>   <comp>             <struct>                <int> <chr>
+#>  1 P08185-176-He… P08185  Hex(5)HexNAc(4)Ne… NeuAc(??-?)Hex(…          176 SERP…
+#>  2 P04196-344-He… P04196  Hex(5)HexNAc(4)Ne… NeuAc(??-?)Hex(…          344 HRG  
+#>  3 P04196-344-He… P04196  Hex(5)HexNAc(4)    Hex(??-?)HexNAc…          344 HRG  
+#>  4 P04196-344-He… P04196  Hex(5)HexNAc(4)Ne… NeuAc(??-?)Hex(…          344 HRG  
+#>  5 P10909-291-He… P10909  Hex(6)HexNAc(5)    Hex(??-?)HexNAc…          291 CLU  
+#>  6 P04196-344-He… P04196  Hex(5)HexNAc(4)Ne… NeuAc(??-?)Hex(…          344 HRG  
+#>  7 P04196-345-He… P04196  Hex(5)HexNAc(4)    Hex(??-?)HexNAc…          345 HRG  
+#>  8 P04196-344-He… P04196  Hex(5)HexNAc(4)dH… dHex(??-?)Hex(?…          344 HRG  
+#>  9 P04196-344-He… P04196  Hex(4)HexNAc(3)    Hex(??-?)HexNAc…          344 HRG  
+#> 10 P04196-344-He… P04196  Hex(4)HexNAc(4)Ne… NeuAc(??-?)Hex(…          344 HRG  
+#> # ℹ 3,969 more rows
+#> # ℹ 8 more variables: log2fc <dbl>, AveExpr <dbl>, t <dbl>, p_val <dbl>,
+#> #   p_adj <dbl>, b <dbl>, ref_group <chr>, test_group <chr>
+```
+
+### Over Representation Analysis (ORA)
+
+Now that we have differential results for glycoforms, we can ask which
+functions are enriched among proteins with dysregulated glycosylation.
+Here, a protein is included if it has at least one dysregulated
+glycoform. The workflow has three steps:
+
+1.  Filter the glycoforms with p-value and log2FC cutoff.
+2.  Get the unique proteins with dysregulated glycoforms.
+3.  Perform Over Representation Analysis (ORA) for these proteins.
+
+`glyfun` wraps these steps in a set of convenience functions:
+
+``` r
+# Gene Ontology (GO) enrichment analysis
+enrich_ora_go(dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+
+# KEGG pathway enrichment analysis
+enrich_ora_kegg(dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+
+# Reactome pathway enrichment analysis
+enrich_ora_reactome(dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+
+# WikiPathways enrichment analysis
+enrich_ora_wp(dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+
+# Disease Ontology (DO) enrichment analysis
+enrich_ora_do(dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+
+# DisGeNET enrichment analysis
+enrich_ora_disgenet(dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+```
+
+Use `p_cutoff` and `log2fc_cutoff` to define which glycoforms count as
+dysregulated.
+
+Under the hood, these functions call the corresponding `clusterProfiler`
+functions and return an `enrichResult` object. That means you can
+convert the result to a tibble with `as_tibble()`, or visualize it with
+`dotplot()`.
+
+``` r
+go_res <- enrich_ora_go(dea_res)
+
+# Convert to tibble
+tibble::as_tibble(go_res)
+
+# Dotplot
+clusterProfiler::dotplot(go_res)
+```
+
+### Gene Set Enrichment Analysis (GSEA)
+
+You can also perform Gene Set Enrichment Analysis (GSEA). Unlike ORA,
+GSEA does not require a hard cutoff to define dysregulated glycoforms.
+Instead, it works from a ranked protein list, often based on statistics
+such as log2FC.
+
+This raises one practical question: one protein can have multiple
+glycoforms with different log2FC values, so how should it be ranked?
+`glyfun` handles this by aggregating glycoform-level statistics into one
+value per protein. The default is the median, but you can also choose
+other methods such as the mean or maximum.
+
+``` r
+# GSEA for Gene Ontology (GO)
+enrich_gsea_go(dea_res, aggr = "median")
+
+# GSEA for KEGG pathway
+enrich_gsea_kegg(dea_res, aggr = "median")
+
+# GSEA for Reactome pathway
+enrich_gsea_reactome(dea_res, aggr = "median")
+
+# GSEA for WikiPathways
+enrich_gsea_wp(dea_res, aggr = "median")
+
+# GSEA for Disease Ontology (DO)
+enrich_gsea_do(dea_res, aggr = "median")
+
+# GSEA for DisGeNET
+enrich_gsea_disgenet(dea_res, aggr = "median")
+```
+
+These functions also support several ranking methods. By default,
+`glyfun` uses `"signed_log10p"`, which combines the sign of log2FC with
+the p-value. Other options include `"log2fc"`, `"abs_log2fc"`,
+`"log10p"`, and `"log2fc_log10p"`. See the GSEA function documentation
+for the full details.
+
+## Approach 2: Glycan-Centric Enrichment Analysis
+
+**Note:** You should be familiar with the
+[glydet](https://github.com/glycoverse/glydet) package to understand
+this section.
+
+The protein-centric approach is useful and easy to interpret, but it
+hides important glycan-level information. Saying that a protein has
+“dysregulated glycosylation” can be too broad. Often, we want a more
+specific question: which functions are associated with particular
+glycosylation changes? For example, we might ask which functions are
+linked to increased fucosylation or decreased sialylation.
+
+To do that, we first calculate glycosylation traits with `glydet`.
+
+``` r
+library(glydet)
+
+trait_exp <- derive_traits(exp)
+trait_exp |>
+  get_var_info() |>
+  dplyr::distinct(trait, explanation)
+#> # A tibble: 14 × 2
+#>    trait explanation                                                            
+#>    <chr> <chr>                                                                  
+#>  1 TM    Proportion of high-mannose glycans among all glycans.                  
+#>  2 TH    Proportion of hybrid glycans among all glycans.                        
+#>  3 TC    Proportion of complex glycans among all glycans.                       
+#>  4 MM    Abundance-weighted mean of mannose count within high-mannose glycans.  
+#>  5 CA2   Proportion of bi-antennary glycans within complex glycans.             
+#>  6 CA3   Proportion of tri-antennary glycans within complex glycans.            
+#>  7 CA4   Proportion of tetra-antennary glycans within complex glycans.          
+#>  8 TF    Proportion of fucosylated glycans among all glycans.                   
+#>  9 TFc   Proportion of core-fucosylated glycans among all glycans.              
+#> 10 TFa   Proportion of arm-fucosylated glycans among all glycans.               
+#> 11 TB    Proportion of glycans with bisecting GlcNAc among all glycans.         
+#> 12 GS    Abundance-weighted mean of degree of sialylation per galactose among a…
+#> 13 AG    Abundance-weighted mean of degree of galactosylation per antenna among…
+#> 14 TS    Proportion of sialylated glycans among all glycans.
+```
+
+The result contains several trait types, including `TF` for fucosylation
+and `GS` for sialylation. These traits are calculated site by site, so
+each glycosylation site on each protein has its own trait values.
+
+Next, we run differential analysis on the trait experiment.
+
+``` r
+trait_dea_res <- gly_limma(trait_exp)
+#> ℹ Ref Group: "H"
+#> ℹ Test Group: "C"
+#> Warning: Zero sample variances detected, have been offset away from zero
+#> Warning in splines::ns(covariate, df = splinedf, intercept = TRUE): shoving
+#> 'interior' knots matching boundary knots to inside
+```
+
+### Over Representation Analysis (ORA)
+
+As before, ORA uses hard cutoffs to identify dysregulated features. The
+difference is that enrichment is now performed separately for each
+trait. For example, for the `TF` trait, we filter statistically
+significant glycosites and then run enrichment analysis on the proteins
+with dysregulated `TF`. The same process is repeated for `GS` and the
+other traits. In `glyfun`, this is called glycan-centric enrichment.
+
+`glyfun` provides the following functions for glycan-centric ORA:
+
+``` r
+# Glycan-centric ORA for Gene Ontology (GO)
+enrich_gc_ora_go(trait_dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+
+# Glycan-centric ORA for KEGG pathway
+enrich_gc_ora_kegg(trait_dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+
+# Glycan-centric ORA for Reactome pathway
+enrich_gc_ora_reactome(trait_dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+
+# Glycan-centric ORA for WikiPathways
+enrich_gc_ora_wp(trait_dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+
+# Glycan-centric ORA for Disease Ontology (DO)
+enrich_gc_ora_do(trait_dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+
+# Glycan-centric ORA for DisGeNET
+enrich_gc_ora_disgenet(trait_dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+```
+
+These functions return `compareClusterResult` objects, which can also be
+visualized with `dotplot()`.
+
+Trait differential results are not the only valid input for
+glycan-centric enrichment. You can also use raw glycoform experiments or
+motif quantification experiments. With raw glycoform experiments,
+enrichment is performed for each glycan composition or structure; with
+motif quantification experiments, it is performed for each motif.
+Because this can trigger many enrichment analyses, raw glycoform-level
+input can be slow and is usually not the first option to try.
+
+### Gene Set Enrichment Analysis (GSEA)
+
+GSEA can also be performed in a glycan-centric manner. The idea mirrors
+glycan-centric ORA: rank proteins separately for each trait, then run
+GSEA for each ranked list.
+
+``` r
+# Glycan-centric GSEA for Gene Ontology (GO)
+enrich_gc_gsea_go(trait_dea_res, aggr = "median")
+
+# Glycan-centric GSEA for KEGG pathway
+enrich_gc_gsea_kegg(trait_dea_res, aggr = "median")
+
+# Glycan-centric GSEA for Reactome pathway
+enrich_gc_gsea_reactome(trait_dea_res, aggr = "median")
+
+# Glycan-centric GSEA for WikiPathways
+enrich_gc_gsea_wp(trait_dea_res, aggr = "median")
+
+# Glycan-centric GSEA for Disease Ontology (DO)
+enrich_gc_gsea_do(trait_dea_res, aggr = "median")
+
+# Glycan-centric GSEA for DisGeNET
+enrich_gc_gsea_disgenet(trait_dea_res, aggr = "median")
+```
+
+Try these workflows on your own data and see which biological patterns
+emerge.

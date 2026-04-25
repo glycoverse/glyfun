@@ -22,14 +22,32 @@ The glyfun package is not a core glycoverse package. You need to install
 it individually even if you have installed the meta-package
 [glycoverse](https://github.com/glycoverse/glycoverse).
 
-**Note:** This package is still in development and not for productive
-use.
+You can install the latest release of glyfun from
+[r-universe](https://glycoverse.r-universe.dev/glyfun)
+(**recommended**):
 
-Install the development version (NOT recommended):
+``` r
+# install.packages("pak")
+pak::repo_add(glycoverse = "https://glycoverse.r-universe.dev")
+pak::pkg_install("glyfun")
+```
+
+Or from [GitHub](https://github.com/glycoverse/glyfun):
+
+``` r
+pak::pkg_install("glycoverse/glyfun@*release")
+```
+
+Or install the development version (NOT recommended):
 
 ``` r
 pak::pkg_install("glycoverse/glyfun")
 ```
+
+**Note:** Tips and troubleshooting for the meta-package
+[glycoverse](https://github.com/glycoverse/glycoverse) are also
+applicable here: [Installation of
+glycoverse](https://github.com/glycoverse/glycoverse#installation).
 
 ## Documentation
 
@@ -50,7 +68,17 @@ move beyond data processing to functional glycomining.
 ## Example
 
 ``` r
+library(glycoverse)
 library(glyfun)
-```
 
-Comming soon.
+exp <- auto_clean(real_experiment)
+
+# GO ORA for proteins with dysregulated glycosylation
+dea_res <- gly_limma(exp)
+enrich_ora_go(dea_res)
+
+# Glycan-centric GO ORA for derived traits
+trait_exp <- derive_traits(exp)
+trait_dea_res <- gly_limma(trait_exp)
+enrich_gc_ora_go(trait_dea_res)
+```
