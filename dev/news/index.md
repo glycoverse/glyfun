@@ -2,6 +2,8 @@
 
 ## glyfun (development version)
 
+## glyfun 0.1.1
+
 - [`detected_universe()`](https://glycoverse.github.io/glyfun/dev/reference/detected_universe.md)
   now accepts
   [`glyexp::GlycoproteomicSE`](https://glycoverse.github.io/glyexp/reference/GlycoproteomicSE.html)
