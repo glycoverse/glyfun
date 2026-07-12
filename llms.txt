@@ -27,6 +27,7 @@ You can install the latest release of glyfun from
 (**recommended**):
 
 ``` r
+
 # install.packages("pak")
 pak::repo_add(glycoverse = "https://glycoverse.r-universe.dev")
 pak::pkg_install("glyfun")
@@ -35,12 +36,14 @@ pak::pkg_install("glyfun")
 Or from [GitHub](https://github.com/glycoverse/glyfun):
 
 ``` r
+
 pak::pkg_install("glycoverse/glyfun@*release")
 ```
 
 Or install the development version (NOT recommended):
 
 ``` r
+
 pak::pkg_install("glycoverse/glyfun")
 ```
 
@@ -68,6 +71,7 @@ move beyond data processing to functional glycomining.
 ## Example
 
 ``` r
+
 library(glycoverse)
 library(glyfun)
 

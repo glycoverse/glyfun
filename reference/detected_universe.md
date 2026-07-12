@@ -1,7 +1,9 @@
 # Helper function to prepare the `universe` parameter
 
 This function extracts all detected proteins in a
-[`glyexp::experiment()`](https://glycoverse.github.io/glyexp/reference/experiment.html)
+[`glyexp::experiment()`](https://glycoverse.github.io/glyexp/reference/experiment.html),
+a
+[`glyexp::GlycoproteomicSE()`](https://glycoverse.github.io/glyexp/reference/GlycoproteomicSE.html),
 or a `glystats` result. It can be readily passed to the `universe`
 parameter of all `glyfun` functions.
 
@@ -16,7 +18,9 @@ detected_universe(x)
 - x:
 
   A
-  [`glyexp::experiment()`](https://glycoverse.github.io/glyexp/reference/experiment.html)
+  [`glyexp::experiment()`](https://glycoverse.github.io/glyexp/reference/experiment.html),
+  a
+  [`glyexp::GlycoproteomicSE()`](https://glycoverse.github.io/glyexp/reference/GlycoproteomicSE.html),
   or a `glystats` result.
 
 ## Value

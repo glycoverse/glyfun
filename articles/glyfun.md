@@ -23,7 +23,10 @@ The following sections walk through both perspectives and show when each
 one is useful.
 
 ``` r
+
 library(glyfun)
+#> Warning: replacing previous import 'S4Arrays::makeNindexFromArrayViewport' by
+#> 'DelayedArray::makeNindexFromArrayViewport' when loading 'SummarizedExperiment'
 ```
 
 **Prerequisites**: To follow this vignette, you should be familiar with
@@ -43,6 +46,7 @@ Let’s start with the first question. We first run differential analysis
 on the glycoforms.
 
 ``` r
+
 library(glyexp)
 library(glyclean)
 #> 
@@ -54,23 +58,22 @@ library(glystats)
 
 exp <- auto_clean(real_experiment) |> filter_obs(group %in% c("H", "C"))
 #> 
-#> ── Normalizing data ──
-#> 
-#> ℹ No QC samples found. Using default normalization method based on experiment type.
-#> ℹ Experiment type is "glycoproteomics". Using `normalize_median()`.
-#> ✔ Normalization completed.
-#> 
 #> ── Removing variables with too many missing values ──
 #> 
-#> ℹ No QC samples found. Using all samples.
 #> ℹ Applying preset "discovery"...
 #> ℹ Total removed: 24 (0.56%) variables.
 #> ✔ Variable removal completed.
 #> 
+#> ── Normalizing data ──
+#> 
+#> ℹ Normalization method: `normalize_median()`
+#> ℹ Reason: default for "glycoproteomics".
+#> ✔ Normalization completed.
+#> 
 #> ── Imputing missing values ──
 #> 
-#> ℹ No QC samples found. Using default imputation method based on sample size.
-#> ℹ Sample size <= 30, using `impute_sample_min()`.
+#> ℹ Imputation method: `impute_min_prob()`
+#> ℹ Reason: default for "glycoproteomics" with n_samples < 30.
 #> ✔ Imputation completed.
 #> 
 #> ── Aggregating data ──
@@ -80,13 +83,13 @@ exp <- auto_clean(real_experiment) |> filter_obs(group %in% c("H", "C"))
 #> 
 #> ── Normalizing data again ──
 #> 
-#> ℹ No QC samples found. Using default normalization method based on experiment type.
-#> ℹ Experiment type is "glycoproteomics". Using `normalize_median()`.
+#> ℹ Normalization method: `normalize_median()`
+#> ℹ Reason: default for "glycoproteomics".
 #> ✔ Normalization completed.
 #> 
 #> ── Correcting batch effects ──
 #> 
-#> ℹ Batch column  not found in sample_info. Skipping batch correction.
+#> ℹ Batch column batch not found in sample_info. Skipping batch correction.
 #> ✔ Batch correction completed.
 dea_res <- gly_limma(exp)
 #> ℹ Ref Group: "H"
@@ -124,27 +127,35 @@ glycoform. The workflow has three steps:
 `glyfun` wraps these steps in a set of convenience functions:
 
 ``` r
+
 # Gene Ontology (GO) enrichment analysis
-enrich_ora_go(dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+enrich_ora_go(
+  dea_res,
+  dea_p_cutoff = 0.05,
+  dea_log2fc_cutoff = c(-1, 1)
+)
 
 # KEGG pathway enrichment analysis
-enrich_ora_kegg(dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+enrich_ora_kegg(dea_res)
 
 # Reactome pathway enrichment analysis
-enrich_ora_reactome(dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+enrich_ora_reactome(dea_res)
 
 # WikiPathways enrichment analysis
-enrich_ora_wp(dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+enrich_ora_wp(dea_res)
 
 # Disease Ontology (DO) enrichment analysis
-enrich_ora_do(dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+enrich_ora_do(dea_res)
 
-# DisGeNET enrichment analysis
-enrich_ora_disgenet(dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+# Network of Cancer Genes (NCG) enrichment analysis
+enrich_ora_ncg(dea_res)
 ```
 
-Use `p_cutoff` and `log2fc_cutoff` to define which glycoforms count as
-dysregulated.
+Use `dea_p_cutoff` and `dea_log2fc_cutoff` to define which glycoforms
+count as dysregulated. The two values in `dea_log2fc_cutoff` are the
+lower and upper boundaries; `c(-1, 1)` selects glycoforms with log2 fold
+changes below -1 or above 1. `p_cutoff` separately filters the enriched
+terms returned by the downstream enrichment method.
 
 Under the hood, these functions call the corresponding `clusterProfiler`
 functions and return an `enrichResult` object. That means you can
@@ -152,6 +163,7 @@ convert the result to a tibble with `as_tibble()`, or visualize it with
 `dotplot()`.
 
 ``` r
+
 go_res <- enrich_ora_go(dea_res)
 
 # Convert to tibble
@@ -175,6 +187,7 @@ value per protein. The default is the median, but you can also choose
 other methods such as the mean or maximum.
 
 ``` r
+
 # GSEA for Gene Ontology (GO)
 enrich_gsea_go(dea_res, aggr = "median")
 
@@ -190,8 +203,8 @@ enrich_gsea_wp(dea_res, aggr = "median")
 # GSEA for Disease Ontology (DO)
 enrich_gsea_do(dea_res, aggr = "median")
 
-# GSEA for DisGeNET
-enrich_gsea_disgenet(dea_res, aggr = "median")
+# GSEA for Network of Cancer Genes (NCG)
+enrich_gsea_ncg(dea_res, aggr = "median")
 ```
 
 These functions also support several ranking methods. By default,
@@ -216,6 +229,7 @@ linked to increased fucosylation or decreased sialylation.
 To do that, we first calculate glycosylation traits with `glydet`.
 
 ``` r
+
 library(glydet)
 
 trait_exp <- derive_traits(exp)
@@ -248,6 +262,7 @@ each glycosylation site on each protein has its own trait values.
 Next, we run differential analysis on the trait experiment.
 
 ``` r
+
 trait_dea_res <- gly_limma(trait_exp)
 #> ℹ Ref Group: "H"
 #> ℹ Test Group: "C"
@@ -268,23 +283,24 @@ other traits. In `glyfun`, this is called glycan-centric enrichment.
 `glyfun` provides the following functions for glycan-centric ORA:
 
 ``` r
+
 # Glycan-centric ORA for Gene Ontology (GO)
-enrich_gc_ora_go(trait_dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+enrich_gc_ora_go(trait_dea_res)
 
 # Glycan-centric ORA for KEGG pathway
-enrich_gc_ora_kegg(trait_dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+enrich_gc_ora_kegg(trait_dea_res)
 
 # Glycan-centric ORA for Reactome pathway
-enrich_gc_ora_reactome(trait_dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+enrich_gc_ora_reactome(trait_dea_res)
 
 # Glycan-centric ORA for WikiPathways
-enrich_gc_ora_wp(trait_dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+enrich_gc_ora_wp(trait_dea_res)
 
 # Glycan-centric ORA for Disease Ontology (DO)
-enrich_gc_ora_do(trait_dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+enrich_gc_ora_do(trait_dea_res)
 
-# Glycan-centric ORA for DisGeNET
-enrich_gc_ora_disgenet(trait_dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
+# Glycan-centric ORA for Network of Cancer Genes (NCG)
+enrich_gc_ora_ncg(trait_dea_res)
 ```
 
 These functions return `compareClusterResult` objects, which can also be
@@ -305,6 +321,7 @@ glycan-centric ORA: rank proteins separately for each trait, then run
 GSEA for each ranked list.
 
 ``` r
+
 # Glycan-centric GSEA for Gene Ontology (GO)
 enrich_gc_gsea_go(trait_dea_res, aggr = "median")
 
@@ -320,8 +337,8 @@ enrich_gc_gsea_wp(trait_dea_res, aggr = "median")
 # Glycan-centric GSEA for Disease Ontology (DO)
 enrich_gc_gsea_do(trait_dea_res, aggr = "median")
 
-# Glycan-centric GSEA for DisGeNET
-enrich_gc_gsea_disgenet(trait_dea_res, aggr = "median")
+# Glycan-centric GSEA for Network of Cancer Genes (NCG)
+enrich_gc_gsea_ncg(trait_dea_res, aggr = "median")
 ```
 
 Try these workflows on your own data and see which biological patterns
