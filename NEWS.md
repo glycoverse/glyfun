@@ -1,5 +1,7 @@
 # glyfun (development version)
 
+* `detected_universe()` now accepts `glyexp::GlycoproteomicSE` objects while retaining support for `glyexp::experiment()` objects. (#1)
+
 # glyfun 0.1.0
 
 * First release.
