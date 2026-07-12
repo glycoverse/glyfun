@@ -181,24 +181,32 @@ dysregulated glycoform. The workflow has three steps:</p>
 functions:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Gene Ontology (GO) enrichment analysis</span></span>
-<span><span class="fu"><a href="../reference/enrich_ora_go.html">enrich_ora_go</a></span><span class="op">(</span><span class="va">dea_res</span>, p_cutoff <span class="op">=</span> <span class="fl">0.05</span>, log2fc_cutoff <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/enrich_ora_go.html">enrich_ora_go</a></span><span class="op">(</span></span>
+<span>  <span class="va">dea_res</span>,</span>
+<span>  dea_p_cutoff <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>  dea_log2fc_cutoff <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># KEGG pathway enrichment analysis</span></span>
-<span><span class="fu"><a href="../reference/enrich_ora_kegg.html">enrich_ora_kegg</a></span><span class="op">(</span><span class="va">dea_res</span>, p_cutoff <span class="op">=</span> <span class="fl">0.05</span>, log2fc_cutoff <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/enrich_ora_kegg.html">enrich_ora_kegg</a></span><span class="op">(</span><span class="va">dea_res</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Reactome pathway enrichment analysis</span></span>
-<span><span class="fu"><a href="../reference/enrich_ora_reactome.html">enrich_ora_reactome</a></span><span class="op">(</span><span class="va">dea_res</span>, p_cutoff <span class="op">=</span> <span class="fl">0.05</span>, log2fc_cutoff <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/enrich_ora_reactome.html">enrich_ora_reactome</a></span><span class="op">(</span><span class="va">dea_res</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># WikiPathways enrichment analysis</span></span>
-<span><span class="fu"><a href="../reference/enrich_ora_wp.html">enrich_ora_wp</a></span><span class="op">(</span><span class="va">dea_res</span>, p_cutoff <span class="op">=</span> <span class="fl">0.05</span>, log2fc_cutoff <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/enrich_ora_wp.html">enrich_ora_wp</a></span><span class="op">(</span><span class="va">dea_res</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Disease Ontology (DO) enrichment analysis</span></span>
-<span><span class="fu"><a href="../reference/enrich_ora_do.html">enrich_ora_do</a></span><span class="op">(</span><span class="va">dea_res</span>, p_cutoff <span class="op">=</span> <span class="fl">0.05</span>, log2fc_cutoff <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/enrich_ora_do.html">enrich_ora_do</a></span><span class="op">(</span><span class="va">dea_res</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># DisGeNET enrichment analysis</span></span>
-<span><span class="fu">enrich_ora_disgenet</span><span class="op">(</span><span class="va">dea_res</span>, p_cutoff <span class="op">=</span> <span class="fl">0.05</span>, log2fc_cutoff <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p>Use <code>p_cutoff</code> and <code>log2fc_cutoff</code> to define
-which glycoforms count as dysregulated.</p>
+<span><span class="co"># Network of Cancer Genes (NCG) enrichment analysis</span></span>
+<span><span class="fu"><a href="../reference/enrich_ora_ncg.html">enrich_ora_ncg</a></span><span class="op">(</span><span class="va">dea_res</span><span class="op">)</span></span></code></pre></div>
+<p>Use <code>dea_p_cutoff</code> and <code>dea_log2fc_cutoff</code> to
+define which glycoforms count as dysregulated. The two values in
+<code>dea_log2fc_cutoff</code> are the lower and upper boundaries;
+<code>c(-1, 1)</code> selects glycoforms with log2 fold changes below -1
+or above 1. <code>p_cutoff</code> separately filters the enriched terms
+returned by the downstream enrichment method.</p>
 <p>Under the hood, these functions call the corresponding
 <code>clusterProfiler</code> functions and return an
 <code>enrichResult</code> object. That means you can convert the result
@@ -241,8 +249,8 @@ you can also choose other methods such as the mean or maximum.</p>
 <span><span class="co"># GSEA for Disease Ontology (DO)</span></span>
 <span><span class="fu"><a href="../reference/enrich_gsea_do.html">enrich_gsea_do</a></span><span class="op">(</span><span class="va">dea_res</span>, aggr <span class="op">=</span> <span class="st">"median"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># GSEA for DisGeNET</span></span>
-<span><span class="fu">enrich_gsea_disgenet</span><span class="op">(</span><span class="va">dea_res</span>, aggr <span class="op">=</span> <span class="st">"median"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># GSEA for Network of Cancer Genes (NCG)</span></span>
+<span><span class="fu"><a href="../reference/enrich_gsea_ncg.html">enrich_gsea_ncg</a></span><span class="op">(</span><span class="va">dea_res</span>, aggr <span class="op">=</span> <span class="st">"median"</span><span class="op">)</span></span></code></pre></div>
 <p>These functions also support several ranking methods. By default,
 <code>glyfun</code> uses <code>"signed_log10p"</code>, which combines
 the sign of log2FC with the p-value. Other options include
@@ -297,6 +305,7 @@ its own trait values.</p>
 <code class="sourceCode R"><span><span class="va">trait_dea_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://glycoverse.github.io/glystats/reference/gly_limma.html" class="external-link">gly_limma</a></span><span class="op">(</span><span class="va">trait_exp</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Ref Group: <span style="color: #0000BB;">"H"</span></span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Test Group: <span style="color: #0000BB;">"C"</span></span></span>
+<span><span class="co">#&gt; Warning: Zero sample variances detected, have been offset away from zero</span></span>
 <span><span class="co">#&gt; Warning in splines::ns(covariate, df = splinedf, intercept = TRUE): shoving</span></span>
 <span><span class="co">#&gt; 'interior' knots matching boundary knots to inside</span></span></code></pre></div>
 <div class="section level3">
@@ -313,22 +322,22 @@ repeated for <code>GS</code> and the other traits. In
 glycan-centric ORA:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Glycan-centric ORA for Gene Ontology (GO)</span></span>
-<span><span class="fu"><a href="../reference/enrich_gc_ora_go.html">enrich_gc_ora_go</a></span><span class="op">(</span><span class="va">trait_dea_res</span>, p_cutoff <span class="op">=</span> <span class="fl">0.05</span>, log2fc_cutoff <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/enrich_gc_ora_go.html">enrich_gc_ora_go</a></span><span class="op">(</span><span class="va">trait_dea_res</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Glycan-centric ORA for KEGG pathway</span></span>
-<span><span class="fu"><a href="../reference/enrich_gc_ora_kegg.html">enrich_gc_ora_kegg</a></span><span class="op">(</span><span class="va">trait_dea_res</span>, p_cutoff <span class="op">=</span> <span class="fl">0.05</span>, log2fc_cutoff <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/enrich_gc_ora_kegg.html">enrich_gc_ora_kegg</a></span><span class="op">(</span><span class="va">trait_dea_res</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Glycan-centric ORA for Reactome pathway</span></span>
-<span><span class="fu"><a href="../reference/enrich_gc_ora_reactome.html">enrich_gc_ora_reactome</a></span><span class="op">(</span><span class="va">trait_dea_res</span>, p_cutoff <span class="op">=</span> <span class="fl">0.05</span>, log2fc_cutoff <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/enrich_gc_ora_reactome.html">enrich_gc_ora_reactome</a></span><span class="op">(</span><span class="va">trait_dea_res</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Glycan-centric ORA for WikiPathways</span></span>
-<span><span class="fu"><a href="../reference/enrich_gc_ora_wp.html">enrich_gc_ora_wp</a></span><span class="op">(</span><span class="va">trait_dea_res</span>, p_cutoff <span class="op">=</span> <span class="fl">0.05</span>, log2fc_cutoff <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/enrich_gc_ora_wp.html">enrich_gc_ora_wp</a></span><span class="op">(</span><span class="va">trait_dea_res</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Glycan-centric ORA for Disease Ontology (DO)</span></span>
-<span><span class="fu"><a href="../reference/enrich_gc_ora_do.html">enrich_gc_ora_do</a></span><span class="op">(</span><span class="va">trait_dea_res</span>, p_cutoff <span class="op">=</span> <span class="fl">0.05</span>, log2fc_cutoff <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/enrich_gc_ora_do.html">enrich_gc_ora_do</a></span><span class="op">(</span><span class="va">trait_dea_res</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Glycan-centric ORA for DisGeNET</span></span>
-<span><span class="fu">enrich_gc_ora_disgenet</span><span class="op">(</span><span class="va">trait_dea_res</span>, p_cutoff <span class="op">=</span> <span class="fl">0.05</span>, log2fc_cutoff <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># Glycan-centric ORA for Network of Cancer Genes (NCG)</span></span>
+<span><span class="fu"><a href="../reference/enrich_gc_ora_ncg.html">enrich_gc_ora_ncg</a></span><span class="op">(</span><span class="va">trait_dea_res</span><span class="op">)</span></span></code></pre></div>
 <p>These functions return <code>compareClusterResult</code> objects,
 which can also be visualized with <code>dotplot()</code>.</p>
 <p>Trait differential results are not the only valid input for
@@ -361,8 +370,8 @@ then run GSEA for each ranked list.</p>
 <span><span class="co"># Glycan-centric GSEA for Disease Ontology (DO)</span></span>
 <span><span class="fu"><a href="../reference/enrich_gc_gsea_do.html">enrich_gc_gsea_do</a></span><span class="op">(</span><span class="va">trait_dea_res</span>, aggr <span class="op">=</span> <span class="st">"median"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Glycan-centric GSEA for DisGeNET</span></span>
-<span><span class="fu">enrich_gc_gsea_disgenet</span><span class="op">(</span><span class="va">trait_dea_res</span>, aggr <span class="op">=</span> <span class="st">"median"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># Glycan-centric GSEA for Network of Cancer Genes (NCG)</span></span>
+<span><span class="fu"><a href="../reference/enrich_gc_gsea_ncg.html">enrich_gc_gsea_ncg</a></span><span class="op">(</span><span class="va">trait_dea_res</span>, aggr <span class="op">=</span> <span class="st">"median"</span><span class="op">)</span></span></code></pre></div>
 <p>Try these workflows on your own data and see which biological
 patterns emerge.</p>
 </div>
