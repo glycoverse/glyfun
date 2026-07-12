@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Get Started with glyfun">
 <meta name="robots" content="noindex">
@@ -112,23 +112,22 @@ analysis on the glycoforms.</p>
 <span></span>
 <span><span class="va">exp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://glycoverse.github.io/glyclean/reference/auto_clean.html" class="external-link">auto_clean</a></span><span class="op">(</span><span class="va">real_experiment</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://glycoverse.github.io/glyexp/reference/filter_obs.html" class="external-link">filter_obs</a></span><span class="op">(</span><span class="va">group</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"H"</span>, <span class="st">"C"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ── <span style="font-weight: bold;">Normalizing data</span> ──</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> No QC samples found. Using default normalization method based on experiment type.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Experiment type is <span style="color: #0000BB;">"glycoproteomics"</span>. Using `normalize_median()`.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Normalization completed.</span></span>
-<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">Removing variables with too many missing values</span> ──</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> No QC samples found. Using all samples.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Applying preset <span style="color: #0000BB;">"discovery"</span>...</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Total removed: <span style="color: #0000BB;">24</span> (<span style="color: #0000BB;">0.56</span>%) variables.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Variable removal completed.</span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ── <span style="font-weight: bold;">Normalizing data</span> ──</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Normalization method: `normalize_median()`</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Reason: default for <span style="color: #0000BB;">"glycoproteomics"</span>.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Normalization completed.</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">Imputing missing values</span> ──</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> No QC samples found. Using default imputation method based on sample size.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Sample size &lt;= 30, using `impute_sample_min()`.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Imputation method: `impute_min_prob()`</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Reason: default for <span style="color: #0000BB;">"glycoproteomics"</span> with n_samples &lt; 30.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Imputation completed.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">Aggregating data</span> ──</span></span>
@@ -138,13 +137,13 @@ analysis on the glycoforms.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">Normalizing data again</span> ──</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> No QC samples found. Using default normalization method based on experiment type.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Experiment type is <span style="color: #0000BB;">"glycoproteomics"</span>. Using `normalize_median()`.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Normalization method: `normalize_median()`</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Reason: default for <span style="color: #0000BB;">"glycoproteomics"</span>.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Normalization completed.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">Correcting batch effects</span> ──</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Batch column  not found in sample_info. Skipping batch correction.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Batch column <span style="color: #00BB00;">batch</span> not found in sample_info. Skipping batch correction.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Batch correction completed.</span></span>
 <span><span class="va">dea_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://glycoverse.github.io/glystats/reference/gly_limma.html" class="external-link">gly_limma</a></span><span class="op">(</span><span class="va">exp</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Ref Group: <span style="color: #0000BB;">"H"</span></span></span>
@@ -298,7 +297,6 @@ its own trait values.</p>
 <code class="sourceCode R"><span><span class="va">trait_dea_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://glycoverse.github.io/glystats/reference/gly_limma.html" class="external-link">gly_limma</a></span><span class="op">(</span><span class="va">trait_exp</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Ref Group: <span style="color: #0000BB;">"H"</span></span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Test Group: <span style="color: #0000BB;">"C"</span></span></span>
-<span><span class="co">#&gt; Warning: Zero sample variances detected, have been offset away from zero</span></span>
 <span><span class="co">#&gt; Warning in splines::ns(covariate, df = splinedf, intercept = TRUE): shoving</span></span>
 <span><span class="co">#&gt; 'interior' knots matching boundary knots to inside</span></span></code></pre></div>
 <div class="section level3">
@@ -380,7 +378,7 @@ patterns emerge.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

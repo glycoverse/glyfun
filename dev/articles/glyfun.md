@@ -23,6 +23,7 @@ The following sections walk through both perspectives and show when each
 one is useful.
 
 ``` r
+
 library(glyfun)
 ```
 
@@ -43,6 +44,7 @@ Let’s start with the first question. We first run differential analysis
 on the glycoforms.
 
 ``` r
+
 library(glyexp)
 library(glyclean)
 #> 
@@ -54,23 +56,22 @@ library(glystats)
 
 exp <- auto_clean(real_experiment) |> filter_obs(group %in% c("H", "C"))
 #> 
-#> ── Normalizing data ──
-#> 
-#> ℹ No QC samples found. Using default normalization method based on experiment type.
-#> ℹ Experiment type is "glycoproteomics". Using `normalize_median()`.
-#> ✔ Normalization completed.
-#> 
 #> ── Removing variables with too many missing values ──
 #> 
-#> ℹ No QC samples found. Using all samples.
 #> ℹ Applying preset "discovery"...
 #> ℹ Total removed: 24 (0.56%) variables.
 #> ✔ Variable removal completed.
 #> 
+#> ── Normalizing data ──
+#> 
+#> ℹ Normalization method: `normalize_median()`
+#> ℹ Reason: default for "glycoproteomics".
+#> ✔ Normalization completed.
+#> 
 #> ── Imputing missing values ──
 #> 
-#> ℹ No QC samples found. Using default imputation method based on sample size.
-#> ℹ Sample size <= 30, using `impute_sample_min()`.
+#> ℹ Imputation method: `impute_min_prob()`
+#> ℹ Reason: default for "glycoproteomics" with n_samples < 30.
 #> ✔ Imputation completed.
 #> 
 #> ── Aggregating data ──
@@ -80,13 +81,13 @@ exp <- auto_clean(real_experiment) |> filter_obs(group %in% c("H", "C"))
 #> 
 #> ── Normalizing data again ──
 #> 
-#> ℹ No QC samples found. Using default normalization method based on experiment type.
-#> ℹ Experiment type is "glycoproteomics". Using `normalize_median()`.
+#> ℹ Normalization method: `normalize_median()`
+#> ℹ Reason: default for "glycoproteomics".
 #> ✔ Normalization completed.
 #> 
 #> ── Correcting batch effects ──
 #> 
-#> ℹ Batch column  not found in sample_info. Skipping batch correction.
+#> ℹ Batch column batch not found in sample_info. Skipping batch correction.
 #> ✔ Batch correction completed.
 dea_res <- gly_limma(exp)
 #> ℹ Ref Group: "H"
@@ -124,6 +125,7 @@ glycoform. The workflow has three steps:
 `glyfun` wraps these steps in a set of convenience functions:
 
 ``` r
+
 # Gene Ontology (GO) enrichment analysis
 enrich_ora_go(dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
 
@@ -152,6 +154,7 @@ convert the result to a tibble with `as_tibble()`, or visualize it with
 `dotplot()`.
 
 ``` r
+
 go_res <- enrich_ora_go(dea_res)
 
 # Convert to tibble
@@ -175,6 +178,7 @@ value per protein. The default is the median, but you can also choose
 other methods such as the mean or maximum.
 
 ``` r
+
 # GSEA for Gene Ontology (GO)
 enrich_gsea_go(dea_res, aggr = "median")
 
@@ -216,6 +220,7 @@ linked to increased fucosylation or decreased sialylation.
 To do that, we first calculate glycosylation traits with `glydet`.
 
 ``` r
+
 library(glydet)
 
 trait_exp <- derive_traits(exp)
@@ -248,10 +253,10 @@ each glycosylation site on each protein has its own trait values.
 Next, we run differential analysis on the trait experiment.
 
 ``` r
+
 trait_dea_res <- gly_limma(trait_exp)
 #> ℹ Ref Group: "H"
 #> ℹ Test Group: "C"
-#> Warning: Zero sample variances detected, have been offset away from zero
 #> Warning in splines::ns(covariate, df = splinedf, intercept = TRUE): shoving
 #> 'interior' knots matching boundary knots to inside
 ```
@@ -268,6 +273,7 @@ other traits. In `glyfun`, this is called glycan-centric enrichment.
 `glyfun` provides the following functions for glycan-centric ORA:
 
 ``` r
+
 # Glycan-centric ORA for Gene Ontology (GO)
 enrich_gc_ora_go(trait_dea_res, p_cutoff = 0.05, log2fc_cutoff = 1)
 
@@ -305,6 +311,7 @@ glycan-centric ORA: rank proteins separately for each trait, then run
 GSEA for each ranked list.
 
 ``` r
+
 # Glycan-centric GSEA for Gene Ontology (GO)
 enrich_gc_gsea_go(trait_dea_res, aggr = "median")
 
