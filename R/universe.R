@@ -1,9 +1,11 @@
 #' Helper function to prepare the `universe` parameter
 #'
-#' This function extracts all detected proteins in a [glyexp::experiment()] or a `glystats` result.
+#' This function extracts all detected proteins in a [glyexp::experiment()], a
+#' [glyexp::GlycoproteomicSE()], or a `glystats` result.
 #' It can be readily passed to the `universe` parameter of all `glyfun` functions.
 #'
-#' @param x A [glyexp::experiment()] or a `glystats` result.
+#' @param x A [glyexp::experiment()], a [glyexp::GlycoproteomicSE()], or a
+#'   `glystats` result.
 #' @returns A character vector of protein UniProt IDs.
 #' @examples
 #' library(glyexp)
@@ -25,6 +27,19 @@ detected_universe.glyexp_experiment <- function(x) {
     ))
   }
   x$var_info$protein
+}
+
+#' @export
+#' @importFrom SummarizedExperiment rowData
+detected_universe.GlycoproteomicSE <- function(x) {
+  row_data <- SummarizedExperiment::rowData(x)
+  if (!"protein" %in% colnames(row_data)) {
+    cli::cli_abort(c(
+      "There must be a {.field protein} column in the {.field rowData} of the GlycoproteomicSE object.",
+      "i" = "Did you accidentally remove the {.field protein} column?"
+    ))
+  }
+  row_data$protein
 }
 
 #' @export

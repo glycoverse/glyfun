@@ -27,6 +27,7 @@ Suggests:
     glyclean,
     glydet,
     testthat (>= 3.0.0),
+    S4Vectors,
     knitr,
     rmarkdown
 Config/testthat/edition: 3
@@ -42,6 +43,7 @@ Imports:
     glystats (>= 0.8.0),
     purrr,
     rlang,
+    SummarizedExperiment,
     tibble,
     tidyselect
 VignetteBuilder: knitr

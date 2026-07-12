@@ -65,11 +65,37 @@
   )
 }
 
+.mock_glycoproteomic_se <- function() {
+  row_data <- S4Vectors::DataFrame(
+    protein = c("P01308", "P04637", "P42345", "P00533", "P42336"),
+    protein_site = seq_len(5),
+    glycan_composition = glyrepr::glycan_composition(
+      c(Hex = 1, HexNAc = 1),
+      c(Hex = 1, HexNAc = 1),
+      c(Hex = 1, HexNAc = 1),
+      c(Hex = 1, HexNAc = 1),
+      c(Hex = 1, HexNAc = 1)
+    )
+  )
+  glyexp::GlycoproteomicSE(
+    matrix(runif(10), nrow = 5, ncol = 2),
+    rowData = row_data,
+    metadata = list(glycan_type = "N")
+  )
+}
+
 
 # Happy path tests ----
 
 test_that("detected_universe returns proteins from glyexp_experiment", {
   exp <- .mock_glyexp_experiment()
+  result <- detected_universe(exp)
+  expect_equal(result, c("P01308", "P04637", "P42345", "P00533", "P42336"))
+})
+
+
+test_that("detected_universe returns proteins from GlycoproteomicSE", {
+  exp <- .mock_glycoproteomic_se()
   result <- detected_universe(exp)
   expect_equal(result, c("P01308", "P04637", "P42345", "P00533", "P42336"))
 })
