@@ -32,6 +32,7 @@ The following sections walk through both perspectives and show when each one is 
 
 ```{r setup}
 library(glyfun)
+library(SummarizedExperiment)
 ```
 
 **Prerequisites**: To follow this vignette, you should be familiar with the core [glycoverse](https://github.com/glycoverse/glycoverse) packages,
@@ -50,7 +51,16 @@ library(glyexp)
 library(glyclean)
 library(glystats)
 
-exp <- auto_clean(real_experiment) |> filter_obs(group %in% c("H", "C"))
+exp <- auto_clean(real_experiment)
+if (inherits(exp, "glyexp_experiment")) {
+  exp <- exp |>
+    filter_obs(group %in% c("H", "C")) |>
+    mutate_obs(group = droplevels(group))
+} else {
+  exp <- exp |>
+    filter_col(group %in% c("H", "C")) |>
+    mutate_col(group = droplevels(group))
+}
 dea_res <- gly_limma(exp)
 get_tidy_result(dea_res)
 ```
@@ -167,8 +177,12 @@ To do that, we first calculate glycosylation traits with `glydet`.
 library(glydet)
 
 trait_exp <- derive_traits(exp)
-trait_exp |>
-  get_var_info() |>
+trait_info <- if (inherits(trait_exp, "glyexp_experiment")) {
+  get_var_info(trait_exp)
+} else {
+  tibble::as_tibble(rowData(trait_exp), rownames = "variable")
+}
+trait_info |>
   dplyr::distinct(trait, explanation)
 ```
 
