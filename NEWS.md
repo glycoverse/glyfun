@@ -1,3 +1,5 @@
+# glyfun (development version)
+
 # glyfun 0.1.2
 
 * The glyfun vignette now runs with both legacy `glyexp::experiment()` and current `SummarizedExperiment` containers.
