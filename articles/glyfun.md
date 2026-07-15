@@ -27,6 +27,76 @@ one is useful.
 library(glyfun)
 #> Warning: replacing previous import 'S4Arrays::makeNindexFromArrayViewport' by
 #> 'DelayedArray::makeNindexFromArrayViewport' when loading 'SummarizedExperiment'
+library(SummarizedExperiment)
+#> Loading required package: MatrixGenerics
+#> Loading required package: matrixStats
+#> 
+#> Attaching package: 'MatrixGenerics'
+#> The following objects are masked from 'package:matrixStats':
+#> 
+#>     colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
+#>     colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
+#>     colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
+#>     colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+#>     colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
+#>     colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
+#>     colWeightedMeans, colWeightedMedians, colWeightedSds,
+#>     colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
+#>     rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
+#>     rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
+#>     rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
+#>     rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
+#>     rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
+#>     rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
+#>     rowWeightedSds, rowWeightedVars
+#> Loading required package: GenomicRanges
+#> Loading required package: stats4
+#> Loading required package: BiocGenerics
+#> Loading required package: generics
+#> 
+#> Attaching package: 'generics'
+#> The following objects are masked from 'package:base':
+#> 
+#>     as.difftime, as.factor, as.ordered, intersect, is.element, setdiff,
+#>     setequal, union
+#> 
+#> Attaching package: 'BiocGenerics'
+#> The following objects are masked from 'package:stats':
+#> 
+#>     IQR, mad, sd, var, xtabs
+#> The following objects are masked from 'package:base':
+#> 
+#>     anyDuplicated, aperm, append, as.data.frame, basename, cbind,
+#>     colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,
+#>     get, grep, grepl, is.unsorted, lapply, Map, mapply, match, mget,
+#>     order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
+#>     rbind, Reduce, rownames, sapply, saveRDS, table, tapply, unique,
+#>     unsplit, which.max, which.min
+#> Loading required package: S4Vectors
+#> 
+#> Attaching package: 'S4Vectors'
+#> The following object is masked from 'package:utils':
+#> 
+#>     findMatches
+#> The following objects are masked from 'package:base':
+#> 
+#>     expand.grid, I, unname
+#> Loading required package: IRanges
+#> Loading required package: Seqinfo
+#> Loading required package: Biobase
+#> Welcome to Bioconductor
+#> 
+#>     Vignettes contain introductory material; view with
+#>     'browseVignettes()'. To cite Bioconductor, see
+#>     'citation("Biobase")', and for packages 'citation("pkgname")'.
+#> 
+#> Attaching package: 'Biobase'
+#> The following object is masked from 'package:MatrixGenerics':
+#> 
+#>     rowMedians
+#> The following objects are masked from 'package:matrixStats':
+#> 
+#>     anyMissing, rowMedians
 ```
 
 **Prerequisites**: To follow this vignette, you should be familiar with
@@ -48,15 +118,23 @@ on the glycoforms.
 ``` r
 
 library(glyexp)
+#> 
+#> Attaching package: 'glyexp'
+#> The following object is masked from 'package:Biobase':
+#> 
+#>     samples
 library(glyclean)
 #> 
 #> Attaching package: 'glyclean'
+#> The following object is masked from 'package:S4Vectors':
+#> 
+#>     aggregate
 #> The following object is masked from 'package:stats':
 #> 
 #>     aggregate
 library(glystats)
 
-exp <- auto_clean(real_experiment) |> filter_obs(group %in% c("H", "C"))
+exp <- auto_clean(real_experiment)
 #> 
 #> ── Removing variables with too many missing values ──
 #> 
@@ -91,6 +169,15 @@ exp <- auto_clean(real_experiment) |> filter_obs(group %in% c("H", "C"))
 #> 
 #> ℹ Batch column batch not found in sample_info. Skipping batch correction.
 #> ✔ Batch correction completed.
+if (inherits(exp, "glyexp_experiment")) {
+  exp <- exp |>
+    filter_obs(group %in% c("H", "C")) |>
+    mutate_obs(group = droplevels(group))
+} else {
+  exp <- exp |>
+    filter_col(group %in% c("H", "C")) |>
+    mutate_col(group = droplevels(group))
+}
 dea_res <- gly_limma(exp)
 #> ℹ Ref Group: "H"
 #> ℹ Test Group: "C"
@@ -233,8 +320,12 @@ To do that, we first calculate glycosylation traits with `glydet`.
 library(glydet)
 
 trait_exp <- derive_traits(exp)
-trait_exp |>
-  get_var_info() |>
+trait_info <- if (inherits(trait_exp, "glyexp_experiment")) {
+  get_var_info(trait_exp)
+} else {
+  tibble::as_tibble(rowData(trait_exp), rownames = "variable")
+}
+trait_info |>
   dplyr::distinct(trait, explanation)
 #> # A tibble: 14 × 2
 #>    trait explanation                                                            
@@ -266,7 +357,6 @@ Next, we run differential analysis on the trait experiment.
 trait_dea_res <- gly_limma(trait_exp)
 #> ℹ Ref Group: "H"
 #> ℹ Test Group: "C"
-#> Warning: Zero sample variances detected, have been offset away from zero
 #> Warning in splines::ns(covariate, df = splinedf, intercept = TRUE): shoving
 #> 'interior' knots matching boundary knots to inside
 ```
