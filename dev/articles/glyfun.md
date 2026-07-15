@@ -357,7 +357,6 @@ Next, we run differential analysis on the trait experiment.
 trait_dea_res <- gly_limma(trait_exp)
 #> ℹ Ref Group: "H"
 #> ℹ Test Group: "C"
-#> Warning: Zero sample variances detected, have been offset away from zero
 #> Warning in splines::ns(covariate, df = splinedf, intercept = TRUE): shoving
 #> 'interior' knots matching boundary knots to inside
 ```
