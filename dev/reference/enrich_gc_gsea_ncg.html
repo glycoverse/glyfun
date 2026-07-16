@@ -63,8 +63,9 @@ cancer gene sets across traits by running GSEA for each trait.</p>
 
 
 <dl><dt id="arg-dea-res">dea_res<a class="anchor" aria-label="anchor" href="#arg-dea-res"></a></dt>
-<dd><p>Differential analysis result. Can be one of:</p><ul><li><p>Result from <code><a href="https://glycoverse.github.io/glystats/reference/gly_limma.html" class="external-link">glystats::gly_limma()</a></code> (two groups), <code><a href="https://glycoverse.github.io/glystats/reference/gly_ttest.html" class="external-link">glystats::gly_ttest()</a></code>, or <code><a href="https://glycoverse.github.io/glystats/reference/gly_wilcox.html" class="external-link">glystats::gly_wilcox()</a></code>,
-called on an <code><a href="https://glycoverse.github.io/glyexp/reference/experiment.html" class="external-link">glyexp::experiment()</a></code> of "traitproteomics" type.</p></li>
+<dd><p>Differential analysis result. Can be one of:</p><ul><li><p>Result from <code><a href="https://glycoverse.github.io/glystats/reference/gly_limma.html" class="external-link">glystats::gly_limma()</a></code> (two groups), <code><a href="https://glycoverse.github.io/glystats/reference/gly_ttest.html" class="external-link">glystats::gly_ttest()</a></code>,
+or <code><a href="https://glycoverse.github.io/glystats/reference/gly_wilcox.html" class="external-link">glystats::gly_wilcox()</a></code>, called on a <code>SummarizedExperiment</code> of
+"traitproteomics" type created from a <code><a href="https://glycoverse.github.io/glyexp/reference/GlycoproteomicSE.html" class="external-link">glyexp::GlycoproteomicSE()</a></code>.</p></li>
 <li><p>A tibble with the following columns:</p><ul><li><p><code>protein</code>: Uniprot ID of proteins</p></li>
 <li><p><code>trait</code>: A glycosylation trait (e.g. "TFc" for proportion of core-fucosylated glycans)</p></li>
 <li><p><code>site</code>: The glycosylation site.</p></li>
