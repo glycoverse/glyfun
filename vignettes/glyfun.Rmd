@@ -51,17 +51,13 @@ library(glyexp)
 library(glyclean)
 library(glystats)
 
-exp <- auto_clean(real_experiment)
-if (inherits(exp, "glyexp_experiment")) {
-  exp <- exp |>
-    filter_obs(group %in% c("H", "C")) |>
-    mutate_obs(group = droplevels(group))
-} else {
-  exp <- exp |>
-    filter_col(group %in% c("H", "C")) |>
-    mutate_col(group = droplevels(group))
-}
-dea_res <- gly_limma(exp)
+# `real_experiment` is a bundled GlycoproteomicSE.
+gp_se <- real_experiment |>
+  auto_clean() |>
+  filter_col(group %in% c("H", "C")) |>
+  mutate_col(group = droplevels(group))
+
+dea_res <- gly_limma(gp_se)
 get_tidy_result(dea_res)
 ```
 
@@ -176,12 +172,8 @@ To do that, we first calculate glycosylation traits with `glydet`.
 ```{r}
 library(glydet)
 
-trait_exp <- derive_traits(exp)
-trait_info <- if (inherits(trait_exp, "glyexp_experiment")) {
-  get_var_info(trait_exp)
-} else {
-  tibble::as_tibble(rowData(trait_exp), rownames = "variable")
-}
+trait_se <- derive_traits(gp_se)
+trait_info <- tibble::as_tibble(rowData(trait_se), rownames = "variable")
 trait_info |>
   dplyr::distinct(trait, explanation)
 ```
@@ -194,7 +186,7 @@ so each glycosylation site on each protein has its own trait values.
 Next, we run differential analysis on the trait experiment.
 
 ```{r}
-trait_dea_res <- gly_limma(trait_exp)
+trait_dea_res <- gly_limma(trait_se)
 ```
 
 ## Over Representation Analysis (ORA)

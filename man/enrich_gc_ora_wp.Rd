@@ -20,8 +20,9 @@ enrich_gc_ora_wp(
 \arguments{
 \item{dea_res}{Differential analysis result. Can be one of:
 \itemize{
-\item Result from \code{\link[glystats:gly_limma]{glystats::gly_limma()}} (two groups), \code{\link[glystats:gly_ttest]{glystats::gly_ttest()}}, or \code{\link[glystats:gly_wilcox]{glystats::gly_wilcox()}},
-called on an \code{\link[glyexp:experiment]{glyexp::experiment()}} of "traitproteomics" type.
+\item Result from \code{\link[glystats:gly_limma]{glystats::gly_limma()}} (two groups), \code{\link[glystats:gly_ttest]{glystats::gly_ttest()}},
+or \code{\link[glystats:gly_wilcox]{glystats::gly_wilcox()}}, called on a \code{SummarizedExperiment} of
+"traitproteomics" type created from a \code{\link[glyexp:GlycoproteomicSE]{glyexp::GlycoproteomicSE()}}.
 \item A tibble with the following columns:
 \itemize{
 \item \code{protein}: Uniprot ID of proteins

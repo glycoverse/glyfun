@@ -7,20 +7,20 @@
 detected_universe(x)
 }
 \arguments{
-\item{x}{A \code{\link[glyexp:experiment]{glyexp::experiment()}}, a \code{\link[glyexp:GlycoproteomicSE]{glyexp::GlycoproteomicSE()}}, or a
-\code{glystats} result.}
+\item{x}{A \code{\link[glyexp:GlycoproteomicSE]{glyexp::GlycoproteomicSE()}} or a \code{glystats} result.}
 }
 \value{
 A character vector of protein UniProt IDs.
 }
 \description{
-This function extracts all detected proteins in a \code{\link[glyexp:experiment]{glyexp::experiment()}}, a
-\code{\link[glyexp:GlycoproteomicSE]{glyexp::GlycoproteomicSE()}}, or a \code{glystats} result.
+This function extracts all detected proteins in a
+\code{\link[glyexp:GlycoproteomicSE]{glyexp::GlycoproteomicSE()}} or a \code{glystats} result.
 It can be readily passed to the \code{universe} parameter of all \code{glyfun} functions.
 }
 \examples{
 library(glyexp)
-universe <- detected_universe(real_experiment)
+gp_se <- real_experiment
+universe <- detected_universe(gp_se)
 length(universe)
 universe[1:5]
 }

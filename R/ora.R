@@ -18,8 +18,9 @@
 #' ```
 #'
 #' @param dea_res Differential analysis result. Can be one of:
-#'   - Result from [glystats::gly_limma()] (two groups), [glystats::gly_ttest()], or [glystats::gly_wilcox()],
-#'     called on an [glyexp::experiment()] of "traitproteomics" type.
+#'   - Result from [glystats::gly_limma()] (two groups), [glystats::gly_ttest()],
+#'     or [glystats::gly_wilcox()], called on a `SummarizedExperiment` of
+#'     "traitproteomics" type created from a [glyexp::GlycoproteomicSE()].
 #'   - A tibble with the following columns:
 #'     - `protein`: Uniprot ID of proteins
 #'     - `trait`: A glycosylation trait (e.g. "TFc" for proportion of core-fucosylated glycans)

@@ -1,15 +1,15 @@
 #' Helper function to prepare the `universe` parameter
 #'
-#' This function extracts all detected proteins in a [glyexp::experiment()], a
-#' [glyexp::GlycoproteomicSE()], or a `glystats` result.
+#' This function extracts all detected proteins in a
+#' [glyexp::GlycoproteomicSE()] or a `glystats` result.
 #' It can be readily passed to the `universe` parameter of all `glyfun` functions.
 #'
-#' @param x A [glyexp::experiment()], a [glyexp::GlycoproteomicSE()], or a
-#'   `glystats` result.
+#' @param x A [glyexp::GlycoproteomicSE()] or a `glystats` result.
 #' @returns A character vector of protein UniProt IDs.
 #' @examples
 #' library(glyexp)
-#' universe <- detected_universe(real_experiment)
+#' gp_se <- real_experiment
+#' universe <- detected_universe(gp_se)
 #' length(universe)
 #' universe[1:5]
 #' @export
@@ -60,7 +60,7 @@ detected_universe.glystats_res <- function(x) {
 #' @noRd
 .check_universe_meta_data <- function(meta, input_type = c("exp", "res")) {
   # If `meta`` is NULL, `input_type`` cannot be "exp",
-  # because a `meta_data` field in enforced by an `experiment()` object.
+  # because the legacy container enforces a `meta_data` field.
   if (is.null(meta) && input_type == "res") {
     # The only reason for this case is that the user is using
     # a glystats version before 0.8.0.

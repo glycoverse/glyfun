@@ -22,7 +22,7 @@ Suggests:
     ReactomePA,
     DOSE,
     GOSemSim,
-    glyexp,
+    glyexp (>= 0.16.0),
     glyrepr,
     glyclean,
     glydet,
