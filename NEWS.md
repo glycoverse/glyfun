@@ -1,3 +1,5 @@
+# glyfun (development version)
+
 # glyfun 0.1.3
 
 * Documentation and vignettes now use `GlycoproteomicSE` inputs and `SummarizedExperiment` accessors for Stage II of glycoverse/glyexp#15. (#4)
