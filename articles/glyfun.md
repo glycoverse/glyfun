@@ -134,7 +134,11 @@ library(glyclean)
 #>     aggregate
 library(glystats)
 
-exp <- auto_clean(real_experiment)
+# `real_experiment` is a bundled GlycoproteomicSE.
+gp_se <- real_experiment |>
+  auto_clean() |>
+  filter_col(group %in% c("H", "C")) |>
+  mutate_col(group = droplevels(group))
 #> 
 #> ── Removing variables with too many missing values ──
 #> 
@@ -169,16 +173,8 @@ exp <- auto_clean(real_experiment)
 #> 
 #> ℹ Batch column batch not found in sample_info. Skipping batch correction.
 #> ✔ Batch correction completed.
-if (inherits(exp, "glyexp_experiment")) {
-  exp <- exp |>
-    filter_obs(group %in% c("H", "C")) |>
-    mutate_obs(group = droplevels(group))
-} else {
-  exp <- exp |>
-    filter_col(group %in% c("H", "C")) |>
-    mutate_col(group = droplevels(group))
-}
-dea_res <- gly_limma(exp)
+
+dea_res <- gly_limma(gp_se)
 #> ℹ Ref Group: "H"
 #> ℹ Test Group: "C"
 get_tidy_result(dea_res)
@@ -319,12 +315,8 @@ To do that, we first calculate glycosylation traits with `glydet`.
 
 library(glydet)
 
-trait_exp <- derive_traits(exp)
-trait_info <- if (inherits(trait_exp, "glyexp_experiment")) {
-  get_var_info(trait_exp)
-} else {
-  tibble::as_tibble(rowData(trait_exp), rownames = "variable")
-}
+trait_se <- derive_traits(gp_se)
+trait_info <- tibble::as_tibble(rowData(trait_se), rownames = "variable")
 trait_info |>
   dplyr::distinct(trait, explanation)
 #> # A tibble: 14 × 2
@@ -354,9 +346,10 @@ Next, we run differential analysis on the trait experiment.
 
 ``` r
 
-trait_dea_res <- gly_limma(trait_exp)
+trait_dea_res <- gly_limma(trait_se)
 #> ℹ Ref Group: "H"
 #> ℹ Test Group: "C"
+#> Warning: Zero sample variances detected, have been offset away from zero
 #> Warning in splines::ns(covariate, df = splinedf, intercept = TRUE): shoving
 #> 'interior' knots matching boundary knots to inside
 ```

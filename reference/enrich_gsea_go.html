@@ -9,7 +9,7 @@ on glycoproteins with dysregulated glycosylation."><meta property="og:image" con
 
     <a class="navbar-brand me-2" href="../index.html">glyfun</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,8 +62,9 @@ on glycoproteins with dysregulated glycosylation.</p>
 
 
 <dl><dt id="arg-dea-res">dea_res<a class="anchor" aria-label="anchor" href="#arg-dea-res"></a></dt>
-<dd><p>Differential analysis result. Can be one of:</p><ul><li><p>Result from <code><a href="https://glycoverse.github.io/glystats/reference/gly_limma.html" class="external-link">glystats::gly_limma()</a></code> (two groups), <code><a href="https://glycoverse.github.io/glystats/reference/gly_ttest.html" class="external-link">glystats::gly_ttest()</a></code>, or <code><a href="https://glycoverse.github.io/glystats/reference/gly_wilcox.html" class="external-link">glystats::gly_wilcox()</a></code>,
-called on an <code><a href="https://glycoverse.github.io/glyexp/reference/experiment.html" class="external-link">glyexp::experiment()</a></code> of "traitproteomics" type.</p></li>
+<dd><p>Differential analysis result. Can be one of:</p><ul><li><p>Result from <code><a href="https://glycoverse.github.io/glystats/reference/gly_limma.html" class="external-link">glystats::gly_limma()</a></code> (two groups), <code><a href="https://glycoverse.github.io/glystats/reference/gly_ttest.html" class="external-link">glystats::gly_ttest()</a></code>,
+or <code><a href="https://glycoverse.github.io/glystats/reference/gly_wilcox.html" class="external-link">glystats::gly_wilcox()</a></code>, called on a <code>SummarizedExperiment</code> of
+"traitproteomics" type created from a <code><a href="https://glycoverse.github.io/glyexp/reference/GlycoproteomicSE.html" class="external-link">glyexp::GlycoproteomicSE()</a></code>.</p></li>
 <li><p>A tibble with the following columns:</p><ul><li><p><code>protein</code>: Uniprot ID of proteins</p></li>
 <li><p><code>trait</code>: A glycosylation trait (e.g. "TFc" for proportion of core-fucosylated glycans)</p></li>
 <li><p><code>site</code>: The glycosylation site.</p></li>

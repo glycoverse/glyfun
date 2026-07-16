@@ -33,9 +33,9 @@ enrich_gsea_reactome(
     [`glystats::gly_ttest()`](https://glycoverse.github.io/glystats/reference/gly_ttest.html),
     or
     [`glystats::gly_wilcox()`](https://glycoverse.github.io/glystats/reference/gly_wilcox.html),
-    called on an
-    [`glyexp::experiment()`](https://glycoverse.github.io/glyexp/reference/experiment.html)
-    of "traitproteomics" type.
+    called on a `SummarizedExperiment` of "traitproteomics" type created
+    from a
+    [`glyexp::GlycoproteomicSE()`](https://glycoverse.github.io/glyexp/reference/GlycoproteomicSE.html).
 
   - A tibble with the following columns:
 
