@@ -1,5 +1,7 @@
 # glyfun (development version)
 
+* `enrich_glyco()` now provides a unified entry point for protein-centric and glycan-trait-centric ORA and GSEA across GO, KEGG, Reactome, WikiPathways, DO, and NCG. (#5)
+
 # glyfun 0.1.3
 
 * Documentation and vignettes now use `GlycoproteomicSE` inputs and `SummarizedExperiment` accessors for Stage II of glycoverse/glyexp#15. (#4)
