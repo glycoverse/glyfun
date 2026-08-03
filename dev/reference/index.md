@@ -1,5 +1,10 @@
 # Package index
 
+## Unified enrichment API
+
+- [`enrich_glyco()`](https://glycoverse.github.io/glyfun/dev/reference/enrich_glyco.md)
+  : Unified functional enrichment for glycoproteomics
+
 ## Protein-Centric Over Representation Analysis
 
 - [`enrich_ora_do()`](https://glycoverse.github.io/glyfun/dev/reference/enrich_ora_do.md)
