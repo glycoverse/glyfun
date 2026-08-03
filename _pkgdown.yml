@@ -6,6 +6,9 @@ development:
   mode: auto
 
 reference:
+  - title: Unified enrichment API
+    contents:
+      - enrich_glyco
   - title: Protein-Centric Over Representation Analysis
     contents:
       - matches("enrich_ora_[a-z]+")
