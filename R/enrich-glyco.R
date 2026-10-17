@@ -39,6 +39,9 @@
 #' @param exponent GSEA weighting exponent.
 #' @param eps Epsilon used for GSEA p-value calculation.
 #' @param seed Whether to set a random seed in GSEA.
+#' @param by Glycan-trait grouping column when `scope = "glycan_trait"`.
+#'   See [enrich_gc_ora_go()] for accepted values and automatic inference.
+#'   Must be `NULL` for `scope = "protein"`.
 #' @param ... Additional arguments passed to the selected enrichment backend.
 #'
 #' @return A clusterProfiler enrichment result. ORA returns an `enrichResult`
@@ -80,11 +83,17 @@ enrich_glyco <- function(
   exponent = 1,
   eps = 1e-10,
   seed = FALSE,
-  ...
+  ...,
+  by = NULL
 ) {
   method <- rlang::arg_match(method)
   database <- rlang::arg_match(database)
   scope <- rlang::arg_match(scope)
+  if (scope == "protein" && !is.null(by)) {
+    cli::cli_abort(
+      "{.arg by} is only supported when {.code scope = \"glycan_trait\"}."
+    )
+  }
 
   backend <- .enrich_glyco_backend(
     method = method,
@@ -108,6 +117,9 @@ enrich_glyco <- function(
     bitr_orgdb = backend$bitr_orgdb,
     uniprot_to_entrez = backend$uniprot_to_entrez
   )
+  if (scope == "glycan_trait") {
+    helper_args$by <- by
+  }
 
   if (method == "ora") {
     helper_args <- c(

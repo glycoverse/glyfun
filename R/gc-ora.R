@@ -40,6 +40,7 @@
 #' go_res <- enrich_gc_ora_go(dea_res)  # or other `enrich_gc_xxx()` functions
 #' ```
 #'
+#' @template gc-trait-params
 #' @inheritParams enrich_ora_go
 #' @return A clusterProfiler `compareClusterResult` object with additional `glyfun` classes.
 #'   It can be readily converted to a tibble with [tibble::as_tibble()],
@@ -58,11 +59,13 @@ enrich_gc_ora_go <- function(
   p_cutoff = 0.05,
   q_cutoff = 0.2,
   min_gs_size = 10,
-  max_gs_size = 500
+  max_gs_size = 500,
+  by = NULL
 ) {
   orgdb <- .prepare_orgdb(orgdb)
   .gc_ora(
     dea_res,
+    by = by,
     enrich_fun = clusterProfiler::enrichGO,
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
@@ -91,6 +94,7 @@ enrich_gc_ora_go <- function(
 #' @inheritSection enrich_gc_ora_go What is glycan-centric enrichment?
 #' @inheritSection enrich_gc_ora_go Common usage pattern
 #'
+#' @template gc-trait-params
 #' @inheritParams enrich_ora_kegg
 #' @inherit enrich_gc_ora_go return
 #'
@@ -106,10 +110,12 @@ enrich_gc_ora_kegg <- function(
   p_cutoff = 0.05,
   q_cutoff = 0.2,
   min_gs_size = 10,
-  max_gs_size = 500
+  max_gs_size = 500,
+  by = NULL
 ) {
   .gc_ora(
     dea_res,
+    by = by,
     enrich_fun = clusterProfiler::enrichKEGG,
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
@@ -137,6 +143,7 @@ enrich_gc_ora_kegg <- function(
 #' @inheritSection enrich_gc_ora_go What is glycan-centric enrichment?
 #' @inheritSection enrich_gc_ora_go Common usage pattern
 #'
+#' @template gc-trait-params
 #' @inheritParams enrich_ora_reactome
 #' @inherit enrich_gc_ora_go return
 #'
@@ -152,12 +159,14 @@ enrich_gc_ora_reactome <- function(
   p_cutoff = 0.05,
   q_cutoff = 0.2,
   min_gs_size = 10,
-  max_gs_size = 500
+  max_gs_size = 500,
+  by = NULL
 ) {
   rlang::check_installed("ReactomePA")
   orgdb <- .reactome_orgdb(organism)
   .gc_ora(
     dea_res,
+    by = by,
     enrich_fun = ReactomePA::enrichPathway,
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
@@ -186,6 +195,7 @@ enrich_gc_ora_reactome <- function(
 #' @inheritSection enrich_gc_ora_go What is glycan-centric enrichment?
 #' @inheritSection enrich_gc_ora_go Common usage pattern
 #'
+#' @template gc-trait-params
 #' @inheritParams enrich_ora_wp
 #' @inherit enrich_gc_ora_go return
 #'
@@ -201,11 +211,13 @@ enrich_gc_ora_wp <- function(
   p_cutoff = 0.05,
   q_cutoff = 0.2,
   min_gs_size = 10,
-  max_gs_size = 500
+  max_gs_size = 500,
+  by = NULL
 ) {
   orgdb <- .wp_orgdb(organism)
   .gc_ora(
     dea_res,
+    by = by,
     enrich_fun = clusterProfiler::enrichWP,
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
@@ -234,6 +246,7 @@ enrich_gc_ora_wp <- function(
 #' @inheritSection enrich_gc_ora_go What is glycan-centric enrichment?
 #' @inheritSection enrich_gc_ora_go Common usage pattern
 #'
+#' @template gc-trait-params
 #' @inheritParams enrich_ora_do
 #' @inherit enrich_gc_ora_go return
 #'
@@ -250,12 +263,14 @@ enrich_gc_ora_do <- function(
   p_cutoff = 0.05,
   q_cutoff = 0.2,
   min_gs_size = 10,
-  max_gs_size = 500
+  max_gs_size = 500,
+  by = NULL
 ) {
   rlang::check_installed("DOSE")
   orgdb <- .do_orgdb(organism)
   .gc_ora(
     dea_res,
+    by = by,
     enrich_fun = DOSE::enrichDO,
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
@@ -285,6 +300,7 @@ enrich_gc_ora_do <- function(
 #' @inheritSection enrich_gc_ora_go What is glycan-centric enrichment?
 #' @inheritSection enrich_gc_ora_go Common usage pattern
 #'
+#' @template gc-trait-params
 #' @inheritParams enrich_ora_ncg
 #' @inherit enrich_gc_ora_go return
 #'
@@ -299,12 +315,14 @@ enrich_gc_ora_ncg <- function(
   p_cutoff = 0.05,
   q_cutoff = 0.2,
   min_gs_size = 10,
-  max_gs_size = 500
+  max_gs_size = 500,
+  by = NULL
 ) {
   rlang::check_installed("DOSE")
   orgdb <- .prepare_orgdb("org.Hs.eg.db")
   .gc_ora(
     dea_res,
+    by = by,
     enrich_fun = DOSE::enrichNCG,
     dea_p_cutoff = dea_p_cutoff,
     dea_log2fc_cutoff = dea_log2fc_cutoff,
@@ -333,6 +351,7 @@ enrich_gc_ora_ncg <- function(
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
   bitr_orgdb = NULL,
+  by = NULL,
   ...
 ) {
   UseMethod(".gc_ora")
@@ -344,15 +363,21 @@ enrich_gc_ora_ncg <- function(
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
   bitr_orgdb = NULL,
+  by = NULL,
   ...
 ) {
   pro_list_fun <- function(dea_res) {
-    dea_res |>
+    by <- .infer_gc_trait_col(dea_res, by = by, prefer_trait = TRUE)
+    filtered_res <- dea_res |>
       dplyr::filter(
         .data$p_val < dea_p_cutoff,
         .data$log2fc < dea_log2fc_cutoff[[1]] |
           .data$log2fc > dea_log2fc_cutoff[[2]]
-      ) |>
+      )
+    tibble::tibble(
+      trait = filtered_res[[by]],
+      protein = filtered_res$protein
+    ) |>
       dplyr::summarise(
         proteins = list(unique(.data$protein)),
         .by = "trait"
@@ -376,21 +401,26 @@ enrich_gc_ora_ncg <- function(
   dea_p_cutoff = 0.05,
   dea_log2fc_cutoff = c(-1, 1),
   bitr_orgdb = NULL,
+  by = NULL,
   ...
 ) {
   pro_list_fun <- function(dea_res) {
     tidy_dea_res <- glystats::get_tidy_result(dea_res)
-    by <- .infer_gc_trait_col(tidy_dea_res)
+    by <- .infer_gc_trait_col(tidy_dea_res, by = by)
 
-    tidy_dea_res |>
+    filtered_res <- tidy_dea_res |>
       dplyr::filter(
         .data$p_adj < dea_p_cutoff,
         .data$log2fc < dea_log2fc_cutoff[[1]] |
           .data$log2fc > dea_log2fc_cutoff[[2]]
-      ) |>
+      )
+    tibble::tibble(
+      trait = filtered_res[[by]],
+      protein = filtered_res$protein
+    ) |>
       dplyr::summarise(
         proteins = list(unique(.data$protein)),
-        .by = tidyselect::all_of(by)
+        .by = "trait"
       ) |>
       tibble::deframe()
   }
@@ -434,7 +464,7 @@ enrich_gc_ora_ncg <- function(
       "{.arg bitr_orgdb} must be provided when {.arg uniprot_to_entrez} is TRUE."
     )
   }
-  .check_dea_res(dea_res)
+  .check_dea_res(dea_res, trait_col = NULL)
   .check_p_cutoff_arg(dea_p_cutoff)
   .check_log2fc_cutoff_arg(dea_log2fc_cutoff)
 

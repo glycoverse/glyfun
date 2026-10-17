@@ -1,5 +1,7 @@
 # glyfun (development version)
 
+* Glycan-centric ORA and GSEA functions gain `by` to select the glycan-trait grouping column, including through `enrich_glyco(scope = "glycan_trait")`. Automatic selection preserves existing defaults and reports the selected column when multiple candidates are present. (#3)
+
 * `enrich_glyco()` now provides a unified entry point for protein-centric and glycan-trait-centric ORA and GSEA across GO, KEGG, Reactome, WikiPathways, DO, and NCG. (#5)
 
 # glyfun 0.1.3

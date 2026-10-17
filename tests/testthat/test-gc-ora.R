@@ -39,6 +39,105 @@ skip_if_not_installed("clusterProfiler")
   )
 }
 
+for (database in c("go", "kegg", "reactome", "wp", "do", "ncg")) {
+  test_that(paste("explicit by controls glycan-centric ORA for", database), {
+    if (database == "reactome") {
+      skip_if_not_installed("ReactomePA")
+    }
+    if (database %in% c("do", "ncg")) {
+      skip_if_not_installed("DOSE")
+    }
+
+    captured <- NULL
+    local_mocked_bindings(
+      compareCluster = function(geneCluster, ...) {
+        captured <<- list(...)
+        geneCluster
+      },
+      .package = "clusterProfiler"
+    )
+    local_mocked_bindings(
+      .prepare_orgdb = function(...) "MOCK_ORGDB",
+      .reactome_orgdb = function(...) "MOCK_ORGDB",
+      .wp_orgdb = function(...) "MOCK_ORGDB",
+      .do_orgdb = function(...) "MOCK_ORGDB",
+      .uniprot_to_entrez_prolist = function(pro_list, ...) pro_list,
+      .package = "glyfun"
+    )
+    df <- tibble::tibble(
+      protein = c("P1", "P2", "P3", "P4"),
+      site = "s1",
+      trait = "T",
+      glycan_structure = "S",
+      glycan_composition = c("C1", "C2", "C1", "C2"),
+      p_val = c(0.001, 0.001, 0.2, 0.001),
+      p_adj = c(0.001, 0.2, 0.2, 0.001),
+      log2fc = c(2, -2, 3, 0.5)
+    )
+    glystats_res <- structure(
+      list(tidy_result = df, raw_result = list()),
+      class = c("glystats_ttest_res", "glystats_res")
+    )
+    enrich <- get(paste0("enrich_gc_ora_", database))
+    expect_equal(
+      suppressMessages(enrich(df, by = "glycan_composition")),
+      list(C1 = "P1", C2 = "P2")
+    )
+    expect_equal(
+      suppressMessages(enrich(glystats_res, by = "glycan_composition")),
+      list(C1 = "P1")
+    )
+    expect_null(captured$by)
+  })
+}
+
+test_that("glycan-centric ORA preserves automatic defaults for both input types", {
+  local_mocked_bindings(
+    compareCluster = function(geneCluster, ...) geneCluster,
+    .package = "clusterProfiler"
+  )
+  df <- .mock_gc_dea_df()
+  df$glycan_structure <- rep("S", nrow(df))
+  glystats_res <- structure(
+    list(tidy_result = dplyr::mutate(df, p_adj = p_val), raw_result = list()),
+    class = c("glystats_ttest_res", "glystats_res")
+  )
+  expect_equal(
+    suppressMessages(enrich_gc_ora_kegg(df)),
+    list(trait_A = "P01308", trait_B = "P00533")
+  )
+  expect_equal(
+    suppressMessages(enrich_gc_ora_kegg(glystats_res)),
+    list(S = c("P01308", "P00533"))
+  )
+})
+
+test_that("glycan-centric ORA accepts custom grouping columns without trait", {
+  local_mocked_bindings(
+    compareCluster = function(geneCluster, ...) geneCluster,
+    .package = "clusterProfiler"
+  )
+  df <- .mock_gc_dea_df()
+  df$proteins <- factor(df$trait)
+  df$trait <- NULL
+  expect_equal(
+    suppressMessages(enrich_gc_ora_kegg(df, by = "proteins")),
+    list(trait_A = "P01308", trait_B = "P00533")
+  )
+  df$motif <- df$proteins
+  expect_equal(
+    suppressMessages(enrich_gc_ora_kegg(df)),
+    suppressMessages(enrich_gc_ora_kegg(df, by = "motif"))
+  )
+})
+
+test_that("glycan-centric ORA rejects invalid by before enrichment", {
+  df <- .mock_gc_dea_df()
+  expect_snapshot(error = TRUE, enrich_gc_ora_kegg(df, by = "missing"))
+  df$trait <- as.list(df$trait)
+  expect_snapshot(error = TRUE, enrich_gc_ora_kegg(df, by = "trait"))
+})
+
 test_that("enrich_gc_ora_go forwards args to compareCluster through all layers", {
   sentinel <- list(source = "compareCluster")
   captured <- NULL
@@ -607,9 +706,9 @@ test_that("enrich_gc_ora_go errors on data.frame with missing columns", {
     p_val = rep(0.001, 5),
     log2fc = c(2.5, 3.0, 1.5, 2.0, 2.2)
   )
-  expect_error(
-    enrich_gc_ora_go(dea_res_missing_trait),
-    "must have all expected columns"
+  expect_snapshot(
+    error = TRUE,
+    suppressMessages(enrich_gc_ora_go(dea_res_missing_trait))
   )
 
   # Missing 'protein' column

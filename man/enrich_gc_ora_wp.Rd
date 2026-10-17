@@ -14,24 +14,14 @@ enrich_gc_ora_wp(
   p_cutoff = 0.05,
   q_cutoff = 0.2,
   min_gs_size = 10,
-  max_gs_size = 500
+  max_gs_size = 500,
+  by = NULL
 )
 }
 \arguments{
-\item{dea_res}{Differential analysis result. Can be one of:
-\itemize{
-\item Result from \code{\link[glystats:gly_limma]{glystats::gly_limma()}} (two groups), \code{\link[glystats:gly_ttest]{glystats::gly_ttest()}},
-or \code{\link[glystats:gly_wilcox]{glystats::gly_wilcox()}}, called on a \code{SummarizedExperiment} of
-"traitproteomics" type created from a \code{\link[glyexp:GlycoproteomicSE]{glyexp::GlycoproteomicSE()}}.
-\item A tibble with the following columns:
-\itemize{
-\item \code{protein}: Uniprot ID of proteins
-\item \code{trait}: A glycosylation trait (e.g. "TFc" for proportion of core-fucosylated glycans)
-\item \code{site}: The glycosylation site.
-\item \code{p_val}: p-values, preferably adjusted p-values
-\item \code{log2fc}: log2 of fold change
-}
-}}
+\item{dea_res}{A supported \code{glystats} differential analysis result, or a data
+frame with \code{protein} (UniProt IDs), \code{site}, \code{p_val}, \code{log2fc}, and a
+glycan-trait grouping column selected by \code{by}.}
 
 \item{dea_p_cutoff}{P-value cutoff for statistical significance. Defaults to 0.05.
 For \code{glystats} result input, adjusted p-values are used.}
@@ -67,6 +57,15 @@ Passed to \code{minGSSize} of downstream enrichment function. Defaults to 10.}
 \item{max_gs_size}{Maximum size of each gene set for analyzing.
 Gene sets with more genes than this threshold will be excluded.
 Passed to \code{maxGSSize} of downstream enrichment function. Defaults to 500.}
+
+\item{by}{A single column name in the tidy DEA result to use for glycan-trait
+grouping. Any one-dimensional atomic vector (including character or factor
+labels) is accepted. With \code{NULL}, \code{glystats} results use the first
+available column in this order: \code{glycan_structure}, \code{glycan_composition},
+\code{trait}, \code{motif}. Data frames retain their legacy preference for \code{trait},
+then use the same order if \code{trait} is absent. When multiple candidates are
+present, a message identifies the selected column and explains how to
+override it with \code{by}.}
 }
 \value{
 A clusterProfiler \code{compareClusterResult} object with additional \code{glyfun} classes.
