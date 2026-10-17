@@ -20,7 +20,8 @@ enrich_gc_gsea_do(
   max_gs_size = 500,
   exponent = 1,
   eps = 1e-10,
-  seed = FALSE
+  seed = FALSE,
+  by = NULL
 )
 ```
 
@@ -28,30 +29,9 @@ enrich_gc_gsea_do(
 
 - dea_res:
 
-  Differential analysis result. Can be one of:
-
-  - Result from
-    [`glystats::gly_limma()`](https://glycoverse.github.io/glystats/reference/gly_limma.html)
-    (two groups),
-    [`glystats::gly_ttest()`](https://glycoverse.github.io/glystats/reference/gly_ttest.html),
-    or
-    [`glystats::gly_wilcox()`](https://glycoverse.github.io/glystats/reference/gly_wilcox.html),
-    called on a `SummarizedExperiment` of "traitproteomics" type created
-    from a
-    [`glyexp::GlycoproteomicSE()`](https://glycoverse.github.io/glyexp/reference/GlycoproteomicSE.html).
-
-  - A tibble with the following columns:
-
-    - `protein`: Uniprot ID of proteins
-
-    - `trait`: A glycosylation trait (e.g. "TFc" for proportion of
-      core-fucosylated glycans)
-
-    - `site`: The glycosylation site.
-
-    - `p_val`: p-values, preferably adjusted p-values
-
-    - `log2fc`: log2 of fold change
+  A supported `glystats` differential analysis result, or a data frame
+  with `protein` (UniProt IDs), `site`, `p_val`, `log2fc`, and a
+  glycan-trait grouping column selected by `by`.
 
 - rank_by:
 
@@ -129,6 +109,17 @@ enrich_gc_gsea_do(
   Passed to `seed` of
   [`clusterProfiler::gseGO()`](https://rdrr.io/pkg/clusterProfiler/man/gseGO.html).
   Defaults to `FALSE`.
+
+- by:
+
+  A single column name in the tidy DEA result to use for glycan-trait
+  grouping. Any one-dimensional atomic vector (including character or
+  factor labels) is accepted. With `NULL`, `glystats` results use the
+  first available column in this order: `glycan_structure`,
+  `glycan_composition`, `trait`, `motif`. Data frames retain their
+  legacy preference for `trait`, then use the same order if `trait` is
+  absent. When multiple candidates are present, a message identifies the
+  selected column and explains how to override it with `by`.
 
 ## Value
 

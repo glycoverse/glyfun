@@ -55,7 +55,8 @@ pathways across traits by running GSEA for each trait.</p>
 <span>  max_gs_size <span class="op">=</span> <span class="fl">500</span>,</span>
 <span>  exponent <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  eps <span class="op">=</span> <span class="fl">1e-10</span>,</span>
-<span>  seed <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  seed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  by <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -64,16 +65,9 @@ pathways across traits by running GSEA for each trait.</p>
 
 
 <dl><dt id="arg-dea-res">dea_res<a class="anchor" aria-label="anchor" href="#arg-dea-res"></a></dt>
-<dd><p>Differential analysis result. Can be one of:</p><ul><li><p>Result from <code><a href="https://glycoverse.github.io/glystats/reference/gly_limma.html" class="external-link">glystats::gly_limma()</a></code> (two groups), <code><a href="https://glycoverse.github.io/glystats/reference/gly_ttest.html" class="external-link">glystats::gly_ttest()</a></code>,
-or <code><a href="https://glycoverse.github.io/glystats/reference/gly_wilcox.html" class="external-link">glystats::gly_wilcox()</a></code>, called on a <code>SummarizedExperiment</code> of
-"traitproteomics" type created from a <code><a href="https://glycoverse.github.io/glyexp/reference/GlycoproteomicSE.html" class="external-link">glyexp::GlycoproteomicSE()</a></code>.</p></li>
-<li><p>A tibble with the following columns:</p><ul><li><p><code>protein</code>: Uniprot ID of proteins</p></li>
-<li><p><code>trait</code>: A glycosylation trait (e.g. "TFc" for proportion of core-fucosylated glycans)</p></li>
-<li><p><code>site</code>: The glycosylation site.</p></li>
-<li><p><code>p_val</code>: p-values, preferably adjusted p-values</p></li>
-<li><p><code>log2fc</code>: log2 of fold change</p></li>
-</ul></li>
-</ul></dd>
+<dd><p>A supported <code>glystats</code> differential analysis result, or a data
+frame with <code>protein</code> (UniProt IDs), <code>site</code>, <code>p_val</code>, <code>log2fc</code>, and a
+glycan-trait grouping column selected by <code>by</code>.</p></dd>
 
 
 <dt id="arg-rank-by">rank_by<a class="anchor" aria-label="anchor" href="#arg-rank-by"></a></dt>
@@ -133,6 +127,17 @@ Defaults to 1e-10.</p></dd>
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
 <dd><p>Logical indicating whether to set a random seed for reproducibility.
 Passed to <code>seed</code> of <code><a href="https://rdrr.io/pkg/clusterProfiler/man/gseGO.html" class="external-link">clusterProfiler::gseGO()</a></code>. Defaults to <code>FALSE</code>.</p></dd>
+
+
+<dt id="arg-by">by<a class="anchor" aria-label="anchor" href="#arg-by"></a></dt>
+<dd><p>A single column name in the tidy DEA result to use for glycan-trait
+grouping. Any one-dimensional atomic vector (including character or factor
+labels) is accepted. With <code>NULL</code>, <code>glystats</code> results use the first
+available column in this order: <code>glycan_structure</code>, <code>glycan_composition</code>,
+<code>trait</code>, <code>motif</code>. Data frames retain their legacy preference for <code>trait</code>,
+then use the same order if <code>trait</code> is absent. When multiple candidates are
+present, a message identifies the selected column and explains how to
+override it with <code>by</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

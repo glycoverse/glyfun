@@ -71,7 +71,8 @@ stratified by a glycan trait; it does not directly enrich glycan structures.</p>
 <span>  exponent <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  eps <span class="op">=</span> <span class="fl">1e-10</span>,</span>
 <span>  seed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">...</span></span>
+<span>  <span class="va">...</span>,</span>
+<span>  by <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -172,6 +173,12 @@ backend.</p></dd>
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional arguments passed to the selected enrichment backend.</p></dd>
+
+
+<dt id="arg-by">by<a class="anchor" aria-label="anchor" href="#arg-by"></a></dt>
+<dd><p>Glycan-trait grouping column when <code>scope = "glycan_trait"</code>.
+See <code><a href="enrich_gc_ora_go.html">enrich_gc_ora_go()</a></code> for accepted values and automatic inference.
+Must be <code>NULL</code> for <code>scope = "protein"</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

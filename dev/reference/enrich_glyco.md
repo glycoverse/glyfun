@@ -33,7 +33,8 @@ enrich_glyco(
   exponent = 1,
   eps = 1e-10,
   seed = FALSE,
-  ...
+  ...,
+  by = NULL
 )
 ```
 
@@ -133,6 +134,13 @@ enrich_glyco(
 - ...:
 
   Additional arguments passed to the selected enrichment backend.
+
+- by:
+
+  Glycan-trait grouping column when `scope = "glycan_trait"`. See
+  [`enrich_gc_ora_go()`](https://glycoverse.github.io/glyfun/dev/reference/enrich_gc_ora_go.md)
+  for accepted values and automatic inference. Must be `NULL` for
+  `scope = "protein"`.
 
 ## Value
 

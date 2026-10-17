@@ -214,7 +214,6 @@ analysis on the glycoforms.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">Aggregating data</span> ──</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Aggregating to <span style="color: #0000BB;">"gfs"</span> level</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Aggregation completed.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">Normalizing data again</span> ──</span></span>
@@ -235,16 +234,16 @@ analysis on the glycoforms.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3,979 × 14</span></span></span>
 <span><span class="co">#&gt;    variable       protein glycan_composition glycan_structure protein_site gene </span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;comp&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;struct&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> P08185-176-He… P08185  <span style="color: #000000;">Hex</span>(5)<span style="color: #000000;">HexNAc</span>(4)<span style="color: #000000;">Ne</span>… <span style="color: #000000;">NeuAc</span>(??-?)<span style="color: #000000;">Hex</span>(…          176 SERP…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> P04196-344-He… P04196  <span style="color: #000000;">Hex</span>(5)<span style="color: #000000;">HexNAc</span>(4)<span style="color: #000000;">Ne</span>… <span style="color: #000000;">NeuAc</span>(??-?)<span style="color: #000000;">Hex</span>(…          344 HRG  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> P04196-344-He… P04196  <span style="color: #000000;">Hex</span>(5)<span style="color: #000000;">HexNAc</span>(4)    <span style="color: #000000;">Hex</span>(??-?)<span style="color: #000000;">HexNAc</span>…          344 HRG  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> P04196-344-He… P04196  <span style="color: #000000;">Hex</span>(5)<span style="color: #000000;">HexNAc</span>(4)<span style="color: #000000;">Ne</span>… <span style="color: #000000;">NeuAc</span>(??-?)<span style="color: #000000;">Hex</span>(…          344 HRG  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> P10909-291-He… P10909  <span style="color: #000000;">Hex</span>(6)<span style="color: #000000;">HexNAc</span>(5)    <span style="color: #000000;">Hex</span>(??-?)<span style="color: #000000;">HexNAc</span>…          291 CLU  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> P04196-344-He… P04196  <span style="color: #000000;">Hex</span>(5)<span style="color: #000000;">HexNAc</span>(4)<span style="color: #000000;">Ne</span>… <span style="color: #000000;">NeuAc</span>(??-?)<span style="color: #000000;">Hex</span>(…          344 HRG  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> P04196-345-He… P04196  <span style="color: #000000;">Hex</span>(5)<span style="color: #000000;">HexNAc</span>(4)    <span style="color: #000000;">Hex</span>(??-?)<span style="color: #000000;">HexNAc</span>…          345 HRG  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> P04196-344-He… P04196  <span style="color: #000000;">Hex</span>(5)<span style="color: #000000;">HexNAc</span>(4)<span style="color: #000000;">dH</span>… <span style="color: #000000;">dHex</span>(??-?)<span style="color: #000000;">Hex</span>(?…          344 HRG  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> P04196-344-He… P04196  <span style="color: #000000;">Hex</span>(4)<span style="color: #000000;">HexNAc</span>(3)    <span style="color: #000000;">Hex</span>(??-?)<span style="color: #000000;">HexNAc</span>…          344 HRG  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> P04196-344-He… P04196  <span style="color: #000000;">Hex</span>(4)<span style="color: #000000;">HexNAc</span>(4)<span style="color: #000000;">Ne</span>… <span style="color: #000000;">NeuAc</span>(??-?)<span style="color: #000000;">Hex</span>(…          344 HRG  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> P08185-176-He… P08185  <span style="color: #000000;">Hex</span>(5)<span style="color: #000000;">HexNAc</span>(4)<span style="color: #000000;">Ne</span>… <span style="color: #000000;">NeuAc</span>(<span style="color: #B2B2B2;">??-?</span>)<span style="color: #000000;">Hex</span>(…          176 SERP…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> P04196-344-He… P04196  <span style="color: #000000;">Hex</span>(5)<span style="color: #000000;">HexNAc</span>(4)<span style="color: #000000;">Ne</span>… <span style="color: #000000;">NeuAc</span>(<span style="color: #B2B2B2;">??-?</span>)<span style="color: #000000;">Hex</span>(…          344 HRG  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> P04196-344-He… P04196  <span style="color: #000000;">Hex</span>(5)<span style="color: #000000;">HexNAc</span>(4)    <span style="color: #000000;">Hex</span>(<span style="color: #B2B2B2;">??-?</span>)<span style="color: #000000;">HexNAc</span>…          344 HRG  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> P04196-344-He… P04196  <span style="color: #000000;">Hex</span>(5)<span style="color: #000000;">HexNAc</span>(4)<span style="color: #000000;">Ne</span>… <span style="color: #000000;">NeuAc</span>(<span style="color: #B2B2B2;">??-?</span>)<span style="color: #000000;">Hex</span>(…          344 HRG  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> P10909-291-He… P10909  <span style="color: #000000;">Hex</span>(6)<span style="color: #000000;">HexNAc</span>(5)    <span style="color: #000000;">Hex</span>(<span style="color: #B2B2B2;">??-?</span>)<span style="color: #000000;">HexNAc</span>…          291 CLU  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> P04196-344-He… P04196  <span style="color: #000000;">Hex</span>(5)<span style="color: #000000;">HexNAc</span>(4)<span style="color: #000000;">Ne</span>… <span style="color: #000000;">NeuAc</span>(<span style="color: #B2B2B2;">??-?</span>)<span style="color: #000000;">Hex</span>(…          344 HRG  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> P04196-345-He… P04196  <span style="color: #000000;">Hex</span>(5)<span style="color: #000000;">HexNAc</span>(4)    <span style="color: #000000;">Hex</span>(<span style="color: #B2B2B2;">??-?</span>)<span style="color: #000000;">HexNAc</span>…          345 HRG  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> P04196-344-He… P04196  <span style="color: #000000;">Hex</span>(5)<span style="color: #000000;">HexNAc</span>(4)<span style="color: #000000;">dH</span>… <span style="color: #000000;">dHex</span>(<span style="color: #B2B2B2;">??-?</span>)<span style="color: #000000;">Hex</span>(<span style="color: #B2B2B2;">?</span>…          344 HRG  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> P04196-344-He… P04196  <span style="color: #000000;">Hex</span>(4)<span style="color: #000000;">HexNAc</span>(3)    <span style="color: #000000;">Hex</span>(<span style="color: #B2B2B2;">??-?</span>)<span style="color: #000000;">HexNAc</span>…          344 HRG  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> P04196-344-He… P04196  <span style="color: #000000;">Hex</span>(4)<span style="color: #000000;">HexNAc</span>(4)<span style="color: #000000;">Ne</span>… <span style="color: #000000;">NeuAc</span>(<span style="color: #B2B2B2;">??-?</span>)<span style="color: #000000;">Hex</span>(…          344 HRG  </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3,969 more rows</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 8 more variables: log2fc &lt;dbl&gt;, AveExpr &lt;dbl&gt;, t &lt;dbl&gt;, p_val &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   p_adj &lt;dbl&gt;, b &lt;dbl&gt;, ref_group &lt;chr&gt;, test_group &lt;chr&gt;</span></span></span></code></pre></div>
@@ -396,11 +395,23 @@ its own trait values.</p>
 </h3>
 <p>As before, ORA uses hard cutoffs to identify dysregulated features.
 The difference is that enrichment is now performed separately for each
-trait. For example, for the <code>TF</code> trait, we filter
-statistically significant glycosites and then run enrichment analysis on
-the proteins with dysregulated <code>TF</code>. The same process is
-repeated for <code>GS</code> and the other traits. In
-<code>glyfun</code>, this is called glycan-centric enrichment.</p>
+trait. Use <code>by</code> to select the column defining these groups,
+for example <code>enrich_gc_ora_go(trait_dea_res, by = "trait")</code>
+or <code>enrich_gc_gsea_go(trait_dea_res, by = "trait")</code>. The same
+argument is available in
+<code>enrich_glyco(trait_dea_res, scope = "glycan_trait", by = "trait")</code>.
+With <code>by = NULL</code>, glystats results use the first available
+column in the order <code>glycan_structure</code>,
+<code>glycan_composition</code>, <code>trait</code>, <code>motif</code>.
+Data frames retain their preference for <code>trait</code>, then use the
+same order if <code>trait</code> is absent. If several candidates are
+available, a message reports the selected column and explains how to
+override it.</p>
+<p>For example, for the <code>TF</code> trait, we filter statistically
+significant glycosites and then run enrichment analysis on the proteins
+with dysregulated <code>TF</code>. The same process is repeated for
+<code>GS</code> and the other traits. In <code>glyfun</code>, this is
+called glycan-centric enrichment.</p>
 <p><code>glyfun</code> provides the following functions for
 glycan-centric ORA:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
