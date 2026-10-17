@@ -10,6 +10,130 @@ skip_if_not_installed("clusterProfiler")
   )
 }
 
+for (database in c("go", "kegg", "reactome", "wp", "do", "ncg")) {
+  test_that(paste("explicit by controls glycan-centric GSEA for", database), {
+    if (database == "reactome") {
+      skip_if_not_installed("ReactomePA")
+    }
+    if (database %in% c("do", "ncg")) {
+      skip_if_not_installed("DOSE")
+    }
+
+    captured <- NULL
+    local_mocked_bindings(
+      compareCluster = function(formula, data, ...) {
+        captured <<- list(...)
+        data
+      },
+      .package = "clusterProfiler"
+    )
+    local_mocked_bindings(
+      .prepare_orgdb = function(...) "MOCK_ORGDB",
+      .reactome_orgdb = function(...) "MOCK_ORGDB",
+      .wp_orgdb = function(...) "MOCK_ORGDB",
+      .do_orgdb = function(...) "MOCK_ORGDB",
+      .uniprot_to_entrez = function(uniprot, ...) uniprot,
+      .package = "glyfun"
+    )
+    df <- tibble::tibble(
+      protein = c("P1", "P2", "P3", "P4"),
+      site = "s1",
+      trait = "T",
+      glycan_structure = "S",
+      glycan_composition = c("C1", "C2", "C1", "C2"),
+      p_val = c(0.001, 0.001, 0.2, 0.001),
+      p_adj = c(0.001, 0.2, 0.2, 0.001),
+      log2fc = c(2, -2, 3, 0.5)
+    )
+    glystats_res <- structure(
+      list(tidy_result = df, raw_result = list()),
+      class = c("glystats_ttest_res", "glystats_res")
+    )
+    expected <- tibble::tibble(
+      gene = c("P3", "P1", "P4", "P2"),
+      score = c(3, 2, 0.5, -2),
+      trait = c("C1", "C1", "C2", "C2")
+    )
+    enrich <- get(paste0("enrich_gc_gsea_", database))
+    for (dea_res in list(df, glystats_res)) {
+      expect_equal(
+        suppressMessages(enrich(
+          dea_res,
+          by = "glycan_composition",
+          rank_by = "log2fc"
+        )),
+        expected
+      )
+      expect_null(captured$by)
+    }
+  })
+}
+
+test_that("glycan-centric GSEA preserves automatic defaults for both input types", {
+  local_mocked_bindings(
+    compareCluster = function(formula, data, ...) data,
+    .package = "clusterProfiler"
+  )
+  df <- .mock_gc_gsea_dea_df()
+  df$glycan_structure <- "S"
+  glystats_res <- structure(
+    list(tidy_result = dplyr::mutate(df, p_adj = p_val), raw_result = list()),
+    class = c("glystats_ttest_res", "glystats_res")
+  )
+  auto_df <- suppressMessages(enrich_gc_gsea_kegg(df, rank_by = "log2fc"))
+  auto_glystats <- suppressMessages(enrich_gc_gsea_kegg(
+    glystats_res,
+    rank_by = "log2fc"
+  ))
+  expect_equal(auto_df$trait, c("trait_A", "trait_A", "trait_B", "trait_B"))
+  expect_equal(auto_glystats$trait, rep("S", 4))
+  expect_equal(
+    auto_df,
+    suppressMessages(enrich_gc_gsea_kegg(df, by = "trait", rank_by = "log2fc"))
+  )
+  expect_equal(
+    auto_glystats,
+    suppressMessages(enrich_gc_gsea_kegg(
+      glystats_res,
+      by = "glycan_structure",
+      rank_by = "log2fc"
+    ))
+  )
+})
+
+test_that("glycan-centric GSEA accepts custom grouping columns without trait", {
+  local_mocked_bindings(
+    compareCluster = function(formula, data, ...) data,
+    .package = "clusterProfiler"
+  )
+  df <- .mock_gc_gsea_dea_df()
+  expected <- suppressMessages(enrich_gc_gsea_kegg(df, rank_by = "log2fc"))
+  df$data <- df$trait
+  df$trait <- NULL
+  expect_equal(
+    suppressMessages(enrich_gc_gsea_kegg(df, by = "data", rank_by = "log2fc")),
+    expected
+  )
+  by_protein <- suppressMessages(enrich_gc_gsea_kegg(
+    df,
+    by = "protein",
+    rank_by = "log2fc"
+  ))
+  expect_identical(by_protein$gene, by_protein$trait)
+  df$motif <- df$data
+  expect_equal(
+    suppressMessages(enrich_gc_gsea_kegg(df, rank_by = "log2fc")),
+    expected
+  )
+})
+
+test_that("glycan-centric GSEA rejects invalid by before enrichment", {
+  df <- .mock_gc_gsea_dea_df()
+  expect_snapshot(error = TRUE, enrich_gc_gsea_kegg(df, by = "missing"))
+  df$trait <- as.list(df$trait)
+  expect_snapshot(error = TRUE, enrich_gc_gsea_kegg(df, by = "trait"))
+})
+
 test_that("enrich_gc_gsea_go forwards args to compareCluster through all layers", {
   sentinel <- list(source = "compareCluster")
   captured <- NULL
@@ -721,9 +845,9 @@ test_that("enrich_gc_gsea_go errors on data.frame with missing columns", {
     p_val = c(0.001, 0.002),
     log2fc = c(2.5, -1.2)
   )
-  expect_error(
-    enrich_gc_gsea_go(dea_res_missing_trait),
-    "must have all expected columns"
+  expect_snapshot(
+    error = TRUE,
+    suppressMessages(enrich_gc_gsea_go(dea_res_missing_trait))
   )
 })
 

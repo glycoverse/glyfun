@@ -15,24 +15,14 @@ enrich_gc_gsea_reactome(
   max_gs_size = 500,
   exponent = 1,
   eps = 1e-10,
-  seed = FALSE
+  seed = FALSE,
+  by = NULL
 )
 }
 \arguments{
-\item{dea_res}{Differential analysis result. Can be one of:
-\itemize{
-\item Result from \code{\link[glystats:gly_limma]{glystats::gly_limma()}} (two groups), \code{\link[glystats:gly_ttest]{glystats::gly_ttest()}},
-or \code{\link[glystats:gly_wilcox]{glystats::gly_wilcox()}}, called on a \code{SummarizedExperiment} of
-"traitproteomics" type created from a \code{\link[glyexp:GlycoproteomicSE]{glyexp::GlycoproteomicSE()}}.
-\item A tibble with the following columns:
-\itemize{
-\item \code{protein}: Uniprot ID of proteins
-\item \code{trait}: A glycosylation trait (e.g. "TFc" for proportion of core-fucosylated glycans)
-\item \code{site}: The glycosylation site.
-\item \code{p_val}: p-values, preferably adjusted p-values
-\item \code{log2fc}: log2 of fold change
-}
-}}
+\item{dea_res}{A supported \code{glystats} differential analysis result, or a data
+frame with \code{protein} (UniProt IDs), \code{site}, \code{p_val}, \code{log2fc}, and a
+glycan-trait grouping column selected by \code{by}.}
 
 \item{rank_by}{Criteria for ranking proteins.
 One of the following:
@@ -74,6 +64,15 @@ Defaults to 1e-10.}
 
 \item{seed}{Logical indicating whether to set a random seed for reproducibility.
 Passed to \code{seed} of \code{\link[clusterProfiler:gseGO]{clusterProfiler::gseGO()}}. Defaults to \code{FALSE}.}
+
+\item{by}{A single column name in the tidy DEA result to use for glycan-trait
+grouping. Any one-dimensional atomic vector (including character or factor
+labels) is accepted. With \code{NULL}, \code{glystats} results use the first
+available column in this order: \code{glycan_structure}, \code{glycan_composition},
+\code{trait}, \code{motif}. Data frames retain their legacy preference for \code{trait},
+then use the same order if \code{trait} is absent. When multiple candidates are
+present, a message identifies the selected column and explains how to
+override it with \code{by}.}
 }
 \value{
 A clusterProfiler \code{compareClusterResult} object.

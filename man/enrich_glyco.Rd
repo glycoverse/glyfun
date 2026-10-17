@@ -25,7 +25,8 @@ enrich_glyco(
   exponent = 1,
   eps = 1e-10,
   seed = FALSE,
-  ...
+  ...,
+  by = NULL
 )
 }
 \arguments{
@@ -81,6 +82,10 @@ backend.}
 \item{seed}{Whether to set a random seed in GSEA.}
 
 \item{...}{Additional arguments passed to the selected enrichment backend.}
+
+\item{by}{Glycan-trait grouping column when \code{scope = "glycan_trait"}.
+See \code{\link[=enrich_gc_ora_go]{enrich_gc_ora_go()}} for accepted values and automatic inference.
+Must be \code{NULL} for \code{scope = "protein"}.}
 }
 \value{
 A clusterProfiler enrichment result. ORA returns an \code{enrichResult}

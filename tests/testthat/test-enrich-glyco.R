@@ -10,6 +10,49 @@ skip_if_not_installed("clusterProfiler")
   )
 }
 
+test_that("enrich_glyco honors by for both glycan-trait enrichment methods", {
+  local_mocked_bindings(
+    compareCluster = function(geneCluster, data = NULL, ...) {
+      if (is.null(data)) geneCluster else data
+    },
+    .package = "clusterProfiler"
+  )
+  df <- .mock_unified_dea_df()
+  df$glycan_structure <- "S"
+  df$`custom trait` <- c("A", "B", "A", "B")
+  expect_equal(
+    suppressMessages(enrich_glyco(
+      df,
+      database = "KEGG",
+      scope = "glycan_trait",
+      by = "custom trait"
+    )),
+    list(A = c("P1", "P3"))
+  )
+  expect_equal(
+    suppressMessages(enrich_glyco(
+      df,
+      method = "gsea",
+      database = "KEGG",
+      scope = "glycan_trait",
+      rank_by = "log2fc",
+      by = "custom trait"
+    )),
+    tibble::tibble(
+      gene = c("P1", "P3", "P2", "P4"),
+      score = c(2, -2, 0.5, 0.2),
+      trait = c("A", "A", "B", "B")
+    )
+  )
+})
+
+test_that("enrich_glyco rejects by for protein-centric enrichment", {
+  expect_snapshot(
+    error = TRUE,
+    enrich_glyco(.mock_unified_dea_df(), by = "trait")
+  )
+})
+
 test_that("enrich_glyco routes protein-centric ORA to the selected database", {
   captured <- NULL
   sentinel <- list(source = "enrichGO")

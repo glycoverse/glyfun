@@ -2,11 +2,11 @@
 
 #' Check argument `dea_res`
 #' @noRd
-.check_dea_res <- function(dea_res) {
+.check_dea_res <- function(dea_res, ...) {
   UseMethod(".check_dea_res")
 }
 
-.check_dea_res.glystats_res <- function(dea_res) {
+.check_dea_res.glystats_res <- function(dea_res, ...) {
   # Check type
   basic_class <- class(dea_res)[[1]]
   supported_classes <- c(
@@ -53,8 +53,8 @@
   }
 }
 
-.check_dea_res.data.frame <- function(dea_res) {
-  expected_cols <- c("protein", "site", "trait", "p_val", "log2fc")
+.check_dea_res.data.frame <- function(dea_res, trait_col = "trait", ...) {
+  expected_cols <- c("protein", "site", trait_col, "p_val", "log2fc")
   missing_cols <- setdiff(expected_cols, colnames(dea_res))
   if (length(missing_cols) > 0) {
     cli::cli_abort(c(
@@ -89,28 +89,54 @@
   }
 }
 
-#' Infer the glycan trait column from a tidy DEA result
-#' @param tidy_dea_res A tidy DEA result.
-#' @returns The column name representing glycan traits.
-#' @noRd
-.infer_gc_trait_col <- function(tidy_dea_res) {
-  by <- dplyr::case_when(
-    "glycan_structure" %in% colnames(tidy_dea_res) ~ "glycan_structure",
-    "glycan_composition" %in% colnames(tidy_dea_res) ~ "glycan_composition",
-    "trait" %in% colnames(tidy_dea_res) ~ "trait",
-    "motif" %in% colnames(tidy_dea_res) ~ "motif"
-  )
-  if (is.na(by)) {
+.infer_gc_trait_col <- function(tidy_dea_res, by = NULL, prefer_trait = FALSE) {
+  if (is.null(by)) {
     required_cols <- c(
       "glycan_structure",
       "glycan_composition",
       "trait",
       "motif"
     )
+    candidates <- intersect(required_cols, colnames(tidy_dea_res))
+    if (length(candidates) == 0) {
+      cli::cli_abort(c(
+        "Cannot determine glycan traits.",
+        "i" = "At least one of these columns is needed: {.field {required_cols}}",
+        "i" = "Did you accidentally set {.arg add_info} to `FALSE` when performing DEA with {.pkg glystats}?"
+      ))
+    }
+    by <- if (prefer_trait && "trait" %in% candidates) {
+      "trait"
+    } else {
+      candidates[[1]]
+    }
+    if (length(candidates) > 1) {
+      cli::cli_inform(c(
+        "i" = "Multiple glycan trait columns found: {.field {candidates}}.",
+        "i" = "Using {.field {by}}. Set {.code by = \"<column>\"} to select another column."
+      ))
+    }
+  } else if (
+    !is.character(by) || length(by) != 1L || is.na(by) || !nzchar(by)
+  ) {
+    cli::cli_abort("{.arg by} must be NULL or a single, non-empty column name.")
+  }
+
+  if (!by %in% colnames(tidy_dea_res)) {
+    cli::cli_abort(
+      "The column {.val {by}} selected by {.arg by} is missing from {.arg dea_res}."
+    )
+  }
+  if (sum(colnames(tidy_dea_res) == by) > 1L) {
+    cli::cli_abort(
+      "The {.arg by} column {.field {by}} must have a unique name."
+    )
+  }
+  trait <- tidy_dea_res[[by]]
+  if (!is.atomic(trait) || !is.null(dim(trait))) {
     cli::cli_abort(c(
-      "Cannot determine glycan traits.",
-      "i" = "At least one of these columns is needed: {.field {required_cols}}",
-      "i" = "Did you accidentally set {.arg add_info} to `FALSE` when performing DEA with {.pkg glystats}?"
+      "The {.arg by} column {.field {by}} cannot be used to group glycan traits.",
+      "i" = "Use a one-dimensional atomic vector, such as character or factor labels."
     ))
   }
   by

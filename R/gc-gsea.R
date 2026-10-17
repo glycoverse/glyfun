@@ -48,6 +48,7 @@
 #' go_res <- enrich_gc_gsea_go(dea_res)  # or other `enrich_gc_gsea_xxx()` functions
 #' ```
 #'
+#' @template gc-trait-params
 #' @inheritParams enrich_gsea_go
 #' @return A clusterProfiler `compareClusterResult` object.
 #'   It can be readily converted to a tibble with [tibble::as_tibble()],
@@ -67,11 +68,13 @@ enrich_gc_gsea_go <- function(
   max_gs_size = 500,
   exponent = 1,
   eps = 1e-10,
-  seed = FALSE
+  seed = FALSE,
+  by = NULL
 ) {
   orgdb <- .prepare_orgdb(orgdb)
   .gc_gsea(
     dea_res,
+    by = by,
     enrich_fun = clusterProfiler::gseGO,
     rank_by = rank_by,
     aggr = aggr,
@@ -99,6 +102,7 @@ enrich_gc_gsea_go <- function(
 #' @inheritSection enrich_gc_gsea_go How it ranks proteins
 #' @inheritSection enrich_gc_gsea_go Common usage pattern
 #'
+#' @template gc-trait-params
 #' @inheritParams enrich_gsea_kegg
 #' @inherit enrich_gc_gsea_go return
 #'
@@ -115,10 +119,12 @@ enrich_gc_gsea_kegg <- function(
   max_gs_size = 500,
   exponent = 1,
   eps = 1e-10,
-  seed = FALSE
+  seed = FALSE,
+  by = NULL
 ) {
   .gc_gsea(
     dea_res,
+    by = by,
     enrich_fun = clusterProfiler::gseKEGG,
     rank_by = rank_by,
     aggr = aggr,
@@ -145,6 +151,7 @@ enrich_gc_gsea_kegg <- function(
 #' @inheritSection enrich_gc_gsea_go How it ranks proteins
 #' @inheritSection enrich_gc_gsea_go Common usage pattern
 #'
+#' @template gc-trait-params
 #' @inheritParams enrich_gsea_reactome
 #' @inherit enrich_gc_gsea_go return
 #'
@@ -161,12 +168,14 @@ enrich_gc_gsea_reactome <- function(
   max_gs_size = 500,
   exponent = 1,
   eps = 1e-10,
-  seed = FALSE
+  seed = FALSE,
+  by = NULL
 ) {
   rlang::check_installed("ReactomePA")
   orgdb <- .reactome_orgdb(organism)
   .gc_gsea(
     dea_res,
+    by = by,
     enrich_fun = ReactomePA::gsePathway,
     rank_by = rank_by,
     aggr = aggr,
@@ -194,6 +203,7 @@ enrich_gc_gsea_reactome <- function(
 #' @inheritSection enrich_gc_gsea_go How it ranks proteins
 #' @inheritSection enrich_gc_gsea_go Common usage pattern
 #'
+#' @template gc-trait-params
 #' @inheritParams enrich_gsea_wp
 #' @inherit enrich_gc_gsea_go return
 #'
@@ -210,11 +220,13 @@ enrich_gc_gsea_wp <- function(
   max_gs_size = 500,
   exponent = 1,
   eps = 1e-10,
-  seed = FALSE
+  seed = FALSE,
+  by = NULL
 ) {
   orgdb <- .wp_orgdb(organism)
   .gc_gsea(
     dea_res,
+    by = by,
     enrich_fun = clusterProfiler::gseWP,
     rank_by = rank_by,
     aggr = aggr,
@@ -242,6 +254,7 @@ enrich_gc_gsea_wp <- function(
 #' @inheritSection enrich_gc_gsea_go How it ranks proteins
 #' @inheritSection enrich_gc_gsea_go Common usage pattern
 #'
+#' @template gc-trait-params
 #' @inheritParams enrich_gsea_do
 #' @inherit enrich_gc_gsea_go return
 #'
@@ -259,12 +272,14 @@ enrich_gc_gsea_do <- function(
   max_gs_size = 500,
   exponent = 1,
   eps = 1e-10,
-  seed = FALSE
+  seed = FALSE,
+  by = NULL
 ) {
   rlang::check_installed("DOSE")
   orgdb <- .do_orgdb(organism)
   .gc_gsea(
     dea_res,
+    by = by,
     enrich_fun = DOSE::gseDO,
     rank_by = rank_by,
     aggr = aggr,
@@ -293,6 +308,7 @@ enrich_gc_gsea_do <- function(
 #' @inheritSection enrich_gc_gsea_go How it ranks proteins
 #' @inheritSection enrich_gc_gsea_go Common usage pattern
 #'
+#' @template gc-trait-params
 #' @inheritParams enrich_gsea_ncg
 #' @inherit enrich_gc_gsea_go return
 #'
@@ -308,12 +324,14 @@ enrich_gc_gsea_ncg <- function(
   max_gs_size = 500,
   exponent = 1,
   eps = 1e-10,
-  seed = FALSE
+  seed = FALSE,
+  by = NULL
 ) {
   rlang::check_installed("DOSE")
   orgdb <- .prepare_orgdb("org.Hs.eg.db")
   .gc_gsea(
     dea_res,
+    by = by,
     enrich_fun = DOSE::gseNCG,
     rank_by = rank_by,
     aggr = aggr,
@@ -343,6 +361,7 @@ enrich_gc_gsea_ncg <- function(
   rank_by,
   aggr,
   bitr_orgdb = NULL,
+  by = NULL,
   ...
 ) {
   UseMethod(".gc_gsea")
@@ -354,12 +373,13 @@ enrich_gc_gsea_ncg <- function(
   rank_by,
   aggr,
   bitr_orgdb = NULL,
+  by = NULL,
   ...
 ) {
   pro_df_fun <- function(dea_res) {
     .prepare_gc_gsea_df(
       dea_res,
-      by = "trait",
+      by = .infer_gc_trait_col(dea_res, by = by, prefer_trait = TRUE),
       rank_by = rank_by,
       aggr = aggr
     )
@@ -380,11 +400,12 @@ enrich_gc_gsea_ncg <- function(
   rank_by,
   aggr,
   bitr_orgdb = NULL,
+  by = NULL,
   ...
 ) {
   pro_df_fun <- function(dea_res) {
     tidy_dea_res <- glystats::get_tidy_result(dea_res)
-    by <- .infer_gc_trait_col(tidy_dea_res)
+    by <- .infer_gc_trait_col(tidy_dea_res, by = by)
     .prepare_gc_gsea_df(
       tidy_dea_res,
       by = by,
@@ -410,15 +431,11 @@ enrich_gc_gsea_ncg <- function(
 #' @returns A tibble with `gene`, `score`, and `trait` columns.
 #' @noRd
 .prepare_gc_gsea_df <- function(df, by, rank_by, aggr) {
-  trait_dfs <- df |>
-    dplyr::summarise(
-      data = list(dplyr::pick(dplyr::everything())),
-      .by = tidyselect::all_of(by)
-    ) |>
-    dplyr::rename(trait = tidyselect::all_of(by))
+  trait_dfs <- tibble::tibble(trait = df[[by]], row = seq_len(nrow(df))) |>
+    dplyr::summarise(rows = list(.data$row), .by = "trait")
 
-  purrr::map2_dfr(trait_dfs$trait, trait_dfs$data, function(trait, trait_df) {
-    pro_list <- .prepare_pro_list(trait_df, rank_by, aggr)
+  purrr::map2_dfr(trait_dfs$trait, trait_dfs$rows, function(trait, rows) {
+    pro_list <- .prepare_pro_list(df[rows, , drop = FALSE], rank_by, aggr)
     tibble::tibble(
       gene = names(pro_list),
       score = unname(pro_list),
@@ -453,7 +470,7 @@ enrich_gc_gsea_ncg <- function(
       "{.arg bitr_orgdb} must be provided when {.arg uniprot_to_entrez} is TRUE."
     )
   }
-  .check_dea_res(dea_res)
+  .check_dea_res(dea_res, trait_col = NULL)
 
   pro_df <- pro_df_fun(dea_res)
   if (uniprot_to_entrez) {
