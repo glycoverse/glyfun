@@ -600,3 +600,19 @@ test_that(".uniprot_to_entrez preserves input length and order for duplicated Un
 
   expect_equal(res, c("E1", "E1", "E2"))
 })
+
+
+test_that(".gsea_impl handles NULL returned by an enrichment backend", {
+  result <- expect_message(
+    glyfun:::.gsea_impl(
+      dea_res = .mock_gsea_dea_df(),
+      enrich_fun = function(...) NULL,
+      pro_fun = function(dea_res) {
+        stats::setNames(dea_res$log2fc, dea_res$protein)
+      }
+    ),
+    "No terms were enriched"
+  )
+
+  expect_null(result)
+})

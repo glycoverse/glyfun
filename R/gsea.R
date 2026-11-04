@@ -474,7 +474,7 @@ enrich_gsea_ncg <- function(
       )
     )
   )
-  if (nrow(res) == 0) {
+  if (is.null(res) || nrow(res) == 0) {
     cli::cli_alert_warning("No terms were enriched. `NULL` will be returned.")
     return(NULL)
   }
