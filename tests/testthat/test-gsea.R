@@ -603,8 +603,8 @@ test_that(".uniprot_to_entrez preserves input length and order for duplicated Un
 
 
 test_that(".gsea_impl handles NULL returned by an enrichment backend", {
-  result <- expect_message(
-    glyfun:::.gsea_impl(
+  expect_message(
+    result <- glyfun:::.gsea_impl(
       dea_res = .mock_gsea_dea_df(),
       enrich_fun = function(...) NULL,
       pro_fun = function(dea_res) {
