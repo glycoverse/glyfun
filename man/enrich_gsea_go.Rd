@@ -31,7 +31,9 @@ or \code{\link[glystats:gly_wilcox]{glystats::gly_wilcox()}}, called on a \code{
 \item \code{trait}: A glycosylation trait (e.g. "TFc" for proportion of core-fucosylated glycans)
 \item \code{site}: The glycosylation site.
 \item \code{p_val}: p-values, preferably adjusted p-values
-\item \code{log2fc}: log2 of fold change
+\item \code{log2fc}: genuine log2 fold change; optional only for GSEA
+with \code{rank_by = "log10p"} (significance-only, no direction).
+Native contrasts or transformed-coordinate effects are not log2FC.
 }
 }}
 
@@ -40,7 +42,7 @@ One of the following:
 \itemize{
 \item "log2fc": log2 fold change with signs
 \item "abs_log2fc": absolute log2 fold change
-\item "log10p": negative log10 p-value
+\item "log10p": negative log10 p-value (significance only, not effect direction)
 \item "signed_log10p" (default): log10 p-value with signs of log2 fold change
 \item "log2fc_log10p": log2 fold change multiplied by negative log10 p-value
 }}
@@ -93,6 +95,17 @@ This function ranks proteins based on the median absolute log2 fold change acros
 This reflects the overall glycosylation dysregulation degree of each glycoprotein.
 You can use \code{rank_by} to specify other ranking criteria, such as p-values or signed log2 fold changes.
 You can also use \code{aggr} to specify how to aggregate multiple scores for the same protein across different traits and sites.
+}
+
+\section{Effect-scale requirements}{
+All ranking methods except \code{log10p} require genuine finite \code{log2fc}.
+Logx results and unlogged raw-scale limma contrasts do not provide this
+quantity; native estimates are never substituted. With \code{rank_by = "log10p"},
+ranking uses \code{p_adj} when present, otherwise \code{p_val}, and does not use
+effect size or direction. Its enrichment sign describes enrichment toward
+greater or lesser significance, not up- or down-regulation.
+Non-finite scores (including infinite scores from zero p-values) are
+excluded with a warning; no finite scores is an error.
 }
 
 \section{Common usage pattern}{

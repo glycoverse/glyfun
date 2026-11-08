@@ -29,7 +29,7 @@ One of the following:
 \itemize{
 \item "log2fc": log2 fold change with signs
 \item "abs_log2fc": absolute log2 fold change
-\item "log10p": negative log10 p-value
+\item "log10p": negative log10 p-value (significance only, not effect direction)
 \item "signed_log10p" (default): log10 p-value with signs of log2 fold change
 \item "log2fc_log10p": log2 fold change multiplied by negative log10 p-value
 }}

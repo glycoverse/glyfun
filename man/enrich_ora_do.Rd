@@ -30,7 +30,9 @@ or \code{\link[glystats:gly_wilcox]{glystats::gly_wilcox()}}, called on a \code{
 \item \code{trait}: A glycosylation trait (e.g. "TFc" for proportion of core-fucosylated glycans)
 \item \code{site}: The glycosylation site.
 \item \code{p_val}: p-values, preferably adjusted p-values
-\item \code{log2fc}: log2 of fold change
+\item \code{log2fc}: genuine log2 fold change; optional only for GSEA
+with \code{rank_by = "log10p"} (significance-only, no direction).
+Native contrasts or transformed-coordinate effects are not log2FC.
 }
 }}
 

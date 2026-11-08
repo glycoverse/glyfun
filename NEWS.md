@@ -1,5 +1,7 @@
 # glyfun (development version)
 
+* Enrichment validates the quantities actually used: ORA and effect-dependent GSEA reject unavailable log2FC rather than silently producing empty input. Significance-only GSEA accepts results without log2FC; invalid or excluded scores are diagnosed.
+
 * Protein-centric GSEA functions now return `NULL` with a diagnostic message, rather than failing, when an enrichment backend returns no result.
 
 * Glycan-centric ORA and GSEA functions gain `by` to select the glycan-trait grouping column, including through `enrich_glyco(scope = "glycan_trait")`. Automatic selection preserves existing defaults and reports the selected column when multiple candidates are present. (#3)

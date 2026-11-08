@@ -30,7 +30,9 @@ or \code{\link[glystats:gly_wilcox]{glystats::gly_wilcox()}}, called on a \code{
 \item \code{trait}: A glycosylation trait (e.g. "TFc" for proportion of core-fucosylated glycans)
 \item \code{site}: The glycosylation site.
 \item \code{p_val}: p-values, preferably adjusted p-values
-\item \code{log2fc}: log2 of fold change
+\item \code{log2fc}: genuine log2 fold change; optional only for GSEA
+with \code{rank_by = "log10p"} (significance-only, no direction).
+Native contrasts or transformed-coordinate effects are not log2FC.
 }
 }}
 
@@ -79,6 +81,13 @@ or visualized with \code{clusterProfiler} functions like \code{\link[clusterProf
 \description{
 Performs Gene Ontology (GO) Over-Representation Analysis (ORA)
 on glycoproteins with dysregulated glycosylation.
+}
+\details{
+ORA requires genuine finite \code{log2fc} values for its fold-change cutoff.
+Logx results and unlogged raw-scale limma contrasts cannot be used.
+Native model estimates are not abundance fold changes. Non-finite values
+are excluded with a warning; wholly unavailable fold changes are an error.
+When no proteins pass valid cutoffs, the result is \code{NULL} with a warning.
 }
 \section{Common usage pattern}{
 A common pattern of using this function is:

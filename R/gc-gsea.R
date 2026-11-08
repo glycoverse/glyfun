@@ -470,7 +470,7 @@ enrich_gc_gsea_ncg <- function(
       "{.arg bitr_orgdb} must be provided when {.arg uniprot_to_entrez} is TRUE."
     )
   }
-  .check_dea_res(dea_res, trait_col = NULL)
+  .check_dea_res(dea_res, trait_col = NULL, require_log2fc = FALSE)
 
   pro_df <- pro_df_fun(dea_res)
   if (uniprot_to_entrez) {
