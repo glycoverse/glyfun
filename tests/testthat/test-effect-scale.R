@@ -21,6 +21,10 @@ test_that("invalid and empty enrichment quantities are explicit", {
                    p_val = c(.01, .1))
   expect_warning(.check_ora_quantities(df), "non-finite")
   expect_warning(.prepare_pro_list(df, "log2fc", "median"), "non-finite")
+  df$log2fc <- c(Inf, 2)
+  expect_warning(expect_equal(
+    .prepare_pro_list(df, "signed_log10p", "median"), c(P2 = 1)),
+    "non-finite ranking")
   df$log2fc[] <- NA_real_
   expect_error(.check_ora_quantities(df), "no finite")
   df$p_val <- c(-.1, .1)

@@ -430,6 +430,7 @@ enrich_gsea_ncg <- function(
   }
   if (rank_by != "log10p") {
     .check_enrichment_quantity(df, "log2fc", "GSEA", warn = FALSE)
+    df$log2fc[!is.finite(df$log2fc)] <- NA_real_
   }
   if (!rank_by %in% c("log2fc", "abs_log2fc")) {
     .check_enrichment_quantity(df, p_col, "GSEA", probability = TRUE, warn = FALSE)
