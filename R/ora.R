@@ -17,6 +17,13 @@
 #' go_res <- enrich_gc_ora_go(dea_res)  # or other glyfun functions
 #' ```
 #'
+#' @details
+#' ORA requires genuine finite `log2fc` values for its fold-change cutoff.
+#' Logx results and unlogged raw-scale limma contrasts cannot be used.
+#' Native model estimates are not abundance fold changes. Non-finite values
+#' are excluded with a warning; wholly unavailable fold changes are an error.
+#' When no proteins pass valid cutoffs, the result is `NULL` with a warning.
+#'
 #' @param dea_res Differential analysis result. Can be one of:
 #'   - Result from [glystats::gly_limma()] (two groups), [glystats::gly_ttest()],
 #'     or [glystats::gly_wilcox()], called on a `SummarizedExperiment` of
@@ -26,7 +33,9 @@
 #'     - `trait`: A glycosylation trait (e.g. "TFc" for proportion of core-fucosylated glycans)
 #'     - `site`: The glycosylation site.
 #'     - `p_val`: p-values, preferably adjusted p-values
-#'     - `log2fc`: log2 of fold change
+#'     - `log2fc`: genuine log2 fold change; optional only for GSEA
+#'       with `rank_by = "log10p"` (significance-only, no direction).
+#'       Native contrasts or transformed-coordinate effects are not log2FC.
 #' @param dea_p_cutoff P-value cutoff for statistical significance. Defaults to 0.05.
 #'   For `glystats` result input, adjusted p-values are used.
 #' @param dea_log2fc_cutoff Log2 fold change cutoff statistical significance.
@@ -357,6 +366,8 @@ enrich_ora_ncg <- function(
   pro_fun <- function(dea_res) {
     dea_res |>
       dplyr::filter(
+        is.finite(.data$log2fc),
+        is.finite(.data$p_val),
         .data$p_val < dea_p_cutoff,
         .data$log2fc < dea_log2fc_cutoff[[1]] |
           .data$log2fc > dea_log2fc_cutoff[[2]]
@@ -387,6 +398,8 @@ enrich_ora_ncg <- function(
     dea_res |>
       glystats::get_tidy_result() |>
       dplyr::filter(
+        is.finite(.data$log2fc),
+        is.finite(.data$p_adj),
         .data$p_adj < dea_p_cutoff,
         .data$log2fc < dea_log2fc_cutoff[[1]] |
           .data$log2fc > dea_log2fc_cutoff[[2]]
@@ -435,11 +448,18 @@ enrich_ora_ncg <- function(
     )
   }
   .check_dea_res(dea_res)
+  .check_ora_quantities(dea_res)
   .check_p_cutoff_arg(dea_p_cutoff)
   .check_log2fc_cutoff_arg(dea_log2fc_cutoff)
 
   # Performing enrichment
   proteins <- pro_fun(dea_res)
+  if (!length(proteins)) {
+    cli::cli_warn(
+      "No proteins pass the ORA significance and log2FC cutoffs; returning NULL."
+    )
+    return(NULL)
+  }
   if (uniprot_to_entrez) {
     proteins <- .uniprot_to_entrez(proteins, bitr_orgdb)
     if (!is.null(universe)) {

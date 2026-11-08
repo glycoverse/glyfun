@@ -13,6 +13,17 @@
 #' You can use `rank_by` to specify other ranking criteria, such as p-values or signed log2 fold changes.
 #' You can also use `aggr` to specify how to aggregate multiple scores for the same protein across different traits and sites.
 #'
+#' # Effect-scale requirements
+#'
+#' All ranking methods except `log10p` require genuine finite `log2fc`.
+#' Logx results and unlogged raw-scale limma contrasts do not provide this
+#' quantity; native estimates are never substituted. With `rank_by = "log10p"`,
+#' ranking uses `p_adj` when present, otherwise `p_val`, and does not use
+#' effect size or direction. Its enrichment sign describes enrichment toward
+#' greater or lesser significance, not up- or down-regulation.
+#' Non-finite scores (including infinite scores from zero p-values) are
+#' excluded with a warning; no finite scores is an error.
+#'
 #' # Common usage pattern
 #'
 #' A common pattern of using this function is:
@@ -30,7 +41,7 @@
 #'   One of the following:
 #'   - "log2fc": log2 fold change with signs
 #'   - "abs_log2fc": absolute log2 fold change
-#'   - "log10p": negative log10 p-value
+#'   - "log10p": negative log10 p-value (significance only, not effect direction)
 #'   - "signed_log10p" (default): log10 p-value with signs of log2 fold change
 #'   - "log2fc_log10p": log2 fold change multiplied by negative log10 p-value
 #' @param aggr Aggregation method for combining multiple scores across different traits and sites for the same protein.
@@ -391,9 +402,18 @@ enrich_gsea_ncg <- function(
 #' and returns a named vector with protein names as names and median scores as values.
 #' @noRd
 .prepare_pro_list <- function(df, rank_by, aggr) {
-  p_col <- if ("p_adj" %in% colnames(df)) "p_adj" else "p_val"
   scores <- .calcu_rank_scores(df, rank_by)
   aggr_fun <- .gsea_aggr_fun(aggr)
+  if (!any(is.finite(scores))) {
+    cli::cli_abort(
+      "GSEA has no finite ranking scores after combining the required fields."
+    )
+  }
+  if (any(!is.finite(scores))) {
+    cli::cli_warn(
+      "GSEA excludes {sum(!is.finite(scores))} row{?s} with non-finite ranking scores (including zero p-values)."
+    )
+  }
   df |>
     dplyr::mutate(score = scores) |>
     dplyr::filter(is.finite(.data$score)) |>
@@ -408,6 +428,25 @@ enrich_gsea_ncg <- function(
 
 .calcu_rank_scores <- function(df, rank_by) {
   p_col <- if ("p_adj" %in% colnames(df)) "p_adj" else "p_val"
+  if (
+    !rank_by %in%
+      c("log2fc", "abs_log2fc", "log10p", "signed_log10p", "log2fc_log10p")
+  ) {
+    cli::cli_abort("Invalid rank_by method: {.val {rank_by}}")
+  }
+  if (rank_by != "log10p") {
+    .check_enrichment_quantity(df, "log2fc", "GSEA", warn = FALSE)
+    df$log2fc[!is.finite(df$log2fc)] <- NA_real_
+  }
+  if (!rank_by %in% c("log2fc", "abs_log2fc")) {
+    .check_enrichment_quantity(
+      df,
+      p_col,
+      "GSEA",
+      probability = TRUE,
+      warn = FALSE
+    )
+  }
   switch(
     rank_by,
     log2fc = df$log2fc,
@@ -444,7 +483,7 @@ enrich_gsea_ncg <- function(
       "{.arg bitr_orgdb} must be provided when {.arg uniprot_to_entrez} is TRUE."
     )
   }
-  .check_dea_res(dea_res)
+  .check_dea_res(dea_res, require_log2fc = FALSE)
 
   # Performing enrichment
   proteins <- pro_fun(dea_res)

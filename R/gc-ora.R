@@ -370,6 +370,8 @@ enrich_gc_ora_ncg <- function(
     by <- .infer_gc_trait_col(dea_res, by = by, prefer_trait = TRUE)
     filtered_res <- dea_res |>
       dplyr::filter(
+        is.finite(.data$log2fc),
+        is.finite(.data$p_val),
         .data$p_val < dea_p_cutoff,
         .data$log2fc < dea_log2fc_cutoff[[1]] |
           .data$log2fc > dea_log2fc_cutoff[[2]]
@@ -410,6 +412,8 @@ enrich_gc_ora_ncg <- function(
 
     filtered_res <- tidy_dea_res |>
       dplyr::filter(
+        is.finite(.data$log2fc),
+        is.finite(.data$p_adj),
         .data$p_adj < dea_p_cutoff,
         .data$log2fc < dea_log2fc_cutoff[[1]] |
           .data$log2fc > dea_log2fc_cutoff[[2]]
@@ -465,11 +469,18 @@ enrich_gc_ora_ncg <- function(
     )
   }
   .check_dea_res(dea_res, trait_col = NULL)
+  .check_ora_quantities(dea_res)
   .check_p_cutoff_arg(dea_p_cutoff)
   .check_log2fc_cutoff_arg(dea_log2fc_cutoff)
 
   # Performing enrichment
   protein_list <- pro_list_fun(dea_res)
+  if (!length(unlist(protein_list, use.names = FALSE))) {
+    cli::cli_warn(
+      "No proteins pass the ORA significance and log2FC cutoffs; returning NULL."
+    )
+    return(NULL)
+  }
 
   # Convert Uniprot IDs to Entrez IDs if needed (for ReactomePA)
   if (uniprot_to_entrez) {

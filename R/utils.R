@@ -34,7 +34,7 @@
   }
 
   # Check columns
-  if (!"protein" %in% colnames(dea_res$tidy_res)) {
+  if (!"protein" %in% colnames(glystats::get_tidy_result(dea_res))) {
     cli::cli_abort(c(
       "A {.field protein} column must be in {.arg dea_res}",
       "i" = "Did you mistakenly set {.arg add_info} to `FALSE` when calling the {.pkg glystats} function?"
@@ -53,8 +53,19 @@
   }
 }
 
-.check_dea_res.data.frame <- function(dea_res, trait_col = "trait", ...) {
-  expected_cols <- c("protein", "site", trait_col, "p_val", "log2fc")
+.check_dea_res.data.frame <- function(
+  dea_res,
+  trait_col = "trait",
+  require_log2fc = TRUE,
+  ...
+) {
+  expected_cols <- c(
+    "protein",
+    "site",
+    trait_col,
+    "p_val",
+    if (require_log2fc) "log2fc"
+  )
   missing_cols <- setdiff(expected_cols, colnames(dea_res))
   if (length(missing_cols) > 0) {
     cli::cli_abort(c(
@@ -335,4 +346,52 @@
       "{.arg min_gs_size} must be less than or equal to {.arg max_gs_size}."
     )
   }
+}
+
+# Validate only the quantities consumed by the enrichment procedure.
+# Never reinterpret model estimates as abundance fold changes.
+.enrichment_data <- function(x) {
+  if (inherits(x, "glystats_res")) glystats::get_tidy_result(x) else x
+}
+
+.check_enrichment_quantity <- function(
+  df,
+  column,
+  context,
+  probability = FALSE,
+  warn = TRUE
+) {
+  values <- df[[column]]
+  if (is.null(values) || !is.numeric(values) || !is.null(dim(values))) {
+    cli::cli_abort("{context} requires a numeric {.field {column}} column.")
+  }
+  if (probability && any(is.finite(values) & (values < 0 | values > 1))) {
+    cli::cli_abort(
+      "{.field {column}} must contain probabilities between 0 and 1."
+    )
+  }
+  usable <- is.finite(values)
+  if (!any(usable)) {
+    cli::cli_abort(c(
+      "{context} has no finite {.field {column}} values.",
+      "i" = if (column == "log2fc") {
+        'Logx and unlogged raw-scale limma results have no interpretable log2FC. Use rank_by = "log10p" for significance-only GSEA, or supply genuine abundance fold changes.'
+      } else {
+        "Provide valid p-values before enrichment."
+      }
+    ))
+  }
+  if (warn && any(!usable)) {
+    cli::cli_warn(
+      "{context}: {sum(!usable)} row{?s} with non-finite {.field {column}} will be excluded."
+    )
+  }
+  invisible(usable)
+}
+
+.check_ora_quantities <- function(x) {
+  df <- .enrichment_data(x)
+  .check_enrichment_quantity(df, "log2fc", "ORA")
+  p_col <- if (inherits(x, "glystats_res")) "p_adj" else "p_val"
+  .check_enrichment_quantity(df, p_col, "ORA", probability = TRUE)
 }
