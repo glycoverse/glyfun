@@ -405,10 +405,14 @@ enrich_gsea_ncg <- function(
   scores <- .calcu_rank_scores(df, rank_by)
   aggr_fun <- .gsea_aggr_fun(aggr)
   if (!any(is.finite(scores))) {
-    cli::cli_abort("GSEA has no finite ranking scores after combining the required fields.")
+    cli::cli_abort(
+      "GSEA has no finite ranking scores after combining the required fields."
+    )
   }
   if (any(!is.finite(scores))) {
-    cli::cli_warn("GSEA excludes {sum(!is.finite(scores))} row{?s} with non-finite ranking scores (including zero p-values).")
+    cli::cli_warn(
+      "GSEA excludes {sum(!is.finite(scores))} row{?s} with non-finite ranking scores (including zero p-values)."
+    )
   }
   df |>
     dplyr::mutate(score = scores) |>
@@ -424,8 +428,10 @@ enrich_gsea_ncg <- function(
 
 .calcu_rank_scores <- function(df, rank_by) {
   p_col <- if ("p_adj" %in% colnames(df)) "p_adj" else "p_val"
-  if (!rank_by %in% c("log2fc", "abs_log2fc", "log10p",
-                       "signed_log10p", "log2fc_log10p")) {
+  if (
+    !rank_by %in%
+      c("log2fc", "abs_log2fc", "log10p", "signed_log10p", "log2fc_log10p")
+  ) {
     cli::cli_abort("Invalid rank_by method: {.val {rank_by}}")
   }
   if (rank_by != "log10p") {
@@ -433,7 +439,13 @@ enrich_gsea_ncg <- function(
     df$log2fc[!is.finite(df$log2fc)] <- NA_real_
   }
   if (!rank_by %in% c("log2fc", "abs_log2fc")) {
-    .check_enrichment_quantity(df, p_col, "GSEA", probability = TRUE, warn = FALSE)
+    .check_enrichment_quantity(
+      df,
+      p_col,
+      "GSEA",
+      probability = TRUE,
+      warn = FALSE
+    )
   }
   switch(
     rank_by,

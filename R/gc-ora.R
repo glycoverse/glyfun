@@ -476,7 +476,9 @@ enrich_gc_ora_ncg <- function(
   # Performing enrichment
   protein_list <- pro_list_fun(dea_res)
   if (!length(unlist(protein_list, use.names = FALSE))) {
-    cli::cli_warn("No proteins pass the ORA significance and log2FC cutoffs; returning NULL.")
+    cli::cli_warn(
+      "No proteins pass the ORA significance and log2FC cutoffs; returning NULL."
+    )
     return(NULL)
   }
 

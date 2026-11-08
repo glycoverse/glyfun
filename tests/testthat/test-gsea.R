@@ -419,11 +419,14 @@ test_that(".prepare_pro_list drops non-finite ranking scores before aggregation"
     log2fc = c(1, 2, -1, -3)
   )
 
-  expect_warning(res <- glyfun:::.prepare_pro_list(
-    df,
-    rank_by = "signed_log10p",
-    aggr = "max"
-  ), "non-finite ranking scores")
+  expect_warning(
+    res <- glyfun:::.prepare_pro_list(
+      df,
+      rank_by = "signed_log10p",
+      aggr = "max"
+    ),
+    "non-finite ranking scores"
+  )
 
   expect_equal(unname(res), c(2, -3))
   expect_equal(names(res), c("P1", "P3"))

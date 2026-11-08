@@ -53,10 +53,19 @@
   }
 }
 
-.check_dea_res.data.frame <- function(dea_res, trait_col = "trait",
-                                      require_log2fc = TRUE, ...) {
-  expected_cols <- c("protein", "site", trait_col, "p_val",
-                     if (require_log2fc) "log2fc")
+.check_dea_res.data.frame <- function(
+  dea_res,
+  trait_col = "trait",
+  require_log2fc = TRUE,
+  ...
+) {
+  expected_cols <- c(
+    "protein",
+    "site",
+    trait_col,
+    "p_val",
+    if (require_log2fc) "log2fc"
+  )
   missing_cols <- setdiff(expected_cols, colnames(dea_res))
   if (length(missing_cols) > 0) {
     cli::cli_abort(c(
@@ -345,25 +354,37 @@
   if (inherits(x, "glystats_res")) glystats::get_tidy_result(x) else x
 }
 
-.check_enrichment_quantity <- function(df, column, context, probability = FALSE, warn = TRUE) {
+.check_enrichment_quantity <- function(
+  df,
+  column,
+  context,
+  probability = FALSE,
+  warn = TRUE
+) {
   values <- df[[column]]
   if (is.null(values) || !is.numeric(values) || !is.null(dim(values))) {
     cli::cli_abort("{context} requires a numeric {.field {column}} column.")
   }
   if (probability && any(is.finite(values) & (values < 0 | values > 1))) {
-    cli::cli_abort("{.field {column}} must contain probabilities between 0 and 1.")
+    cli::cli_abort(
+      "{.field {column}} must contain probabilities between 0 and 1."
+    )
   }
   usable <- is.finite(values)
   if (!any(usable)) {
     cli::cli_abort(c(
       "{context} has no finite {.field {column}} values.",
-      "i" = if (column == "log2fc")
+      "i" = if (column == "log2fc") {
         'Logx and unlogged raw-scale limma results have no interpretable log2FC. Use rank_by = "log10p" for significance-only GSEA, or supply genuine abundance fold changes.'
-      else "Provide valid p-values before enrichment."
+      } else {
+        "Provide valid p-values before enrichment."
+      }
     ))
   }
   if (warn && any(!usable)) {
-    cli::cli_warn("{context}: {sum(!usable)} row{?s} with non-finite {.field {column}} will be excluded.")
+    cli::cli_warn(
+      "{context}: {sum(!usable)} row{?s} with non-finite {.field {column}} will be excluded."
+    )
   }
   invisible(usable)
 }
