@@ -67,7 +67,9 @@ or <code><a href="https://glycoverse.github.io/glystats/reference/gly_wilcox.htm
 <li><p><code>trait</code>: A glycosylation trait (e.g. "TFc" for proportion of core-fucosylated glycans)</p></li>
 <li><p><code>site</code>: The glycosylation site.</p></li>
 <li><p><code>p_val</code>: p-values, preferably adjusted p-values</p></li>
-<li><p><code>log2fc</code>: log2 of fold change</p></li>
+<li><p><code>log2fc</code>: genuine log2 fold change; optional only for GSEA
+with <code>rank_by = "log10p"</code> (significance-only, no direction).
+Native contrasts or transformed-coordinate effects are not log2FC.</p></li>
 </ul></li>
 </ul></dd>
 

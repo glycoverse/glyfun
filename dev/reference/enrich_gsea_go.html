@@ -69,7 +69,9 @@ or <code><a href="https://glycoverse.github.io/glystats/reference/gly_wilcox.htm
 <li><p><code>trait</code>: A glycosylation trait (e.g. "TFc" for proportion of core-fucosylated glycans)</p></li>
 <li><p><code>site</code>: The glycosylation site.</p></li>
 <li><p><code>p_val</code>: p-values, preferably adjusted p-values</p></li>
-<li><p><code>log2fc</code>: log2 of fold change</p></li>
+<li><p><code>log2fc</code>: genuine log2 fold change; optional only for GSEA
+with <code>rank_by = "log10p"</code> (significance-only, no direction).
+Native contrasts or transformed-coordinate effects are not log2FC.</p></li>
 </ul></li>
 </ul></dd>
 
@@ -78,7 +80,7 @@ or <code><a href="https://glycoverse.github.io/glystats/reference/gly_wilcox.htm
 <dd><p>Criteria for ranking proteins.
 One of the following:</p><ul><li><p>"log2fc": log2 fold change with signs</p></li>
 <li><p>"abs_log2fc": absolute log2 fold change</p></li>
-<li><p>"log10p": negative log10 p-value</p></li>
+<li><p>"log10p": negative log10 p-value (significance only, not effect direction)</p></li>
 <li><p>"signed_log10p" (default): log10 p-value with signs of log2 fold change</p></li>
 <li><p>"log2fc_log10p": log2 fold change multiplied by negative log10 p-value</p></li>
 </ul></dd>
@@ -150,6 +152,17 @@ This function ranks proteins based on the median absolute log2 fold change acros
 This reflects the overall glycosylation dysregulation degree of each glycoprotein.
 You can use <code>rank_by</code> to specify other ranking criteria, such as p-values or signed log2 fold changes.
 You can also use <code>aggr</code> to specify how to aggregate multiple scores for the same protein across different traits and sites.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="effect-scale-requirements">Effect-scale requirements<a class="anchor" aria-label="anchor" href="#effect-scale-requirements"></a></h2>
+    <p>All ranking methods except <code>log10p</code> require genuine finite <code>log2fc</code>.
+Logx results and unlogged raw-scale limma contrasts do not provide this
+quantity; native estimates are never substituted. With <code>rank_by = "log10p"</code>,
+ranking uses <code>p_adj</code> when present, otherwise <code>p_val</code>, and does not use
+effect size or direction. Its enrichment sign describes enrichment toward
+greater or lesser significance, not up- or down-regulation.
+Non-finite scores (including infinite scores from zero p-values) are
+excluded with a warning; no finite scores is an error.</p>
     </div>
     <div class="section level2">
     <h2 id="common-usage-pattern">Common usage pattern<a class="anchor" aria-label="anchor" href="#common-usage-pattern"></a></h2>

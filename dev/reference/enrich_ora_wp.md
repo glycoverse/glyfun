@@ -47,7 +47,9 @@ enrich_ora_wp(
 
     - `p_val`: p-values, preferably adjusted p-values
 
-    - `log2fc`: log2 of fold change
+    - `log2fc`: genuine log2 fold change; optional only for GSEA with
+      `rank_by = "log10p"` (significance-only, no direction). Native
+      contrasts or transformed-coordinate effects are not log2FC.
 
 - dea_p_cutoff:
 

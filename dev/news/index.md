@@ -2,6 +2,11 @@
 
 ## glyfun (development version)
 
+- Enrichment validates the quantities actually used: ORA and
+  effect-dependent GSEA reject unavailable log2FC rather than silently
+  producing empty input. Significance-only GSEA accepts results without
+  log2FC; invalid or excluded scores are diagnosed. (#8)
+
 - Protein-centric GSEA functions now return `NULL` with a diagnostic
   message, rather than failing, when an enrichment backend returns no
   result.

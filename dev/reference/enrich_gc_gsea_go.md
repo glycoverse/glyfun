@@ -43,7 +43,8 @@ enrich_gc_gsea_go(
 
   - "abs_log2fc": absolute log2 fold change
 
-  - "log10p": negative log10 p-value
+  - "log10p": negative log10 p-value (significance only, not effect
+    direction)
 
   - "signed_log10p" (default): log10 p-value with signs of log2 fold
     change
