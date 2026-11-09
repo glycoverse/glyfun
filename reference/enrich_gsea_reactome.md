@@ -48,7 +48,9 @@ enrich_gsea_reactome(
 
     - `p_val`: p-values, preferably adjusted p-values
 
-    - `log2fc`: log2 of fold change
+    - `log2fc`: genuine log2 fold change; optional only for GSEA with
+      `rank_by = "log10p"` (significance-only, no direction). Native
+      contrasts or transformed-coordinate effects are not log2FC.
 
 - rank_by:
 
@@ -58,7 +60,8 @@ enrich_gsea_reactome(
 
   - "abs_log2fc": absolute log2 fold change
 
-  - "log10p": negative log10 p-value
+  - "log10p": negative log10 p-value (significance only, not effect
+    direction)
 
   - "signed_log10p" (default): log10 p-value with signs of log2 fold
     change

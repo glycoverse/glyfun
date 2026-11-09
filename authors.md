@@ -8,12 +8,12 @@
 ## Citation
 
 Fu B (2026). *glyfun: Glycan-Centric Functional Enrichment Analysis*. R
-package version 0.1.3, <https://glycoverse.github.io/glyfun/>.
+package version 0.2.0, <https://glycoverse.github.io/glyfun/>.
 
     @Manual{,
       title = {glyfun: Glycan-Centric Functional Enrichment Analysis},
       author = {Bin Fu},
       year = {2026},
-      note = {R package version 0.1.3},
+      note = {R package version 0.2.0},
       url = {https://glycoverse.github.io/glyfun/},
     }

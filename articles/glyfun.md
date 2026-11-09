@@ -25,8 +25,6 @@ one is useful.
 ``` r
 
 library(glyfun)
-#> Warning: replacing previous import 'S4Arrays::makeNindexFromArrayViewport' by
-#> 'DelayedArray::makeNindexFromArrayViewport' when loading 'SummarizedExperiment'
 library(SummarizedExperiment)
 #> Loading required package: MatrixGenerics
 #> Loading required package: matrixStats
@@ -160,7 +158,6 @@ gp_se <- real_experiment |>
 #> 
 #> ── Aggregating data ──
 #> 
-#> ℹ Aggregating to "gfs" level
 #> ✔ Aggregation completed.
 #> 
 #> ── Normalizing data again ──
@@ -179,7 +176,7 @@ dea_res <- gly_limma(gp_se)
 #> ℹ Test Group: "C"
 get_tidy_result(dea_res)
 #> # A tibble: 3,979 × 14
-#>    variable       protein glycan_composition glycan_structure protein_site gene 
+#>    .variable      protein glycan_composition glycan_structure protein_site gene 
 #>    <chr>          <chr>   <comp>             <struct>                <int> <chr>
 #>  1 P08185-176-He… P08185  Hex(5)HexNAc(4)Ne… NeuAc(??-?)Hex(…          176 SERP…
 #>  2 P04196-344-He… P04196  Hex(5)HexNAc(4)Ne… NeuAc(??-?)Hex(…          344 HRG  
@@ -358,10 +355,21 @@ trait_dea_res <- gly_limma(trait_se)
 
 As before, ORA uses hard cutoffs to identify dysregulated features. The
 difference is that enrichment is now performed separately for each
-trait. For example, for the `TF` trait, we filter statistically
-significant glycosites and then run enrichment analysis on the proteins
-with dysregulated `TF`. The same process is repeated for `GS` and the
-other traits. In `glyfun`, this is called glycan-centric enrichment.
+trait. Use `by` to select the column defining these groups, for example
+`enrich_gc_ora_go(trait_dea_res, by = "trait")` or
+`enrich_gc_gsea_go(trait_dea_res, by = "trait")`. The same argument is
+available in
+`enrich_glyco(trait_dea_res, scope = "glycan_trait", by = "trait")`.
+With `by = NULL`, glystats results use the first available column in the
+order `glycan_structure`, `glycan_composition`, `trait`, `motif`. Data
+frames retain their preference for `trait`, then use the same order if
+`trait` is absent. If several candidates are available, a message
+reports the selected column and explains how to override it.
+
+For example, for the `TF` trait, we filter statistically significant
+glycosites and then run enrichment analysis on the proteins with
+dysregulated `TF`. The same process is repeated for `GS` and the other
+traits. In `glyfun`, this is called glycan-centric enrichment.
 
 `glyfun` provides the following functions for glycan-centric ORA:
 

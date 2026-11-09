@@ -49,7 +49,9 @@ enrich_gsea_go(
 
     - `p_val`: p-values, preferably adjusted p-values
 
-    - `log2fc`: log2 of fold change
+    - `log2fc`: genuine log2 fold change; optional only for GSEA with
+      `rank_by = "log10p"` (significance-only, no direction). Native
+      contrasts or transformed-coordinate effects are not log2FC.
 
 - rank_by:
 
@@ -59,7 +61,8 @@ enrich_gsea_go(
 
   - "abs_log2fc": absolute log2 fold change
 
-  - "log10p": negative log10 p-value
+  - "log10p": negative log10 p-value (significance only, not effect
+    direction)
 
   - "signed_log10p" (default): log10 p-value with signs of log2 fold
     change
@@ -142,6 +145,17 @@ of each glycoprotein. You can use `rank_by` to specify other ranking
 criteria, such as p-values or signed log2 fold changes. You can also use
 `aggr` to specify how to aggregate multiple scores for the same protein
 across different traits and sites.
+
+## Effect-scale requirements
+
+All ranking methods except `log10p` require genuine finite `log2fc`.
+Logx results and unlogged raw-scale limma contrasts do not provide this
+quantity; native estimates are never substituted. With
+`rank_by = "log10p"`, ranking uses `p_adj` when present, otherwise
+`p_val`, and does not use effect size or direction. Its enrichment sign
+describes enrichment toward greater or lesser significance, not up- or
+down-regulation. Non-finite scores (including infinite scores from zero
+p-values) are excluded with a warning; no finite scores is an error.
 
 ## Common usage pattern
 

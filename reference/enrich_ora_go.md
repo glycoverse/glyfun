@@ -48,7 +48,9 @@ enrich_ora_go(
 
     - `p_val`: p-values, preferably adjusted p-values
 
-    - `log2fc`: log2 of fold change
+    - `log2fc`: genuine log2 fold change; optional only for GSEA with
+      `rank_by = "log10p"` (significance-only, no direction). Native
+      contrasts or transformed-coordinate effects are not log2FC.
 
 - dea_p_cutoff:
 
@@ -116,6 +118,15 @@ a tibble with
 [`tibble::as_tibble()`](https://tibble.tidyverse.org/reference/as_tibble.html),
 or visualized with `clusterProfiler` functions like
 [`clusterProfiler::dotplot()`](https://rdrr.io/pkg/clusterProfiler/man/reexports.html).
+
+## Details
+
+ORA requires genuine finite `log2fc` values for its fold-change cutoff.
+Logx results and unlogged raw-scale limma contrasts cannot be used.
+Native model estimates are not abundance fold changes. Non-finite values
+are excluded with a warning; wholly unavailable fold changes are an
+error. When no proteins pass valid cutoffs, the result is `NULL` with a
+warning.
 
 ## Common usage pattern
 
