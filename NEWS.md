@@ -1,3 +1,5 @@
+# glyfun (development version)
+
 # glyfun 0.2.0
 
 ## New features
