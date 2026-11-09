@@ -176,7 +176,7 @@ dea_res <- gly_limma(gp_se)
 #> ℹ Test Group: "C"
 get_tidy_result(dea_res)
 #> # A tibble: 3,979 × 14
-#>    variable       protein glycan_composition glycan_structure protein_site gene 
+#>    .variable      protein glycan_composition glycan_structure protein_site gene 
 #>    <chr>          <chr>   <comp>             <struct>                <int> <chr>
 #>  1 P08185-176-He… P08185  Hex(5)HexNAc(4)Ne… NeuAc(??-?)Hex(…          176 SERP…
 #>  2 P04196-344-He… P04196  Hex(5)HexNAc(4)Ne… NeuAc(??-?)Hex(…          344 HRG  
